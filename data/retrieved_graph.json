@@ -1,0 +1,477 @@
+{
+  "user_query": "観察の活動を取り入れた授業をしたいです",
+  "raw_conditions": {
+    "Grade": null,
+    "Field": null,
+    "Unit": null,
+    "ICT_Hardware": null,
+    "ICT_Software": null,
+    "ICT_Artifact": null,
+    "ICT_Function": null,
+    "Educational_Opportunity": "観察の活動",
+    "Educational_Effect": null
+  },
+  "grounded_conditions": {
+    "Educational_Opportunity": [
+      "短時間での効率的な観察活動",
+      "短時間で対象を観察し結果を確認する活動",
+      "観察結果を発表して他者と共有する活動"
+    ]
+  },
+  "retrieved_graph": {
+    "nodes": [
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:20",
+        "labels": [
+          "Paper"
+        ],
+        "properties": {
+          "journal": "生物教育",
+          "node_type": "Paper",
+          "year": 2024,
+          "author": "山野井 貴浩, 菊地 優花, 大谷津 明花",
+          "name": "P_0046",
+          "title": "ドジョウの血流観察におけるモバイル顕微鏡の教育効果",
+          "paper_id": "P_0046",
+          "url": "https://www.jstage.jst.go.jp/article/jjbe/66/1/66_11/_article/-char/ja"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+        "labels": [
+          "Practice"
+        ],
+        "properties": {
+          "unit": "人の体のつくりと働き",
+          "node_type": "Practice",
+          "field": "生物",
+          "grade": "小6",
+          "practice_id": "P_0046_1",
+          "name": "P_0046_1",
+          "paper_id": "P_0046"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:135",
+        "labels": [
+          "ICT_Hardware"
+        ],
+        "properties": {
+          "node_type": "ICT_Hardware",
+          "name": "iPad"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+        "labels": [
+          "ICT_Software"
+        ],
+        "properties": {
+          "node_type": "ICT_Software",
+          "name": "カメラアプリ"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:300",
+        "labels": [
+          "ICT_Function"
+        ],
+        "properties": {
+          "node_type": "ICT_Function",
+          "name": "ピント合わせをほとんど行わずに観察対象を見ることが可能"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+        "labels": [
+          "Educational_Opportunity"
+        ],
+        "properties": {
+          "node_type": "Educational_Opportunity",
+          "name": "短時間での効率的な観察活動"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:77",
+        "labels": [
+          "Educational_Effect"
+        ],
+        "properties": {
+          "node_type": "Educational_Effect",
+          "name": "観察に対する意欲が高まる"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:93",
+        "labels": [
+          "Grade"
+        ],
+        "properties": {
+          "node_type": "Grade",
+          "name": "小6"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:94",
+        "labels": [
+          "Field"
+        ],
+        "properties": {
+          "node_type": "Field",
+          "name": "生物"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:298",
+        "labels": [
+          "Unit"
+        ],
+        "properties": {
+          "node_type": "Unit",
+          "name": "人の体のつくりと働き"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:305",
+        "labels": [
+          "Educational_Effect"
+        ],
+        "properties": {
+          "node_type": "Educational_Effect",
+          "name": "発話の質の向上が促される"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:306",
+        "labels": [
+          "Educational_Effect"
+        ],
+        "properties": {
+          "node_type": "Educational_Effect",
+          "name": "観察した内容の特徴や変化に気づきやすくなり、現象を捉える視点が深まる"
+        }
+      },
+      {
+        "id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:301",
+        "labels": [
+          "ICT_Function"
+        ],
+        "properties": {
+          "node_type": "ICT_Function",
+          "name": "上下左右の逆転なく観察場所の操作が可能"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152921504606846996",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000412",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:20",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+        "type": "CONTAINS"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152925902653358134",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000416",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:135",
+        "type": "USES_HARDWARE"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1159682401606041735",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000418",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:135",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+        "type": "RUNS_SOFTWARE"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919787424524534060",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000420",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:300",
+        "type": "HAS_FUNCTION"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917536724222476591",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000425",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:300",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+        "type": "ENABLES"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1155182100513554735",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000432",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:77",
+        "type": "PROMOTES"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152922604118474806",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000413",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:93",
+        "type": "TARGETS_GRADE"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152923703630102582",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000414",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:94",
+        "type": "TARGETS_FIELD"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917532326175965482",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000415",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:298",
+        "type": "TARGETS_UNIT"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917537823734104369",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000428",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:305",
+        "type": "PROMOTES"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917537823734104370",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000430",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:306",
+        "type": "PROMOTES"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919787424524534061",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000422",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:301",
+        "type": "HAS_FUNCTION"
+      },
+      {
+        "id": "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919788524036161839",
+        "properties": {
+          "practice_id": "P_0046_1",
+          "edge_id": "E_0000426",
+          "paper_id": "P_0046"
+        },
+        "source_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:301",
+        "target_id": "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+        "type": "ENABLES"
+      }
+    ],
+    "paths": [
+      {
+        "path_type": "hardware-software-function-opportunity-effect",
+        "node_ids": [
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:20",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:135",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:300",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:77"
+        ],
+        "edge_ids": [
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152921504606846996",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152925902653358134",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1159682401606041735",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919787424524534060",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917536724222476591",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1155182100513554735"
+        ],
+        "match_level": 1,
+        "matched_conditions": [
+          "Educational_Opportunity"
+        ]
+      },
+      {
+        "path_type": "hardware-software-function-opportunity-effect",
+        "node_ids": [
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:20",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:135",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:300",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:305"
+        ],
+        "edge_ids": [
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152921504606846996",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152925902653358134",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1159682401606041735",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919787424524534060",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917536724222476591",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917537823734104369"
+        ],
+        "match_level": 1,
+        "matched_conditions": [
+          "Educational_Opportunity"
+        ]
+      },
+      {
+        "path_type": "hardware-software-function-opportunity-effect",
+        "node_ids": [
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:20",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:135",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:300",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:306"
+        ],
+        "edge_ids": [
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152921504606846996",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152925902653358134",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1159682401606041735",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919787424524534060",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917536724222476591",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917537823734104370"
+        ],
+        "match_level": 1,
+        "matched_conditions": [
+          "Educational_Opportunity"
+        ]
+      },
+      {
+        "path_type": "hardware-software-function-opportunity-effect",
+        "node_ids": [
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:20",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:135",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:301",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:77"
+        ],
+        "edge_ids": [
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152921504606846996",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152925902653358134",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1159682401606041735",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919787424524534061",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919788524036161839",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1155182100513554735"
+        ],
+        "match_level": 1,
+        "matched_conditions": [
+          "Educational_Opportunity"
+        ]
+      },
+      {
+        "path_type": "hardware-software-function-opportunity-effect",
+        "node_ids": [
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:20",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:135",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:301",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:305"
+        ],
+        "edge_ids": [
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152921504606846996",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152925902653358134",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1159682401606041735",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919787424524534061",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919788524036161839",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917537823734104369"
+        ],
+        "match_level": 1,
+        "matched_conditions": [
+          "Educational_Opportunity"
+        ]
+      },
+      {
+        "path_type": "hardware-software-function-opportunity-effect",
+        "node_ids": [
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:20",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:54",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:135",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:71",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:301",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:303",
+          "4:6ca19d9e-b389-457d-8dae-0b7d185f5901:306"
+        ],
+        "edge_ids": [
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152921504606846996",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1152925902653358134",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:1159682401606041735",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919787424524534061",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6919788524036161839",
+          "5:6ca19d9e-b389-457d-8dae-0b7d185f5901:6917537823734104370"
+        ],
+        "match_level": 1,
+        "matched_conditions": [
+          "Educational_Opportunity"
+        ]
+      }
+    ],
+    "retrieval_groups": [
+      {
+        "match_level": 1,
+        "matched_conditions": [
+          "Educational_Opportunity"
+        ],
+        "node_count": 13,
+        "edge_count": 13,
+        "path_count": 6
+      }
+    ],
+    "coverage": {
+      "requested_conditions": [
+        "Educational_Opportunity"
+      ],
+      "covered_conditions": [
+        "Educational_Opportunity"
+      ],
+      "uncovered_conditions": []
+    }
+  }
+}

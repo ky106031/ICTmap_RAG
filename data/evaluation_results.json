@@ -1,0 +1,172 @@
+[
+  {
+    "user_query": "高校3年生でInstagramを活用し、観察への意欲を高めたいです。どのような授業実践が参考になりますか？",
+    "raw_conditions": {
+      "Grade": "高校3年生",
+      "Field": null,
+      "Unit": null,
+      "ICT_Hardware": null,
+      "ICT_Software": "Instagram",
+      "ICT_Artifact": null,
+      "ICT_Function": null,
+      "Educational_Opportunity": null,
+      "Educational_Effect": "観察への意欲を高めたい"
+    },
+    "grounded_conditions": {
+      "Grade": [
+        "高3"
+      ],
+      "ICT_Software": [
+        "Instagram"
+      ],
+      "Educational_Effect": [
+        "観察に対する意欲が高まる",
+        "明確な観察視点を持った注意深い観察が促される",
+        "自作した顕微鏡を用いた観察への意欲が向上・持続する"
+      ]
+    },
+    "retrieval_summary": {
+      "nodes": 16,
+      "edges": 18,
+      "paths": 5,
+      "coverage": {
+        "requested_conditions": [
+          "Grade",
+          "ICT_Software",
+          "Educational_Effect"
+        ],
+        "covered_conditions": [
+          "Educational_Effect",
+          "Grade",
+          "ICT_Software"
+        ],
+        "uncovered_conditions": []
+      },
+      "retrieval_groups": [
+        {
+          "match_level": 3,
+          "matched_conditions": [
+            "Grade",
+            "ICT_Software",
+            "Educational_Effect"
+          ],
+          "node_count": 16,
+          "edge_count": 18,
+          "path_count": 5
+        }
+      ]
+    },
+    "generated_answer": "高校3年生でInstagramを活用し、観察への意欲を高めたいというご要望に対し、以下の授業実践が参考になります。\n\n---\n### **授業実践名: P_0032_1**\n\nこの授業実践は、**高等学校3年生**の**生物**領域における**「生態系とその保全」**単元で実施されました。ICTとして**iPad**と**Instagram**が使用されています。\n\nこの実践では、Instagramの以下のICT機能が活用され、観察に対する意欲を高める教育効果につながっています。\n\n1.  **ICT機能：「外部ユーザーとの相互交流が可能」**\n    *   この機能は、生徒が**「SNS上で観察結果を発信し、他者からの反応を受け取る活動」**という教育機会を可能にします。\n    *   その結果として、**「観察に対する意欲が高まる」**という教育効果が得られました。\n\nまた、Instagramの以下のICT機能も活用され、より注意深い観察を促すことで、観察への質的な向上にも寄与しています。\n\n2.  **ICT機能：「写真撮影とコメントの同時記録が可能」、「観察結果の経時的記録が可能」、「ハッシュタグによる検索・分類が可能」、「画像加工が可能」**\n    *   これらの機能は、生徒が**「観察結果としての写真をまとめ、適宜加工し、写真とコメントで発信する活動」**という教育機会を可能にします。\n    *   その結果として、**「明確な観察視点を持った注意深い観察が促される」**という教育効果が得られました。\n\nこの実践に関する詳細は、以下の論文で確認できます。\n\n*   **論文情報:** 高等学校生物のPBLでのSNSを利用した観察についての実践的研究―ジェンダーの視点によるInstagram活用についての考察―\n*   **著者:** 奥村 仁一\n*   **年:** 2018",
+    "status": "success"
+  },
+  {
+    "user_query": "中学3年生でFaceTimeを使った理科の授業実践を知りたいです。",
+    "raw_conditions": {
+      "Grade": "中学3年生",
+      "Field": null,
+      "Unit": null,
+      "ICT_Hardware": null,
+      "ICT_Software": "FaceTime",
+      "ICT_Artifact": null,
+      "ICT_Function": null,
+      "Educational_Opportunity": null,
+      "Educational_Effect": null
+    },
+    "grounded_conditions": {
+      "Grade": [
+        "中3"
+      ],
+      "ICT_Software": [
+        "FaceTime"
+      ]
+    },
+    "retrieval_summary": {
+      "nodes": 15,
+      "edges": 19,
+      "paths": 8,
+      "coverage": {
+        "requested_conditions": [
+          "Grade",
+          "ICT_Software"
+        ],
+        "covered_conditions": [
+          "Grade",
+          "ICT_Software"
+        ],
+        "uncovered_conditions": []
+      },
+      "retrieval_groups": [
+        {
+          "match_level": 2,
+          "matched_conditions": [
+            "Grade",
+            "ICT_Software"
+          ],
+          "node_count": 15,
+          "edge_count": 19,
+          "path_count": 8
+        }
+      ]
+    },
+    "generated_answer": "中学3年生でFaceTimeを活用した理科の授業実践について、以下の情報が見つかりました。\n\n### 授業実践の概要\n\nこの実践は、中学3年生の地学領域「自然環境の保全と科学技術の利用（自然環境の保全と科学技術の利用）」の単元で行われました。\n\n**論文情報:**\n*   論文タイトル: FaceTime を利用した他校生徒との協働学習を取り入れた中学校理科の授業実践 ―科学的思考力・判断力および表現力に与える影響を中心に―\n*   著者: 相馬 惠子\n*   年: 2014\n*   論文ID: P_0008\n\n**使用されたICT:**\n*   ICTソフトウェア: FaceTime\n*   ICTハードウェア: iPad\n\n### ICT機能と教育効果の関係性\n\nこの授業実践では、FaceTimeの以下の機能が教育機会を可能にし、特定の教育効果につながっています。\n\n1.  **ICT機能: 遠隔地の他校の小グループ間での直接会話が可能**\n    *   この機能は、「他地域の生徒との意見交換」という教育機会を可能にしました。これにより、生徒には「多面的に捉えて総合的に考察する力が育まれる」とともに、「他者に伝わるように考えを整理し、分かりやすく表現する力が育まれる」という教育効果が見られました。\n    *   また、同じく「遠隔地の他校の小グループ間での直接会話が可能」という機能は、「相手の発言を比較検討する討議活動」という教育機会も可能にしました。この活動を通じて、生徒は「多面的に捉えて総合的に考察する力が育まれる」、「他者に伝わるように考えを整理し、分かりやすく表現する力が育まれる」、さらに「根拠をもとに自分の考えを説明する力が育まれる」という教育効果を得ました。\n\n2.  **ICT機能: 議論に必要な情報のリアルタイムでの提示が可能**\n    *   この機能は、「互いに説明し合いながら、内容を図で表現する活動」という教育機会を可能にしました。この活動の結果、生徒は「多面的に捉えて総合的に考察する力が育まれる」、「他者に伝わるように考えを整理し、分かりやすく表現する力が育まれる」、そして「根拠をもとに自分の考えを説明する力が育まれる」といった教育効果を向上させることができました。\n\nこの実践は、FaceTimeを活用することで、遠隔地の生徒との協働学習を通じて、生徒の科学的思考力・判断力および表現力を育成することに焦点を当てています。",
+    "status": "success"
+  },
+  {
+    "user_query": "観察結果を共有する活動を取り入れたいです。参考になるICT活用事例はありますか？",
+    "raw_conditions": {
+      "Grade": null,
+      "Field": null,
+      "Unit": null,
+      "ICT_Hardware": null,
+      "ICT_Software": null,
+      "ICT_Artifact": null,
+      "ICT_Function": null,
+      "Educational_Opportunity": "観察結果を共有する活動",
+      "Educational_Effect": null
+    },
+    "grounded_conditions": {
+      "Educational_Opportunity": [
+        "観察結果を発表して他者と共有する活動",
+        "観察結果を全員で共有し、互いの結果を比較・確認する活動",
+        "観察結果をグループ内で共有し、その内容について討議する活動"
+      ]
+    },
+    "retrieval_summary": {
+      "nodes": 22,
+      "edges": 22,
+      "paths": 4,
+      "coverage": {
+        "requested_conditions": [
+          "Educational_Opportunity"
+        ],
+        "covered_conditions": [
+          "Educational_Opportunity"
+        ],
+        "uncovered_conditions": []
+      },
+      "retrieval_groups": [
+        {
+          "match_level": 1,
+          "matched_conditions": [
+            "Educational_Opportunity"
+          ],
+          "node_count": 22,
+          "edge_count": 22,
+          "path_count": 4
+        }
+      ]
+    },
+    "generated_answer": "観察結果を共有する活動におけるICT活用事例として、以下の実践が参考になります。\n\n---\n### **1. 顕微鏡映像を共有しグループで討議する活動**\n\n**該当する授業実践:** P_0001_1\n\n**学年・領域・単元:**\n中学校第一学年、化学領域「物質のすがた（身の回りの物質とその性質）」\n\n**使用されたICT:**\n- **ICTハードウェア:** NEXUS7（タブレット）\n- **ICTソフトウェア:** カメラアプリ\n\n**ICT機能と教育機会・教育効果の関係:**\nこの実践では、NEXUS7とカメラアプリを使用し、以下のICT機能が観察結果の共有活動を可能にし、学習効果に繋がっています。\n- **ICT機能「顕微鏡映像をタブレット画面に表示」** および **「顕微鏡以上の拡大表示が可能」** により、生徒は観察対象（液体の粒子モデル）の映像をタブレット画面で共有し、**「観察結果をグループ内で共有し、その内容について討議する活動」** が可能になりました。この活動を通じて、**「粒子の運動に関する理解が深まる」** という教育効果が得られています。\n\n**根拠論文:**\n青木 悠樹 (2017)「液体の粒子モデルを学ぶ教材・教育プログラムの開発 中学校第一学年を対象として」(論文ID: P_0001)\n\n---\n### **2. 生物マップ作成アプリで観察結果を全体で共有し比較・確認する活動**\n\n**該当する授業実践:** P_0045_1\n\n**学年・領域・単元:**\n小学校4年、生物領域「季節と生物（植物の成長と季節）」\n\n**使用されたICT:**\n- **ICTハードウェア:** iPad\n- **ICTソフトウェア:** 生物マップ作成アプリ\n\n**ICT機能と教育機会・教育効果の関係:**\nこの実践では、iPadと生物マップ作成アプリを使用し、以下のICT機能が観察結果の共有活動を可能にし、学習効果に繋がっています。\n- **ICT機能「観察結果の共有が可能」** および **「季節ごとと通年でマップを作成することが可能」** により、生徒は自身が観察した植物の情報をアプリ上でマップとして作成し、**「観察結果を全員で共有し、互いの結果を比較・確認する活動」** が可能になりました。この活動を通じて、**「植物の季節による変化に関する理解が深まる」** という教育効果が得られています。\n\n**根拠論文:**\n野地 楓, 深谷 将, 山野井 貴浩 (2023)「小学校4年理科「季節と生物」の授業で活用できる生物マップ作製アプリの開発と評価」(論文ID: P_0045)",
+    "status": "success"
+  },
+  {
+    "user_query": "小学校5年生でタブレットを使い、観察への意欲を高めたいです。",
+    "status": "error",
+    "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, model: gemini-2.5-flash\\nPlease retry in 55.232184033s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-2.5-flash', 'location': 'global'}, 'quotaValue': '5'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '55s'}]}}"
+  },
+  {
+    "user_query": "Excelを使って実験データを整理する授業実践を教えてください。",
+    "status": "error",
+    "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, model: gemini-2.5-flash\\nPlease retry in 55.028465265s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-flash'}, 'quotaValue': '5'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '55s'}]}}"
+  }
+]

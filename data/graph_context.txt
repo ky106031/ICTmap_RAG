@@ -1,0 +1,43 @@
+【検索条件】
+- Educational_Opportunity: 短時間での効率的な観察活動, 短時間で対象を観察し結果を確認する活動, 観察結果を発表して他者と共有する活動
+
+【検索条件の回収状況】
+- 要求条件: Educational_Opportunity
+- 回収条件: Educational_Opportunity
+- 未回収条件: 
+
+============================================================
+【授業実践 P_0046_1】
+論文: ドジョウの血流観察におけるモバイル顕微鏡の教育効果
+著者: 山野井 貴浩, 菊地 優花, 大谷津 明花
+年: 2024
+論文ID: P_0046
+学年: 小6
+領域: 生物
+単元: 人の体のつくりと働き
+
+一致した検索条件:
+- Educational_Opportunity
+
+ノード概要:
+ICTハードウェア:
+- iPad
+ICTソフトウェア:
+- カメラアプリ
+ICT機能:
+- ピント合わせをほとんど行わずに観察対象を見ることが可能
+- 上下左右の逆転なく観察場所の操作が可能
+教育機会:
+- 短時間での効率的な観察活動
+教育効果:
+- 観察に対する意欲が高まる
+- 発話の質の向上が促される
+- 観察した内容の特徴や変化に気づきやすくなり、現象を捉える視点が深まる
+
+関係パス:
+1. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「ピント合わせをほとんど行わずに観察対象を見ることが可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「観察に対する意欲が高まる」
+2. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「ピント合わせをほとんど行わずに観察対象を見ることが可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「発話の質の向上が促される」
+3. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「ピント合わせをほとんど行わずに観察対象を見ることが可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「観察した内容の特徴や変化に気づきやすくなり、現象を捉える視点が深まる」
+4. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「上下左右の逆転なく観察場所の操作が可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「観察に対する意欲が高まる」
+5. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「上下左右の逆転なく観察場所の操作が可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「発話の質の向上が促される」
+6. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「上下左右の逆転なく観察場所の操作が可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「観察した内容の特徴や変化に気づきやすくなり、現象を捉える視点が深まる」
