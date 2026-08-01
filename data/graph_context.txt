@@ -1,13 +1,48 @@
 【検索条件】
-- Educational_Opportunity: 短時間での効率的な観察活動, 短時間で対象を観察し結果を確認する活動, 観察結果を発表して他者と共有する活動
+- Educational_Effect: 観察に対する意欲が高まる, 明確な観察視点を持った注意深い観察が促される, 自作した顕微鏡を用いた観察への意欲が向上・持続する
 
 【検索条件の回収状況】
-- 要求条件: Educational_Opportunity
-- 回収条件: Educational_Opportunity
+- 要求条件: Educational_Effect
+- 回収条件: Educational_Effect
 - 未回収条件: 
 
 ============================================================
-【授業実践 P_0046_1】
+【実践1】
+実践ID: P_0001_1
+論文: 液体の粒子モデルを学ぶ教材・教育プログラムの開発
+中学校第一学年を対象として
+著者: 青木 悠樹
+年: 2017
+論文ID: P_0001
+学年: 中1
+領域: 化学
+単元: 物質のすがた（身の回りの物質とその性質）
+
+一致した検索条件:
+- Educational_Effect
+
+ノード概要:
+ICTハードウェア:
+- NEXUS7
+ICTソフトウェア:
+- カメラアプリ
+ICT機能:
+- 顕微鏡映像をタブレット画面に表示
+- 顕微鏡以上の拡大表示が可能
+教育機会:
+- タブレット顕微鏡を用いてブラウン運動を協働的に観察する活動
+教育効果:
+- 観察に対する意欲が高まる
+
+関係パス:
+1. Paper「液体の粒子モデルを学ぶ教材・教育プログラムの開発
+中学校第一学年を対象として」 --CONTAINS--> Practice「P_0001_1」 --USES_HARDWARE--> ICT_Hardware「NEXUS7」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「顕微鏡映像をタブレット画面に表示」 --ENABLES--> Educational_Opportunity「タブレット顕微鏡を用いてブラウン運動を協働的に観察する活動」 --PROMOTES--> Educational_Effect「観察に対する意欲が高まる」
+2. Paper「液体の粒子モデルを学ぶ教材・教育プログラムの開発
+中学校第一学年を対象として」 --CONTAINS--> Practice「P_0001_1」 --USES_HARDWARE--> ICT_Hardware「NEXUS7」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「顕微鏡以上の拡大表示が可能」 --ENABLES--> Educational_Opportunity「タブレット顕微鏡を用いてブラウン運動を協働的に観察する活動」 --PROMOTES--> Educational_Effect「観察に対する意欲が高まる」
+
+============================================================
+【実践2】
+実践ID: P_0046_1
 論文: ドジョウの血流観察におけるモバイル顕微鏡の教育効果
 著者: 山野井 貴浩, 菊地 優花, 大谷津 明花
 年: 2024
@@ -17,7 +52,7 @@
 単元: 人の体のつくりと働き
 
 一致した検索条件:
-- Educational_Opportunity
+- Educational_Effect
 
 ノード概要:
 ICTハードウェア:
@@ -27,17 +62,53 @@ ICTソフトウェア:
 ICT機能:
 - ピント合わせをほとんど行わずに観察対象を見ることが可能
 - 上下左右の逆転なく観察場所の操作が可能
+- 同じ画面を児童同士で共有が可能
 教育機会:
 - 短時間での効率的な観察活動
+- 画面を共有しながら、協働的に対象を観察し意見を交わす活動
 教育効果:
 - 観察に対する意欲が高まる
-- 発話の質の向上が促される
-- 観察した内容の特徴や変化に気づきやすくなり、現象を捉える視点が深まる
 
 関係パス:
 1. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「ピント合わせをほとんど行わずに観察対象を見ることが可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「観察に対する意欲が高まる」
-2. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「ピント合わせをほとんど行わずに観察対象を見ることが可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「発話の質の向上が促される」
-3. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「ピント合わせをほとんど行わずに観察対象を見ることが可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「観察した内容の特徴や変化に気づきやすくなり、現象を捉える視点が深まる」
-4. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「上下左右の逆転なく観察場所の操作が可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「観察に対する意欲が高まる」
-5. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「上下左右の逆転なく観察場所の操作が可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「発話の質の向上が促される」
-6. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「上下左右の逆転なく観察場所の操作が可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「観察した内容の特徴や変化に気づきやすくなり、現象を捉える視点が深まる」
+2. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「上下左右の逆転なく観察場所の操作が可能」 --ENABLES--> Educational_Opportunity「短時間での効率的な観察活動」 --PROMOTES--> Educational_Effect「観察に対する意欲が高まる」
+3. Paper「ドジョウの血流観察におけるモバイル顕微鏡の教育効果」 --CONTAINS--> Practice「P_0046_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「カメラアプリ」 --HAS_FUNCTION--> ICT_Function「同じ画面を児童同士で共有が可能」 --ENABLES--> Educational_Opportunity「画面を共有しながら、協働的に対象を観察し意見を交わす活動」 --PROMOTES--> Educational_Effect「観察に対する意欲が高まる」
+
+============================================================
+【実践3】
+実践ID: P_0032_1
+論文: 高等学校生物のPBLでのSNSを利用した観察についての実践的研究―ジェンダーの視点によるInstagram活用についての考察―
+著者: 奥村 仁一
+年: 2018
+論文ID: P_0032
+学年: 高3
+領域: 生物
+単元: 生態系とその保全
+
+一致した検索条件:
+- Educational_Effect
+
+ノード概要:
+ICTハードウェア:
+- iPad
+ICTソフトウェア:
+- Instagram
+ICT機能:
+- 写真撮影とコメントの同時記録が可能
+- 観察結果の経時的記録が可能
+- ハッシュタグによる検索・分類が可能
+- 外部ユーザーとの相互交流が可能
+- 画像加工が可能
+教育機会:
+- 観察結果としての写真をまとめ，適宜加工し，写真とコメントで発信する活動
+- SNS上で観察結果を発信し、他者からの反応を受け取る活動
+教育効果:
+- 明確な観察視点を持った注意深い観察が促される
+- 観察に対する意欲が高まる
+
+関係パス:
+1. Paper「高等学校生物のPBLでのSNSを利用した観察についての実践的研究―ジェンダーの視点によるInstagram活用についての考察―」 --CONTAINS--> Practice「P_0032_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「Instagram」 --HAS_FUNCTION--> ICT_Function「写真撮影とコメントの同時記録が可能」 --ENABLES--> Educational_Opportunity「観察結果としての写真をまとめ，適宜加工し，写真とコメントで発信する活動」 --PROMOTES--> Educational_Effect「明確な観察視点を持った注意深い観察が促される」
+2. Paper「高等学校生物のPBLでのSNSを利用した観察についての実践的研究―ジェンダーの視点によるInstagram活用についての考察―」 --CONTAINS--> Practice「P_0032_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「Instagram」 --HAS_FUNCTION--> ICT_Function「観察結果の経時的記録が可能」 --ENABLES--> Educational_Opportunity「観察結果としての写真をまとめ，適宜加工し，写真とコメントで発信する活動」 --PROMOTES--> Educational_Effect「明確な観察視点を持った注意深い観察が促される」
+3. Paper「高等学校生物のPBLでのSNSを利用した観察についての実践的研究―ジェンダーの視点によるInstagram活用についての考察―」 --CONTAINS--> Practice「P_0032_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「Instagram」 --HAS_FUNCTION--> ICT_Function「ハッシュタグによる検索・分類が可能」 --ENABLES--> Educational_Opportunity「観察結果としての写真をまとめ，適宜加工し，写真とコメントで発信する活動」 --PROMOTES--> Educational_Effect「明確な観察視点を持った注意深い観察が促される」
+4. Paper「高等学校生物のPBLでのSNSを利用した観察についての実践的研究―ジェンダーの視点によるInstagram活用についての考察―」 --CONTAINS--> Practice「P_0032_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「Instagram」 --HAS_FUNCTION--> ICT_Function「外部ユーザーとの相互交流が可能」 --ENABLES--> Educational_Opportunity「SNS上で観察結果を発信し、他者からの反応を受け取る活動」 --PROMOTES--> Educational_Effect「観察に対する意欲が高まる」
+5. Paper「高等学校生物のPBLでのSNSを利用した観察についての実践的研究―ジェンダーの視点によるInstagram活用についての考察―」 --CONTAINS--> Practice「P_0032_1」 --USES_HARDWARE--> ICT_Hardware「iPad」 --RUNS_SOFTWARE--> ICT_Software「Instagram」 --HAS_FUNCTION--> ICT_Function「画像加工が可能」 --ENABLES--> Educational_Opportunity「観察結果としての写真をまとめ，適宜加工し，写真とコメントで発信する活動」 --PROMOTES--> Educational_Effect「明確な観察視点を持った注意深い観察が促される」

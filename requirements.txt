@@ -1,0 +1,8 @@
+streamlit
+python-dotenv
+neo4j
+google-genai
+chromadb
+langchain-text-splitters
+pydantic
+numpy
