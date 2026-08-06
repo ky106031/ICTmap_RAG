@@ -12,10 +12,10 @@ from google.genai import types
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-GENERATION_MODEL = "gemini-2.5-flash"
+GENERATION_MODEL = "gemini-3.5-flash"
 
 DEFAULT_TEMPERATURE = 0.2
-DEFAULT_MAX_OUTPUT_TOKENS = 2048
+DEFAULT_MAX_OUTPUT_TOKENS = 4096
 
 
 # ============================================================
@@ -171,6 +171,10 @@ def build_document_answer_prompt(
 
 質問が授業への応用や相談である場合は、
 原則として次の構成で回答してください。
+
+回答全体は、原則として800～1500字程度にまとめてください。
+ユーザーが詳細な授業案を求めた場合のみ、
+必要に応じて長くしてください。
 
 【この実践から参考にできる点】
 

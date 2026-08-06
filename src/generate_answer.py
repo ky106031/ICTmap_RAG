@@ -12,7 +12,7 @@ CONTEXT_PATH = BASE_DIR / "data" / "graph_context.txt"
 OUTPUT_PATH = BASE_DIR / "data" / "generated_answer.txt"
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GENERATE_MODEL = os.getenv("GEMINI_GENERATE_MODEL", "gemini-2.5-flash")
+GENERATE_MODEL = os.getenv("GEMINI_GENERATE_MODEL", "gemini-3.5-flash")
 
 
 def load_text(path: Path) -> str:
