@@ -47,9 +47,6 @@ DOCUMENT_LOADING_SECONDS = 5.5
 def load_json(
     path: Path,
 ) -> dict[str, Any]:
-    """
-    保存済みのデモ用JSONを読み込む。
-    """
     if not path.exists():
         raise FileNotFoundError(
             f"データが見つかりません: {path}"
@@ -775,7 +772,7 @@ def display_request_form() -> None:
 
     try:
         with st.spinner(
-            "ICTマップを探索しています..."
+            "..."
         ):
             time.sleep(
                 PRACTICE_LOADING_SECONDS
