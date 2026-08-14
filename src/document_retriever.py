@@ -1,11 +1,11 @@
-import os
 from pathlib import Path
 from typing import Any, TypedDict
 
 import chromadb
-from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+
+from gemini_client import create_gemini_client
 
 
 # ============================================================
@@ -34,28 +34,6 @@ class RetrievedChunk(TypedDict):
     distance: float
     metadata: dict[str, Any]
     text: str
-
-
-# ============================================================
-# Geminiクライアント
-# ============================================================
-
-def create_gemini_client() -> genai.Client:
-    """
-    .envからGEMINI_API_KEYを読み込み、
-    Gemini APIクライアントを作成する。
-    """
-    load_dotenv(BASE_DIR / ".env")
-
-    api_key = os.getenv("GEMINI_API_KEY")
-
-    if not api_key:
-        raise ValueError(
-            "GEMINI_API_KEYが設定されていません。\n"
-            "プロジェクトルートの.envを確認してください。"
-        )
-
-    return genai.Client(api_key=api_key)
 
 
 # ============================================================

@@ -2,7 +2,8 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from google import genai
+
+from gemini_client import create_gemini_client
 
 
 load_dotenv()
@@ -11,8 +12,10 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 CONTEXT_PATH = BASE_DIR / "data" / "graph_context.txt"
 OUTPUT_PATH = BASE_DIR / "data" / "generated_answer.txt"
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GENERATE_MODEL = os.getenv("GEMINI_GENERATE_MODEL", "gemini-3.5-flash")
+GENERATE_MODEL = os.getenv(
+    "GEMINI_GENERATE_MODEL",
+    "gemini-3.5-flash",
+)
 
 
 def load_text(path: Path) -> str:
@@ -27,14 +30,10 @@ def save_text(text: str, path: Path) -> None:
         f.write(text)
 
 
-def get_gemini_client():
-    if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY が .env に設定されていません。")
-
-    return genai.Client(api_key=GEMINI_API_KEY)
-
-
-def build_prompt(user_query: str, graph_context: str) -> str:
+def build_prompt(
+    user_query: str,
+    graph_context: str,
+) -> str:
     return f"""
 あなたは小学校・中学校・高等学校の理科教員向けに授業実践を紹介する教育支援AIです。
 
@@ -139,32 +138,59 @@ GraphRAGの関係性を自然な日本語で説明してください。
 """.strip()
 
 
-def generate_answer(user_query: str) -> str:
-    graph_context = load_text(CONTEXT_PATH)
-    prompt = build_prompt(user_query, graph_context)
+def generate_answer(
+    user_query: str,
+) -> str:
+    graph_context = load_text(
+        CONTEXT_PATH
+    )
 
-    client = get_gemini_client()
+    prompt = build_prompt(
+        user_query=user_query,
+        graph_context=graph_context,
+    )
+
+    # retry設定済みの共通Geminiクライアントを使用
+    client = create_gemini_client()
 
     response = client.models.generate_content(
         model=GENERATE_MODEL,
         contents=prompt,
     )
 
-    return response.text
+    answer = response.text
+
+    if not answer:
+        raise RuntimeError(
+            "Gemini APIから回答が返されませんでした。"
+        )
+
+    return answer.strip()
 
 
-def main():
+def main() -> None:
     user_query = (
-        "高校3年生でInstagramを活用し、観察への意欲を高めたいです。"
+        "高校3年生でInstagramを活用し、"
+        "観察への意欲を高めたいです。"
         "どのような授業実践が参考になりますか？"
     )
 
-    answer = generate_answer(user_query)
-    save_text(answer, OUTPUT_PATH)
+    answer = generate_answer(
+        user_query=user_query
+    )
 
-    print("=== Answer Generation Completed ===")
-    print(f"出力: {OUTPUT_PATH}")
-    print("")
+    save_text(
+        text=answer,
+        path=OUTPUT_PATH,
+    )
+
+    print(
+        "=== Answer Generation Completed ==="
+    )
+    print(
+        f"出力: {OUTPUT_PATH}"
+    )
+    print()
     print(answer)
 
 

@@ -1,9 +1,8 @@
-import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-from google import genai
 from google.genai import types
+
+from gemini_client import create_gemini_client
 
 
 # ============================================================
@@ -16,28 +15,6 @@ GENERATION_MODEL = "gemini-3.5-flash"
 
 DEFAULT_TEMPERATURE = 0.2
 DEFAULT_MAX_OUTPUT_TOKENS = 4096
-
-
-# ============================================================
-# Geminiクライアント
-# ============================================================
-
-def create_gemini_client() -> genai.Client:
-    """
-    .envからGEMINI_API_KEYを読み込み、
-    Gemini APIクライアントを作成する。
-    """
-    load_dotenv(BASE_DIR / ".env")
-
-    api_key = os.getenv("GEMINI_API_KEY")
-
-    if not api_key:
-        raise ValueError(
-            "GEMINI_API_KEYが設定されていません。\n"
-            "プロジェクトルートの.envを確認してください。"
-        )
-
-    return genai.Client(api_key=api_key)
 
 
 # ============================================================
@@ -256,6 +233,7 @@ def generate_document_answer(
         context=context,
     )
 
+    # retry設定済みの共通Geminiクライアントを使用
     client = create_gemini_client()
 
     response = client.models.generate_content(

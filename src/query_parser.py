@@ -2,15 +2,18 @@ import os
 from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
-from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field as PydanticField
+
+from gemini_client import create_gemini_client
 
 
 load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-PARSE_MODEL = os.getenv("GEMINI_PARSE_MODEL", "gemini-2.5-flash")
+PARSE_MODEL = os.getenv(
+    "GEMINI_PARSE_MODEL",
+    "gemini-2.5-flash",
+)
 
 
 class QueryConditions(BaseModel):
@@ -51,14 +54,6 @@ class QueryConditions(BaseModel):
         description="期待する教育効果。例: 観察への意欲を高めたい, 理解を深めたい"
     )
 
-
-def get_gemini_client():
-    if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY が .env に設定されていません。")
-
-    return genai.Client(api_key=GEMINI_API_KEY)
-
-
 def build_parse_prompt(user_query: str) -> str:
     return f"""
 あなたは理科教育ICT活用GraphRAGシステムの検索条件抽出器です。
@@ -85,7 +80,7 @@ def build_parse_prompt(user_query: str) -> str:
 
 
 def parse_query(user_query: str) -> Dict[str, Any]:
-    client = get_gemini_client()
+    client = create_gemini_client()
     prompt = build_parse_prompt(user_query)
 
     response = client.models.generate_content(

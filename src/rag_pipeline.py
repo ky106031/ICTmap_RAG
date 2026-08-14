@@ -12,9 +12,9 @@ from graph_context_builder import (
 )
 from generate_answer import (
     build_prompt,
-    get_gemini_client,
     GENERATE_MODEL,
 )
+from gemini_client import create_gemini_client
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -77,13 +77,15 @@ def generate_answer_from_context(
 ) -> str:
     """
     Graph Contextをもとに回答を生成する。
+
+    retry設定済みの共通Geminiクライアントを使用する。
     """
     prompt = build_prompt(
         user_query=user_query,
         graph_context=graph_context,
     )
 
-    client = get_gemini_client()
+    client = create_gemini_client()
 
     response = client.models.generate_content(
         model=GENERATE_MODEL,

@@ -1,19 +1,15 @@
 import json
-import os
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 import numpy as np
-from dotenv import load_dotenv
-from google import genai
 
+from gemini_client import create_gemini_client
 
-load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 NODE_EMBEDDINGS_PATH = BASE_DIR / "data" / "node_embeddings.json"
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 EMBEDDING_MODEL = "gemini-embedding-001"
 
 
@@ -31,18 +27,18 @@ GROUNDING_TOP_K = {
 
 
 def load_node_embeddings() -> List[Dict[str, Any]]:
-    with open(NODE_EMBEDDINGS_PATH, "r", encoding="utf-8") as f:
+    with open(
+        NODE_EMBEDDINGS_PATH,
+        "r",
+        encoding="utf-8",
+    ) as f:
         return json.load(f)
 
 
-def get_gemini_client():
-    if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY が .env に設定されていません。")
-
-    return genai.Client(api_key=GEMINI_API_KEY)
-
-
-def generate_embedding(client, text: str) -> List[float]:
+def generate_embedding(
+    client,
+    text: str,
+) -> List[float]:
     result = client.models.embed_content(
         model=EMBEDDING_MODEL,
         contents=text,
@@ -51,27 +47,37 @@ def generate_embedding(client, text: str) -> List[float]:
     return result.embeddings[0].values
 
 
-def cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
+def cosine_similarity(
+    vec1: List[float],
+    vec2: List[float],
+) -> float:
     v1 = np.array(vec1)
     v2 = np.array(vec2)
 
-    denominator = np.linalg.norm(v1) * np.linalg.norm(v2)
+    denominator = (
+        np.linalg.norm(v1)
+        * np.linalg.norm(v2)
+    )
 
     if denominator == 0:
         return 0.0
 
-    return float(np.dot(v1, v2) / denominator)
+    return float(
+        np.dot(v1, v2) / denominator
+    )
 
 
 def search_similar_nodes(
+    client,
+    node_embeddings: List[Dict[str, Any]],
     query_text: str,
     target_label: str,
     top_k: int,
 ) -> List[str]:
-    client = get_gemini_client()
-    node_embeddings = load_node_embeddings()
-
-    query_embedding = generate_embedding(client, query_text)
+    query_embedding = generate_embedding(
+        client=client,
+        text=query_text,
+    )
 
     candidates = []
 
@@ -97,7 +103,10 @@ def search_similar_nodes(
         reverse=True,
     )
 
-    return [candidate["name"] for candidate in candidates[:top_k]]
+    return [
+        candidate["name"]
+        for candidate in candidates[:top_k]
+    ]
 
 
 def ground_conditions(
@@ -106,16 +115,30 @@ def ground_conditions(
 ) -> Dict[str, List[str]]:
     grounded_conditions = {}
 
+    # Geminiクライアントは1回だけ作成する
+    client = create_gemini_client()
+
+    # Node Embeddingも1回だけ読み込む
+    node_embeddings = load_node_embeddings()
+
     for label, value in raw_conditions.items():
         if value is None:
             continue
 
-        if isinstance(value, str) and value.strip() == "":
+        if (
+            isinstance(value, str)
+            and value.strip() == ""
+        ):
             continue
 
-        label_top_k = GROUNDING_TOP_K.get(label, top_k)
+        label_top_k = GROUNDING_TOP_K.get(
+            label,
+            top_k,
+        )
 
         candidates = search_similar_nodes(
+            client=client,
+            node_embeddings=node_embeddings,
             query_text=value,
             target_label=label,
             top_k=label_top_k,
@@ -140,12 +163,15 @@ def main():
         "Educational_Effect": "観察への意欲を高めたい",
     }
 
-    grounded_conditions = ground_conditions(raw_conditions)
+    grounded_conditions = ground_conditions(
+        raw_conditions
+    )
 
     print("=== Raw Conditions ===")
     print(raw_conditions)
 
     print("\n=== Grounded Conditions ===")
+
     for label, values in grounded_conditions.items():
         print(f"{label}: {values}")
 
