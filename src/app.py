@@ -1,9 +1,225 @@
+import json
+from pathlib import Path
 from typing import Any
 
 import streamlit as st
 
 from document_pipeline import run_document_rag
 from rag_pipeline import run_pipeline
+
+
+# ============================================================
+# 基本パス
+# ============================================================
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+
+DEMO_BACKUP_DIR = (
+    BASE_DIR
+    / "data"
+    / "demo_backup"
+)
+
+
+# ============================================================
+# 発表デモで保存したい入力
+# ============================================================
+
+DEMO_INITIAL_QUERY = (
+    "観察に意欲的に取り組めるような授業にしたいです。"
+)
+
+DEMO_DOCUMENT_QUERY_01 = (
+    "授業展開は？"
+)
+
+DEMO_DOCUMENT_QUERY_02 = (
+    "この実践を活かして、高校２年生の生物に応用するとしたら"
+    "どんな授業が考えられますか？"
+)
+
+
+# ============================================================
+# デモ用JSONファイル名
+# ============================================================
+
+DEMO_PRACTICE_FILENAME = (
+    "practice_search.json"
+)
+
+DEMO_DOCUMENT_01_FILENAME = (
+    "document_answer_01.json"
+)
+
+DEMO_DOCUMENT_02_FILENAME = (
+    "document_answer_02.json"
+)
+
+
+# ============================================================
+# デモ用バックアップ保存
+# ============================================================
+
+def save_demo_json(
+    data: dict[str, Any],
+    filename: str,
+) -> Path:
+    """
+    正常動作時のRAG結果を、
+    発表デモ用バックアップとしてJSON保存する。
+
+    Community Cloud上では一時ストレージに保存されるため、
+    画面上のダウンロードボタンから手元へ保存する。
+    """
+    DEMO_BACKUP_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    output_path = (
+        DEMO_BACKUP_DIR
+        / filename
+    )
+
+    with open(
+        output_path,
+        "w",
+        encoding="utf-8",
+    ) as f:
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2,
+            default=str,
+        )
+
+    print(
+        f"[Demo Backup] Saved: {output_path}"
+    )
+
+    return output_path
+
+
+def read_demo_json_bytes(
+    filename: str,
+) -> bytes | None:
+    """
+    保存済みデモJSONを、
+    Streamlitのダウンロード用bytesとして読み込む。
+    """
+    path = (
+        DEMO_BACKUP_DIR
+        / filename
+    )
+
+    if not path.exists():
+        return None
+
+    return path.read_bytes()
+
+
+def normalize_demo_text(
+    text: str,
+) -> str:
+    """
+    デモ入力比較用に、
+    前後の空白と改行差を吸収する。
+    """
+    return "".join(
+        text.split()
+    )
+
+
+def is_demo_query(
+    actual: str,
+    expected: str,
+) -> bool:
+    """
+    入力が発表用デモ入力と一致するか確認する。
+
+    改行や空白の違いは無視する。
+    """
+    return (
+        normalize_demo_text(actual)
+        == normalize_demo_text(expected)
+    )
+
+
+def save_practice_demo_result(
+    result: dict[str, Any],
+    user_query: str,
+) -> None:
+    """
+    発表用の最初の入力と一致した場合のみ、
+    GraphRAGの正常結果を保存する。
+    """
+    if not is_demo_query(
+        actual=user_query,
+        expected=DEMO_INITIAL_QUERY,
+    ):
+        return
+
+    backup_data = {
+        "demo_type": "practice_search",
+        "user_query": user_query,
+        "result": result,
+    }
+
+    save_demo_json(
+        data=backup_data,
+        filename=DEMO_PRACTICE_FILENAME,
+    )
+
+
+def save_document_demo_result(
+    result: dict[str, Any],
+    query: str,
+) -> None:
+    """
+    発表用のDocument RAG質問と一致した場合のみ、
+    正常結果をJSON保存する。
+    """
+    if is_demo_query(
+        actual=query,
+        expected=DEMO_DOCUMENT_QUERY_01,
+    ):
+        filename = (
+            DEMO_DOCUMENT_01_FILENAME
+        )
+        turn = 1
+
+    elif is_demo_query(
+        actual=query,
+        expected=DEMO_DOCUMENT_QUERY_02,
+    ):
+        filename = (
+            DEMO_DOCUMENT_02_FILENAME
+        )
+        turn = 2
+
+    else:
+        return
+
+    backup_data = {
+        "demo_type": "document_answer",
+        "turn": turn,
+        "query": query,
+        "answer": result.get(
+            "answer",
+            "",
+        ),
+        "sources": result.get(
+            "sources",
+            [],
+        ),
+        "result": result,
+    }
+
+    save_demo_json(
+        data=backup_data,
+        filename=filename,
+    )
 
 
 # ============================================================
@@ -85,7 +301,9 @@ def initialize_document_state(
         ] = None
 
 
-def toggle_practice(practice_id: str) -> None:
+def toggle_practice(
+    practice_id: str,
+) -> None:
     """
     実践カードの展開・閉じるを切り替える。
 
@@ -97,6 +315,7 @@ def toggle_practice(practice_id: str) -> None:
         == practice_id
     ):
         st.session_state.expanded_practice_id = None
+
     else:
         st.session_state.expanded_practice_id = (
             practice_id
@@ -154,15 +373,21 @@ def display_processing_error(
         )
 
     # 開発中の詳細確認用
-    with st.expander("エラーの詳細"):
-        st.code(error_text)
+    with st.expander(
+        "エラーの詳細"
+    ):
+        st.code(
+            error_text
+        )
 
 
 # ============================================================
 # 表示用ヘルパー
 # ============================================================
 
-def join_values(values: list[Any]) -> str:
+def join_values(
+    values: list[Any],
+) -> str:
     """
     空の値を除外して「、」で連結する。
     """
@@ -172,7 +397,9 @@ def join_values(values: list[Any]) -> str:
         if str(value).strip()
     ]
 
-    return "、".join(normalized_values)
+    return "、".join(
+        normalized_values
+    )
 
 
 def display_basic_information(
@@ -181,24 +408,35 @@ def display_basic_information(
     """
     学年・領域・単元を3列で表示する。
     """
-    columns = st.columns(3)
+    columns = st.columns(
+        3
+    )
 
     with columns[0]:
-        st.markdown("**学年**")
+        st.markdown(
+            "**学年**"
+        )
+
         st.write(
             candidate.get("grade")
             or "記載なし"
         )
 
     with columns[1]:
-        st.markdown("**領域**")
+        st.markdown(
+            "**領域**"
+        )
+
         st.write(
             candidate.get("field")
             or "記載なし"
         )
 
     with columns[2]:
-        st.markdown("**単元**")
+        st.markdown(
+            "**単元**"
+        )
+
         st.write(
             candidate.get("unit")
             or "記載なし"
@@ -226,8 +464,12 @@ def display_document_message(
     if not content:
         return
 
-    with st.chat_message(role):
-        st.markdown(content)
+    with st.chat_message(
+        role
+    ):
+        st.markdown(
+            content
+        )
 
         sources = message.get(
             "sources",
@@ -251,6 +493,7 @@ def display_document_message(
                         st.markdown(
                             "- 論文本文の該当箇所"
                         )
+
                     else:
                         st.markdown(
                             "- 論文本文の該当箇所"
@@ -311,9 +554,11 @@ def display_document_conversation(
         practice_id=practice_id
     )
 
-    messages = st.session_state.document_messages[
-        practice_id
-    ]
+    messages = (
+        st.session_state.document_messages[
+            practice_id
+        ]
+    )
 
     pending_query = (
         st.session_state.document_pending_queries[
@@ -334,7 +579,10 @@ def display_document_conversation(
     )
 
     # 会話開始前だけ質問例を表示する
-    if not messages and not pending_query:
+    if (
+        not messages
+        and not pending_query
+    ):
         st.info(
             "例えば、"
             "「生徒はどのような活動をしましたか？」"
@@ -361,17 +609,35 @@ def display_document_conversation(
         try:
             # AIのメッセージ領域には、
             # 回答生成中はスピナーだけを表示する
-            with st.chat_message("assistant"):
-                with st.spinner(""):
+            with st.chat_message(
+                "assistant"
+            ):
+                with st.spinner(
+                    ""
+                ):
                     result = run_document_rag(
                         query=pending_query,
-                        paper_ids=[paper_id],
+                        paper_ids=[
+                            paper_id
+                        ],
                         top_k=5,
                     )
 
+            # ------------------------------------------------
+            # 発表用の指定質問なら、
+            # 正常結果をJSONとして保存
+            # ------------------------------------------------
+
+            save_document_demo_result(
+                result=result,
+                query=pending_query,
+            )
+
             assistant_message = {
                 "role": "assistant",
-                "content": result["answer"],
+                "content": result[
+                    "answer"
+                ],
                 "sources": result.get(
                     "sources",
                     [],
@@ -477,7 +743,9 @@ def display_practice_card(
     ).strip()
 
     title = (
-        candidate.get("title")
+        candidate.get(
+            "title"
+        )
         or "タイトル不明"
     )
 
@@ -515,7 +783,9 @@ def display_practice_card(
         == practice_id
     )
 
-    with st.container(border=True):
+    with st.container(
+        border=True
+    ):
         st.markdown(
             f"### 実践{index}"
         )
@@ -574,13 +844,18 @@ def display_practice_card(
 
         if st.button(
             button_text,
-            key=f"toggle_{practice_id}",
-            disabled=not bool(paper_id),
+            key=(
+                f"toggle_{practice_id}"
+            ),
+            disabled=not bool(
+                paper_id
+            ),
             use_container_width=True,
         ):
             toggle_practice(
                 practice_id=practice_id
             )
+
             st.rerun()
 
         if not paper_id:
@@ -618,7 +893,9 @@ def display_request_form() -> None:
     ):
         user_request = st.text_area(
             "相談内容",
-            value=st.session_state.user_request,
+            value=(
+                st.session_state.user_request
+            ),
             placeholder=(
                 "例：高校3年生の生物でInstagramを活用し、"
                 "観察への意欲を高めたいです。"
@@ -652,6 +929,16 @@ def display_request_form() -> None:
             result = run_pipeline(
                 user_query=normalized_request
             )
+
+        # ----------------------------------------------------
+        # 発表用の最初の入力なら、
+        # 正常結果をJSONとして保存
+        # ----------------------------------------------------
+
+        save_practice_demo_result(
+            result=result,
+            user_query=normalized_request,
+        )
 
         st.session_state.user_request = (
             normalized_request
@@ -734,8 +1021,116 @@ def display_practice_candidates() -> None:
 
 
 # ============================================================
+# デモ用バックアップデータ取得
+# ============================================================
+
+def display_demo_backup_downloads() -> None:
+    """
+    Community Cloud上で生成された
+    発表用JSONを手元へ保存するためのUI。
+    """
+    st.divider()
+
+    with st.expander(
+        "デモ用バックアップデータ"
+    ):
+        st.caption(
+            "発表用に指定した入力が正常処理された場合、"
+            "ここからJSONファイルを保存できます。"
+        )
+
+        practice_data = (
+            read_demo_json_bytes(
+                DEMO_PRACTICE_FILENAME
+            )
+        )
+
+        document_01_data = (
+            read_demo_json_bytes(
+                DEMO_DOCUMENT_01_FILENAME
+            )
+        )
+
+        document_02_data = (
+            read_demo_json_bytes(
+                DEMO_DOCUMENT_02_FILENAME
+            )
+        )
+
+        if practice_data is not None:
+            st.success(
+                "最初の実践検索結果を保存済みです。"
+            )
+
+            st.download_button(
+                label=(
+                    "practice_search.json を保存"
+                ),
+                data=practice_data,
+                file_name=(
+                    DEMO_PRACTICE_FILENAME
+                ),
+                mime="application/json",
+                use_container_width=True,
+            )
+
+        else:
+            st.info(
+                "practice_search.json は"
+                "まだ作成されていません。"
+            )
+
+        if document_01_data is not None:
+            st.success(
+                "1回目のDocument RAG回答を保存済みです。"
+            )
+
+            st.download_button(
+                label=(
+                    "document_answer_01.json を保存"
+                ),
+                data=document_01_data,
+                file_name=(
+                    DEMO_DOCUMENT_01_FILENAME
+                ),
+                mime="application/json",
+                use_container_width=True,
+            )
+
+        else:
+            st.info(
+                "document_answer_01.json は"
+                "まだ作成されていません。"
+            )
+
+        if document_02_data is not None:
+            st.success(
+                "2回目のDocument RAG回答を保存済みです。"
+            )
+
+            st.download_button(
+                label=(
+                    "document_answer_02.json を保存"
+                ),
+                data=document_02_data,
+                file_name=(
+                    DEMO_DOCUMENT_02_FILENAME
+                ),
+                mime="application/json",
+                use_container_width=True,
+            )
+
+        else:
+            st.info(
+                "document_answer_02.json は"
+                "まだ作成されていません。"
+            )
+
+
+# ============================================================
 # 画面表示
 # ============================================================
 
 display_request_form()
 display_practice_candidates()
+display_demo_backup_downloads()
