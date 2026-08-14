@@ -1,9 +1,102 @@
+import json
+import time
+from pathlib import Path
 from typing import Any
 
 import streamlit as st
 
-from document_pipeline import run_document_rag
-from rag_pipeline import run_pipeline
+
+# ============================================================
+# 基本設定
+# ============================================================
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+
+DEMO_BACKUP_DIR = (
+    BASE_DIR
+    / "data"
+    / "demo_backup"
+)
+
+PRACTICE_SEARCH_PATH = (
+    DEMO_BACKUP_DIR
+    / "practice_search.json"
+)
+
+DOCUMENT_ANSWER_01_PATH = (
+    DEMO_BACKUP_DIR
+    / "document_answer_01.json"
+)
+
+DOCUMENT_ANSWER_02_PATH = (
+    DEMO_BACKUP_DIR
+    / "document_answer_02.json"
+)
+
+# 保存済みデータを読み込む際の短い待機時間。
+# 外部API処理を模倣する目的ではなく、
+# UIの切り替わりを自然にするための待機。
+PRACTICE_LOADING_SECONDS = 1.0
+DOCUMENT_LOADING_SECONDS = 0.8
+
+
+# ============================================================
+# JSON読み込み
+# ============================================================
+
+def load_json(
+    path: Path,
+) -> dict[str, Any]:
+    """
+    保存済みのデモ用JSONを読み込む。
+    """
+    if not path.exists():
+        raise FileNotFoundError(
+            f"データが見つかりません: {path}"
+        )
+
+    with open(
+        path,
+        "r",
+        encoding="utf-8",
+    ) as f:
+        return json.load(f)
+
+
+def load_practice_search() -> dict[str, Any]:
+    """
+    最初のGraphRAG検索結果を読み込む。
+    """
+    return load_json(
+        PRACTICE_SEARCH_PATH
+    )
+
+
+def load_document_answer(
+    turn: int,
+) -> dict[str, Any]:
+    """
+    Document RAGの保存済み回答を読み込む。
+
+    Args:
+        turn:
+            1なら1回目の回答、
+            2なら2回目の回答。
+    """
+    if turn == 1:
+        path = DOCUMENT_ANSWER_01_PATH
+
+    elif turn == 2:
+        path = DOCUMENT_ANSWER_02_PATH
+
+    else:
+        raise ValueError(
+            "保存済み回答は2回目までです。"
+        )
+
+    return load_json(
+        path
+    )
 
 
 # ============================================================
@@ -16,7 +109,9 @@ st.set_page_config(
     layout="centered",
 )
 
-st.title("理科ICT授業実践アシスタント")
+st.title(
+    "理科ICT授業実践アシスタント"
+)
 
 st.caption(
     "授業づくりの条件を入力すると、参考になる実践事例を提案します。"
@@ -38,15 +133,16 @@ if "expanded_practice_id" not in st.session_state:
     st.session_state.expanded_practice_id = None
 
 if "document_messages" not in st.session_state:
-    # practice_idごとに会話履歴を保持する
     st.session_state.document_messages = {}
 
 if "document_pending_queries" not in st.session_state:
-    # practice_idごとに回答生成待ちの質問を保持する
     st.session_state.document_pending_queries = {}
 
 if "has_generated_candidates" not in st.session_state:
     st.session_state.has_generated_candidates = False
+
+if "document_answer_counts" not in st.session_state:
+    st.session_state.document_answer_counts = {}
 
 
 # ============================================================
@@ -58,10 +154,17 @@ def reset_all() -> None:
     入力内容・実践候補・会話履歴をすべて初期化する。
     """
     st.session_state.user_request = ""
+
     st.session_state.practice_candidates = []
+
     st.session_state.expanded_practice_id = None
+
     st.session_state.document_messages = {}
+
     st.session_state.document_pending_queries = {}
+
+    st.session_state.document_answer_counts = {}
+
     st.session_state.has_generated_candidates = False
 
 
@@ -69,9 +172,12 @@ def initialize_document_state(
     practice_id: str,
 ) -> None:
     """
-    practice_idごとのDocument RAG用状態を初期化する。
+    practice_idごとの会話状態を初期化する。
     """
-    if practice_id not in st.session_state.document_messages:
+    if (
+        practice_id
+        not in st.session_state.document_messages
+    ):
         st.session_state.document_messages[
             practice_id
         ] = []
@@ -84,19 +190,27 @@ def initialize_document_state(
             practice_id
         ] = None
 
+    if (
+        practice_id
+        not in st.session_state.document_answer_counts
+    ):
+        st.session_state.document_answer_counts[
+            practice_id
+        ] = 0
 
-def toggle_practice(practice_id: str) -> None:
+
+def toggle_practice(
+    practice_id: str,
+) -> None:
     """
     実践カードの展開・閉じるを切り替える。
-
-    別の実践を開いた場合は、
-    それまで開いていた実践を閉じる。
     """
     if (
         st.session_state.expanded_practice_id
         == practice_id
     ):
         st.session_state.expanded_practice_id = None
+
     else:
         st.session_state.expanded_practice_id = (
             practice_id
@@ -111,58 +225,31 @@ def toggle_practice(practice_id: str) -> None:
 # エラー表示
 # ============================================================
 
-def display_processing_error(
+def display_demo_error(
     error: Exception,
-    process_name: str,
 ) -> None:
     """
-    APIエラーなどを利用者向けの表現で表示する。
+    バックアップデータ読み込み時のエラーを表示する。
     """
-    error_text = str(error)
+    st.error(
+        "保存済みのデモデータを読み込めませんでした。"
+    )
 
-    if (
-        "429" in error_text
-        or "RESOURCE_EXHAUSTED" in error_text
+    with st.expander(
+        "エラーの詳細"
     ):
-        st.warning(
-            "現在、AIの利用回数が一時的な上限に達しています。"
-            "時間を空けてから、もう一度お試しください。"
+        st.code(
+            str(error)
         )
-
-    elif (
-        "503" in error_text
-        or "UNAVAILABLE" in error_text
-    ):
-        st.warning(
-            "現在、AIへのアクセスが混み合っています。"
-            "少し時間を空けてから、もう一度お試しください。"
-        )
-
-    elif (
-        "404" in error_text
-        or "NOT_FOUND" in error_text
-    ):
-        st.error(
-            "現在、AIモデルを利用できません。"
-            "管理者に設定の確認を依頼してください。"
-        )
-
-    else:
-        st.error(
-            f"{process_name}の途中で"
-            "エラーが発生しました。"
-        )
-
-    # 開発中の詳細確認用
-    with st.expander("エラーの詳細"):
-        st.code(error_text)
 
 
 # ============================================================
 # 表示用ヘルパー
 # ============================================================
 
-def join_values(values: list[Any]) -> str:
+def join_values(
+    values: list[Any],
+) -> str:
     """
     空の値を除外して「、」で連結する。
     """
@@ -172,7 +259,9 @@ def join_values(values: list[Any]) -> str:
         if str(value).strip()
     ]
 
-    return "、".join(normalized_values)
+    return "、".join(
+        normalized_values
+    )
 
 
 def display_basic_information(
@@ -181,24 +270,35 @@ def display_basic_information(
     """
     学年・領域・単元を3列で表示する。
     """
-    columns = st.columns(3)
+    columns = st.columns(
+        3
+    )
 
     with columns[0]:
-        st.markdown("**学年**")
+        st.markdown(
+            "**学年**"
+        )
+
         st.write(
             candidate.get("grade")
             or "記載なし"
         )
 
     with columns[1]:
-        st.markdown("**領域**")
+        st.markdown(
+            "**領域**"
+        )
+
         st.write(
             candidate.get("field")
             or "記載なし"
         )
 
     with columns[2]:
-        st.markdown("**単元**")
+        st.markdown(
+            "**単元**"
+        )
+
         st.write(
             candidate.get("unit")
             or "記載なし"
@@ -209,7 +309,7 @@ def display_document_message(
     message: dict[str, Any],
 ) -> None:
     """
-    Document RAGの会話メッセージを表示する。
+    保存済みDocument RAGの会話メッセージを表示する。
     """
     role = message.get(
         "role",
@@ -226,8 +326,12 @@ def display_document_message(
     if not content:
         return
 
-    with st.chat_message(role):
-        st.markdown(content)
+    with st.chat_message(
+        role
+    ):
+        st.markdown(
+            content
+        )
 
         sources = message.get(
             "sources",
@@ -251,6 +355,7 @@ def display_document_message(
                         st.markdown(
                             "- 論文本文の該当箇所"
                         )
+
                     else:
                         st.markdown(
                             "- 論文本文の該当箇所"
@@ -259,25 +364,21 @@ def display_document_message(
 
 
 # ============================================================
-# 論文本文への質問欄
+# Document RAG会話
 # ============================================================
 
 def display_document_conversation(
     candidate: dict[str, Any],
 ) -> None:
     """
-    展開された実践カード内に、
-    論文本文を対象としたチャット欄を表示する。
+    保存済みDocument RAG回答を利用して
+    会話UIを表示する。
 
-    表示順:
-        1. 過去の会話履歴
-        2. 新しく送信されたユーザー質問
-        3. AIの回答または回答生成中の表示
-        4. 次の質問を入力するチャット入力欄
+    1回目の質問:
+        document_answer_01.json
 
-    質問送信後は一度再描画し、
-    ユーザーの質問を画面へ先に表示してから
-    回答生成を開始する。
+    2回目の質問:
+        document_answer_02.json
     """
     practice_id = str(
         candidate.get(
@@ -311,12 +412,20 @@ def display_document_conversation(
         practice_id=practice_id
     )
 
-    messages = st.session_state.document_messages[
-        practice_id
-    ]
+    messages = (
+        st.session_state.document_messages[
+            practice_id
+        ]
+    )
 
     pending_query = (
         st.session_state.document_pending_queries[
+            practice_id
+        ]
+    )
+
+    answer_count = (
+        st.session_state.document_answer_counts[
             practice_id
         ]
     )
@@ -333,8 +442,10 @@ def display_document_conversation(
         "相談できます。"
     )
 
-    # 会話開始前だけ質問例を表示する
-    if not messages and not pending_query:
+    if (
+        not messages
+        and not pending_query
+    ):
         st.info(
             "例えば、"
             "「生徒はどのような活動をしましたか？」"
@@ -345,7 +456,7 @@ def display_document_conversation(
         )
 
     # --------------------------------------------------------
-    # 保存済みの会話履歴を表示
+    # 過去の会話履歴
     # --------------------------------------------------------
 
     for message in messages:
@@ -354,40 +465,78 @@ def display_document_conversation(
         )
 
     # --------------------------------------------------------
-    # 回答待ちの質問があれば回答を生成
+    # 回答待ちの質問がある場合
     # --------------------------------------------------------
 
     if pending_query:
         try:
-            # AIのメッセージ領域には、
-            # 回答生成中はスピナーだけを表示する
-            with st.chat_message("assistant"):
-                with st.spinner(""):
-                    result = run_document_rag(
-                        query=pending_query,
-                        paper_ids=[paper_id],
-                        top_k=5,
+            next_turn = (
+                answer_count + 1
+            )
+
+            if next_turn > 2:
+                st.session_state.document_pending_queries[
+                    practice_id
+                ] = None
+
+                st.info(
+                    "このデモでは、保存済みの回答は"
+                    "2回分まで用意されています。"
+                )
+
+                return
+
+            with st.chat_message(
+                "assistant"
+            ):
+                with st.spinner(
+                    "保存済みのデモ結果を読み込んでいます..."
+                ):
+                    time.sleep(
+                        DOCUMENT_LOADING_SECONDS
                     )
+
+                    demo_data = (
+                        load_document_answer(
+                            turn=next_turn
+                        )
+                    )
+
+            answer = str(
+                demo_data.get(
+                    "answer",
+                    "",
+                )
+            ).strip()
+
+            sources = demo_data.get(
+                "sources",
+                [],
+            )
+
+            if not answer:
+                raise RuntimeError(
+                    "保存済み回答が空です。"
+                )
 
             assistant_message = {
                 "role": "assistant",
-                "content": result["answer"],
-                "sources": result.get(
-                    "sources",
-                    [],
-                ),
+                "content": answer,
+                "sources": sources,
             }
 
             messages.append(
                 assistant_message
             )
 
+            st.session_state.document_answer_counts[
+                practice_id
+            ] = next_turn
+
             st.session_state.document_pending_queries[
                 practice_id
             ] = None
 
-            # 完成した回答を会話履歴として再描画し、
-            # その下に入力欄を表示する
             st.rerun()
 
         except Exception as error:
@@ -395,16 +544,22 @@ def display_document_conversation(
                 practice_id
             ] = None
 
-            display_processing_error(
-                error=error,
-                process_name="回答の作成",
+            display_demo_error(
+                error=error
             )
 
-            # エラー後も次の質問を入力できるようにするため、
-            # ここではreturnしない
+    # --------------------------------------------------------
+    # 2回分の回答が終了した場合
+    # --------------------------------------------------------
+
+    if answer_count >= 2:
+        st.caption(
+            "このデモで用意されている回答は以上です。"
+        )
+        return
 
     # --------------------------------------------------------
-    # チャット入力欄を会話履歴の一番下に表示
+    # 質問入力欄
     # --------------------------------------------------------
 
     user_question = st.chat_input(
@@ -427,10 +582,8 @@ def display_document_conversation(
         )
         return
 
-    # --------------------------------------------------------
-    # 質問を履歴へ追加し、回答待ち状態にする
-    # --------------------------------------------------------
-
+    # 入力内容には依存せず、
+    # 1回目・2回目という順番で保存済み回答を返す。
     messages.append(
         {
             "role": "user",
@@ -442,8 +595,6 @@ def display_document_conversation(
         practice_id
     ] = normalized_question
 
-    # 次の再描画でユーザー質問を先に表示し、
-    # その下で回答を生成する
     st.rerun()
 
 
@@ -455,7 +606,7 @@ def display_practice_card(
     candidate: dict[str, Any],
 ) -> None:
     """
-    実践の概要と展開ボタンを表示する。
+    保存済みの実践候補をカード形式で表示する。
     """
     index = candidate.get(
         "index",
@@ -477,7 +628,9 @@ def display_practice_card(
     ).strip()
 
     title = (
-        candidate.get("title")
+        candidate.get(
+            "title"
+        )
         or "タイトル不明"
     )
 
@@ -515,7 +668,9 @@ def display_practice_card(
         == practice_id
     )
 
-    with st.container(border=True):
+    with st.container(
+        border=True
+    ):
         st.markdown(
             f"### 実践{index}"
         )
@@ -574,13 +729,18 @@ def display_practice_card(
 
         if st.button(
             button_text,
-            key=f"toggle_{practice_id}",
-            disabled=not bool(paper_id),
+            key=(
+                f"toggle_{practice_id}"
+            ),
+            disabled=not bool(
+                paper_id
+            ),
             use_container_width=True,
         ):
             toggle_practice(
                 practice_id=practice_id
             )
+
             st.rerun()
 
         if not paper_id:
@@ -596,12 +756,13 @@ def display_practice_card(
 
 
 # ============================================================
-# 相談内容の入力
+# 最初の相談内容
 # ============================================================
 
 def display_request_form() -> None:
     """
-    授業づくりについての相談内容を入力する。
+    相談内容を入力し、
+    保存済みの正常なGraphRAG結果を読み込む。
     """
     st.markdown(
         "## 授業づくりについて相談する"
@@ -618,11 +779,12 @@ def display_request_form() -> None:
     ):
         user_request = st.text_area(
             "相談内容",
-            value=st.session_state.user_request,
+            value=(
+                st.session_state.user_request
+            ),
             placeholder=(
-                "例：高校3年生の生物でInstagramを活用し、"
-                "観察への意欲を高めたいです。"
-                "参考になる実践を教えてください。"
+                "例：観察に意欲的に取り組めるような"
+                "授業にしたいです。"
             ),
             height=120,
         )
@@ -647,21 +809,41 @@ def display_request_form() -> None:
 
     try:
         with st.spinner(
-            "条件に合う実践を考えています..."
+            "保存済みのデモ結果を読み込んでいます..."
         ):
-            result = run_pipeline(
-                user_query=normalized_request
+            time.sleep(
+                PRACTICE_LOADING_SECONDS
             )
 
+            demo_data = (
+                load_practice_search()
+            )
+
+        result = demo_data.get(
+            "result",
+            {},
+        )
+
+        practice_candidates = (
+            result.get(
+                "practice_candidates",
+                [],
+            )
+        )
+
+        if not practice_candidates:
+            raise RuntimeError(
+                "保存済みの実践候補がありません。"
+            )
+
+        # 入力内容には依存せず、
+        # 保存済みの正常な検索結果を表示する。
         st.session_state.user_request = (
             normalized_request
         )
 
         st.session_state.practice_candidates = (
-            result.get(
-                "practice_candidates",
-                [],
-            )
+            practice_candidates
         )
 
         st.session_state.expanded_practice_id = None
@@ -670,14 +852,15 @@ def display_request_form() -> None:
 
         st.session_state.document_pending_queries = {}
 
+        st.session_state.document_answer_counts = {}
+
         st.session_state.has_generated_candidates = True
 
         st.rerun()
 
     except Exception as error:
-        display_processing_error(
-            error=error,
-            process_name="実践の提案",
+        display_demo_error(
+            error=error
         )
 
 
@@ -687,7 +870,7 @@ def display_request_form() -> None:
 
 def display_practice_candidates() -> None:
     """
-    提案された実践をカード形式で表示する。
+    保存済みの実践候補を表示する。
     """
     if not (
         st.session_state.has_generated_candidates
@@ -706,8 +889,7 @@ def display_practice_candidates() -> None:
 
     if not candidates:
         st.info(
-            "条件に合う実践を提案できませんでした。"
-            "条件を少し変えて、もう一度お試しください。"
+            "実践候補を表示できませんでした。"
         )
 
     else:
