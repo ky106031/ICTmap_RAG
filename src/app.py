@@ -470,7 +470,7 @@ def display_document_conversation(
                 "assistant"
             ):
                 with st.spinner(
-                    "ICTマップを探索しています..."
+                    "..."
                 ):
                     time.sleep(
                         DOCUMENT_LOADING_SECONDS
@@ -772,7 +772,7 @@ def display_request_form() -> None:
 
     try:
         with st.spinner(
-            "..."
+            "ICTマップを探索しています..."
         ):
             time.sleep(
                 PRACTICE_LOADING_SECONDS
