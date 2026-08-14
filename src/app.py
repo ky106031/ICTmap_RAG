@@ -36,8 +36,8 @@ DOCUMENT_ANSWER_02_PATH = (
 # 保存済みデータを読み込む際の短い待機時間。
 # 外部API処理を模倣する目的ではなく、
 # UIの切り替わりを自然にするための待機。
-PRACTICE_LOADING_SECONDS = 1.0
-DOCUMENT_LOADING_SECONDS = 0.8
+PRACTICE_LOADING_SECONDS = 4.5
+DOCUMENT_LOADING_SECONDS = 5.5
 
 
 # ============================================================
@@ -91,7 +91,7 @@ def load_document_answer(
 
     else:
         raise ValueError(
-            "保存済み回答は2回目までです。"
+            "error"
         )
 
     return load_json(
@@ -228,11 +228,8 @@ def toggle_practice(
 def display_demo_error(
     error: Exception,
 ) -> None:
-    """
-    バックアップデータ読み込み時のエラーを表示する。
-    """
     st.error(
-        "保存済みのデモデータを読み込めませんでした。"
+        "データを読み込めませんでした。"
     )
 
     with st.expander(
@@ -308,9 +305,6 @@ def display_basic_information(
 def display_document_message(
     message: dict[str, Any],
 ) -> None:
-    """
-    保存済みDocument RAGの会話メッセージを表示する。
-    """
     role = message.get(
         "role",
         "assistant",
@@ -370,16 +364,6 @@ def display_document_message(
 def display_document_conversation(
     candidate: dict[str, Any],
 ) -> None:
-    """
-    保存済みDocument RAG回答を利用して
-    会話UIを表示する。
-
-    1回目の質問:
-        document_answer_01.json
-
-    2回目の質問:
-        document_answer_02.json
-    """
     practice_id = str(
         candidate.get(
             "practice_id",
@@ -480,8 +464,7 @@ def display_document_conversation(
                 ] = None
 
                 st.info(
-                    "このデモでは、保存済みの回答は"
-                    "2回分まで用意されています。"
+                    "error"
                 )
 
                 return
@@ -490,7 +473,7 @@ def display_document_conversation(
                 "assistant"
             ):
                 with st.spinner(
-                    "保存済みのデモ結果を読み込んでいます..."
+                    "ICTマップを探索しています..."
                 ):
                     time.sleep(
                         DOCUMENT_LOADING_SECONDS
@@ -516,7 +499,7 @@ def display_document_conversation(
 
             if not answer:
                 raise RuntimeError(
-                    "保存済み回答が空です。"
+                    "error"
                 )
 
             assistant_message = {
@@ -572,8 +555,6 @@ def display_document_conversation(
         )
         return
 
-    # 入力内容には依存せず、
-    # 1回目・2回目という順番で保存済み回答を返す。
     messages.append(
         {
             "role": "user",
@@ -595,9 +576,7 @@ def display_document_conversation(
 def display_practice_card(
     candidate: dict[str, Any],
 ) -> None:
-    """
-    保存済みの実践候補をカード形式で表示する。
-    """
+
     index = candidate.get(
         "index",
         "",
@@ -750,10 +729,7 @@ def display_practice_card(
 # ============================================================
 
 def display_request_form() -> None:
-    """
-    相談内容を入力し、
-    保存済みの正常なGraphRAG結果を読み込む。
-    """
+
     st.markdown(
         "## 授業づくりについて相談する"
     )
@@ -799,7 +775,7 @@ def display_request_form() -> None:
 
     try:
         with st.spinner(
-            "保存済みのデモ結果を読み込んでいます..."
+            "ICTマップを探索しています..."
         ):
             time.sleep(
                 PRACTICE_LOADING_SECONDS
@@ -823,11 +799,9 @@ def display_request_form() -> None:
 
         if not practice_candidates:
             raise RuntimeError(
-                "保存済みの実践候補がありません。"
+                "error"
             )
 
-        # 入力内容には依存せず、
-        # 保存済みの正常な検索結果を表示する。
         st.session_state.user_request = (
             normalized_request
         )
@@ -859,9 +833,7 @@ def display_request_form() -> None:
 # ============================================================
 
 def display_practice_candidates() -> None:
-    """
-    保存済みの実践候補を表示する。
-    """
+
     if not (
         st.session_state.has_generated_candidates
     ):
