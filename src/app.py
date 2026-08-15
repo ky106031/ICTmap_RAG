@@ -2,6 +2,7 @@ import html
 import json
 import time
 from pathlib import Path
+from textwrap import dedent
 from typing import Any
 
 import streamlit as st
@@ -34,7 +35,6 @@ DOCUMENT_ANSWER_02_PATH = (
     / "document_answer_02.json"
 )
 
-# 保存済みデータを読み込む際の待機時間
 PRACTICE_LOADING_SECONDS = 4.5
 DOCUMENT_LOADING_SECONDS = 5.5
 
@@ -60,9 +60,6 @@ def load_json(
 
 
 def load_practice_search() -> dict[str, Any]:
-    """
-    最初のGraphRAG検索結果を読み込む。
-    """
     return load_json(
         PRACTICE_SEARCH_PATH
     )
@@ -71,14 +68,7 @@ def load_practice_search() -> dict[str, Any]:
 def load_document_answer(
     turn: int,
 ) -> dict[str, Any]:
-    """
-    Document RAGの保存済み回答を読み込む。
 
-    Args:
-        turn:
-            1なら1回目の回答、
-            2なら2回目の回答。
-    """
     if turn == 1:
         path = DOCUMENT_ANSWER_01_PATH
 
@@ -107,11 +97,38 @@ st.set_page_config(
 
 
 # ============================================================
+# HTML表示ヘルパー
+# ============================================================
+
+def render_html(
+    content: str,
+) -> None:
+    """
+    HTMLのインデントを除去してからStreamlitへ描画する。
+
+    MarkdownがHTMLをコードブロックとして認識する問題を防ぐ。
+    """
+    st.markdown(
+        dedent(content).strip(),
+        unsafe_allow_html=True,
+    )
+
+
+def escape_text(
+    value: Any,
+) -> str:
+    return html.escape(
+        str(value)
+    )
+
+
+# ============================================================
 # カスタムCSS
 # ============================================================
 
 def apply_custom_css() -> None:
-    st.markdown(
+
+    render_html(
         """
         <style>
 
@@ -123,112 +140,146 @@ def apply_custom_css() -> None:
             background:
                 linear-gradient(
                     180deg,
-                    #f4f8fa 0%,
-                    #f7f9fb 280px,
+                    #f1f6f8 0%,
+                    #f7f9fb 320px,
                     #f7f9fb 100%
                 );
         }
 
         .block-container {
             max-width: 1120px;
-            padding-top: 2.4rem;
+            padding-top: 2rem;
             padding-bottom: 5rem;
         }
 
         html,
         body,
         [class*="css"] {
-            color: #18212b;
+            color: #182630;
         }
 
         p {
             line-height: 1.75;
         }
 
-        /* ============================================
-           通常見出し
-        ============================================ */
-
-        h1,
-        h2,
-        h3 {
-            color: #172432;
-            letter-spacing: -0.025em;
-        }
-
-        h2 {
-            font-size: 2rem !important;
-            font-weight: 750 !important;
-            margin-top: 1.6rem !important;
-            margin-bottom: 0.35rem !important;
-        }
-
-        h3 {
-            font-size: 1.35rem !important;
-            font-weight: 700 !important;
-        }
 
         /* ============================================
-           ヒーローヘッダー
+           ヒーロー
         ============================================ */
 
         .app-hero {
             position: relative;
             overflow: hidden;
-            padding: 2.25rem 2.4rem 2.15rem 2.4rem;
-            margin-bottom: 2.15rem;
+
+            padding:
+                2.35rem
+                2.5rem
+                2.3rem
+                2.5rem;
+
+            margin-bottom: 2.4rem;
+
             border-radius: 24px;
 
             background:
                 linear-gradient(
                     135deg,
-                    #123c4a 0%,
-                    #176077 56%,
-                    #247f91 100%
+                    #123d4b 0%,
+                    #17647a 58%,
+                    #27899b 100%
                 );
 
             box-shadow:
-                0 18px 50px rgba(25, 65, 82, 0.15);
+                0 20px 55px
+                rgba(24, 70, 87, 0.17);
         }
 
         .app-hero::after {
             content: "";
+
             position: absolute;
-            right: -55px;
+            right: -50px;
             top: -75px;
-            width: 220px;
-            height: 220px;
+
+            width: 230px;
+            height: 230px;
+
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.08
+                );
         }
 
         .app-hero::before {
             content: "";
+
             position: absolute;
-            right: 90px;
-            bottom: -110px;
-            width: 190px;
-            height: 190px;
+            right: 110px;
+            bottom: -130px;
+
+            width: 230px;
+            height: 230px;
+
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.055
+                );
         }
 
         .hero-badge {
+            position: relative;
+            z-index: 2;
+
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
-            padding: 0.38rem 0.78rem;
-            margin-bottom: 0.85rem;
+
+            padding:
+                0.38rem
+                0.8rem;
+
+            margin-bottom: 0.95rem;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.23
+                );
 
             border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.22);
 
-            background: rgba(255,255,255,0.10);
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.10
+                );
 
-            color: rgba(255,255,255,0.90);
-            font-size: 0.82rem;
-            font-weight: 650;
-            letter-spacing: 0.04em;
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.93
+                );
+
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.055em;
         }
 
         .hero-title {
@@ -236,109 +287,168 @@ def apply_custom_css() -> None:
             z-index: 2;
 
             margin: 0;
+
             color: #ffffff;
-            font-size: clamp(2rem, 4.4vw, 3.25rem);
+
+            font-size:
+                clamp(
+                    2.05rem,
+                    4.6vw,
+                    3.25rem
+                );
+
             font-weight: 780;
-            line-height: 1.16;
-            letter-spacing: -0.04em;
+            line-height: 1.18;
+            letter-spacing: -0.045em;
         }
 
         .hero-description {
             position: relative;
             z-index: 2;
 
-            max-width: 760px;
-            margin-top: 0.85rem;
+            max-width: 770px;
+
+            margin-top: 0.95rem;
             margin-bottom: 0;
 
-            color: rgba(255,255,255,0.82);
-            font-size: 1rem;
-            line-height: 1.75;
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.82
+                );
+
+            font-size: 0.98rem;
+            line-height: 1.8;
         }
 
+
         /* ============================================
-           セクション見出し
+           セクション
         ============================================ */
 
         .section-header {
-            margin-top: 0.4rem;
-            margin-bottom: 1.05rem;
+            margin-top: 0.25rem;
+            margin-bottom: 1.2rem;
         }
 
         .section-eyebrow {
-            color: #227589;
-            font-size: 0.78rem;
-            font-weight: 750;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.28rem;
+
+            color: #258095;
+
+            font-size: 0.73rem;
+            font-weight: 760;
+
+            letter-spacing: 0.11em;
         }
 
         .section-title {
             margin: 0;
-            color: #172432;
-            font-size: 1.9rem;
-            font-weight: 760;
+
+            color: #182733;
+
+            font-size: 1.95rem;
+            font-weight: 770;
+
+            line-height: 1.3;
             letter-spacing: -0.035em;
         }
 
         .section-description {
-            margin-top: 0.4rem;
-            color: #6f7d89;
-            font-size: 0.95rem;
-            line-height: 1.65;
+            margin-top: 0.45rem;
+
+            color: #70808b;
+
+            font-size: 0.94rem;
+            line-height: 1.7;
         }
+
 
         /* ============================================
            フォーム
         ============================================ */
 
         div[data-testid="stForm"] {
-            padding: 1.35rem 1.45rem 1.3rem;
-            border: 1px solid #dce6ea;
+            padding:
+                1.45rem
+                1.5rem
+                1.35rem;
+
+            border:
+                1px solid
+                #dce6ea;
+
             border-radius: 18px;
-            background: rgba(255,255,255,0.92);
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.96
+                );
 
             box-shadow:
-                0 7px 30px rgba(31, 64, 79, 0.055);
+                0 8px 32px
+                rgba(
+                    31,
+                    64,
+                    79,
+                    0.06
+                );
         }
 
         div[data-testid="stTextArea"] label {
-            color: #33424f !important;
+            color: #334650 !important;
+
             font-weight: 680 !important;
             font-size: 0.9rem !important;
         }
 
         div[data-testid="stTextArea"] textarea {
-            min-height: 130px !important;
+            min-height: 135px !important;
 
-            border: 1px solid #d8e2e7 !important;
-            border-radius: 14px !important;
+            padding:
+                1rem
+                1.05rem !important;
 
-            background: #f8fafb !important;
+            border:
+                1px solid
+                #d8e3e7 !important;
 
-            padding: 1rem 1rem !important;
+            border-radius: 13px !important;
 
-            color: #1c2933 !important;
+            background:
+                #f8fafb !important;
+
+            color:
+                #1d2d37 !important;
+
             font-size: 1rem !important;
             line-height: 1.65 !important;
 
             box-shadow: none !important;
-
-            transition:
-                border-color 0.2s ease,
-                box-shadow 0.2s ease,
-                background 0.2s ease;
         }
 
         div[data-testid="stTextArea"] textarea:focus {
-            border-color: #29859a !important;
-            background: #ffffff !important;
+            border-color:
+                #28859a !important;
+
+            background:
+                #ffffff !important;
 
             box-shadow:
-                0 0 0 4px rgba(41,133,154,0.10)
-                !important;
+                0 0 0 4px
+                rgba(
+                    40,
+                    133,
+                    154,
+                    0.10
+                ) !important;
         }
+
 
         /* ============================================
            ボタン
@@ -348,189 +458,284 @@ def apply_custom_css() -> None:
         .stFormSubmitButton > button {
             min-height: 3rem;
 
-            border-radius: 12px !important;
-            border: 1px solid #cad9df !important;
+            border-radius: 11px !important;
 
-            background: #ffffff !important;
-            color: #20313d !important;
-
+            font-size: 0.95rem !important;
             font-weight: 680 !important;
-            font-size: 0.96rem !important;
-
-            box-shadow: none !important;
 
             transition:
                 transform 0.16s ease,
-                border-color 0.16s ease,
+                box-shadow 0.16s ease,
                 background 0.16s ease,
-                color 0.16s ease,
-                box-shadow 0.16s ease;
+                border-color 0.16s ease !important;
         }
 
-        .stButton > button:hover,
-        .stFormSubmitButton > button:hover {
-            transform: translateY(-1px);
+        .stButton > button {
+            border:
+                1px solid
+                #ccd9df !important;
 
-            border-color: #22798d !important;
+            background:
+                #ffffff !important;
 
-            background: #f2f9fa !important;
-            color: #15596b !important;
+            color:
+                #283b46 !important;
+        }
+
+        .stButton > button:hover {
+            transform:
+                translateY(-1px);
+
+            border-color:
+                #2a8296 !important;
+
+            background:
+                #f2f9fa !important;
+
+            color:
+                #155c6d !important;
 
             box-shadow:
-                0 6px 15px rgba(23,96,119,0.08)
-                !important;
+                0 5px 15px
+                rgba(
+                    25,
+                    95,
+                    115,
+                    0.08
+                ) !important;
         }
 
         .stFormSubmitButton > button {
-            border: 1px solid #176077 !important;
+            border:
+                1px solid
+                #17677c !important;
 
             background:
                 linear-gradient(
                     135deg,
-                    #176077,
-                    #247f91
+                    #17647a,
+                    #27889a
                 )
                 !important;
 
-            color: #ffffff !important;
+            color:
+                #ffffff !important;
 
             box-shadow:
-                0 8px 22px rgba(23,96,119,0.16)
+                0 8px 22px
+                rgba(
+                    23,
+                    100,
+                    122,
+                    0.17
+                )
                 !important;
         }
 
         .stFormSubmitButton > button:hover {
-            border-color: #124e62 !important;
+            transform:
+                translateY(-1px);
 
             background:
                 linear-gradient(
                     135deg,
-                    #135569,
-                    #1e7183
+                    #13576b,
+                    #21788a
                 )
                 !important;
 
-            color: #ffffff !important;
+            color:
+                #ffffff !important;
         }
+
 
         /* ============================================
            実践カード
         ============================================ */
 
         div[data-testid="stVerticalBlockBorderWrapper"] {
-            border: 1px solid #dde6ea !important;
-            border-radius: 19px !important;
-
-            background: rgba(255,255,255,0.96) !important;
-
-            box-shadow:
-                0 8px 30px rgba(28, 60, 75, 0.055);
-
             overflow: hidden;
 
+            border:
+                1px solid
+                #dce6ea !important;
+
+            border-radius:
+                19px !important;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.98
+                ) !important;
+
+            box-shadow:
+                0 9px 32px
+                rgba(
+                    28,
+                    60,
+                    75,
+                    0.055
+                );
+
             transition:
-                transform 0.18s ease,
-                box-shadow 0.18s ease,
-                border-color 0.18s ease;
+                border-color 0.18s ease,
+                box-shadow 0.18s ease;
         }
 
         div[data-testid="stVerticalBlockBorderWrapper"]:hover {
-            border-color: #c8dadd !important;
+            border-color:
+                #c8dade !important;
 
             box-shadow:
-                0 12px 38px rgba(28, 60, 75, 0.085);
+                0 13px 38px
+                rgba(
+                    28,
+                    60,
+                    75,
+                    0.085
+                );
         }
 
         .practice-kicker {
             display: inline-flex;
-            align-items: center;
 
-            padding: 0.27rem 0.68rem;
-            margin-bottom: 0.7rem;
+            padding:
+                0.28rem
+                0.7rem;
+
+            margin-bottom: 0.75rem;
 
             border-radius: 999px;
 
-            background: #e9f5f7;
-            color: #176077;
+            background:
+                #e9f5f7;
 
-            font-size: 0.76rem;
+            color:
+                #17647a;
+
+            font-size: 0.72rem;
             font-weight: 760;
-            letter-spacing: 0.06em;
+
+            letter-spacing: 0.075em;
         }
 
         .practice-title {
-            margin: 0 0 0.45rem 0;
+            margin:
+                0
+                0
+                0.45rem
+                0;
 
-            color: #172432;
-            font-size: 1.27rem;
+            color:
+                #172733;
+
+            font-size: 1.28rem;
             font-weight: 740;
-            line-height: 1.55;
 
-            letter-spacing: -0.018em;
+            line-height: 1.55;
+            letter-spacing: -0.02em;
         }
 
         .practice-biblio {
             margin-bottom: 1rem;
 
-            color: #7a8791;
-            font-size: 0.88rem;
+            color:
+                #7a8993;
+
+            font-size: 0.87rem;
         }
 
+
         /* ============================================
-           メタデータ
+           メタ情報
         ============================================ */
 
         .meta-grid {
             display: grid;
+
             grid-template-columns:
-                repeat(3, minmax(0, 1fr));
+                repeat(
+                    3,
+                    minmax(0, 1fr)
+                );
 
-            gap: 0.75rem;
+            gap: 0.7rem;
 
-            margin-top: 0.9rem;
-            margin-bottom: 1rem;
+            margin:
+                0.9rem
+                0
+                1rem;
         }
 
         .meta-box {
-            padding: 0.8rem 0.88rem;
+            padding:
+                0.8rem
+                0.9rem;
 
-            border: 1px solid #e4ebee;
-            border-radius: 12px;
+            border:
+                1px solid
+                #e4ebee;
 
-            background: #f8fafb;
+            border-radius: 11px;
+
+            background:
+                #f8fafb;
         }
 
         .meta-label {
-            margin-bottom: 0.28rem;
+            margin-bottom: 0.25rem;
 
-            color: #81909a;
-            font-size: 0.73rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
+            color:
+                #81919a;
+
+            font-size: 0.7rem;
+            font-weight: 720;
+
+            letter-spacing: 0.06em;
         }
 
         .meta-value {
-            color: #263744;
-            font-size: 0.92rem;
-            font-weight: 630;
-            line-height: 1.45;
+            color:
+                #263945;
+
+            font-size: 0.91rem;
+            font-weight: 640;
+
+            line-height: 1.5;
         }
+
+
+        /* ============================================
+           ICT情報
+        ============================================ */
 
         .info-row {
             display: flex;
-            gap: 0.7rem;
             align-items: flex-start;
 
-            margin: 0.95rem 0;
-            padding: 0.78rem 0.9rem;
+            gap: 0.75rem;
 
-            border-radius: 12px;
+            margin:
+                0.9rem
+                0;
 
-            background: #f8fafb;
+            padding:
+                0.8rem
+                0.95rem;
+
+            border-radius:
+                11px;
+
+            background:
+                #f7fafb;
         }
 
         .info-icon {
-            min-width: 1.8rem;
+            min-width: 1.7rem;
+
             font-size: 1.05rem;
         }
 
@@ -539,48 +744,83 @@ def apply_custom_css() -> None:
         }
 
         .info-label {
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.15rem;
 
-            color: #596a76;
-            font-size: 0.78rem;
+            color:
+                #697b85;
+
+            font-size: 0.73rem;
             font-weight: 720;
         }
 
         .info-value {
-            color: #253641;
-            font-size: 0.94rem;
+            color:
+                #263945;
+
+            font-size: 0.93rem;
             line-height: 1.6;
         }
 
+
+        /* ============================================
+           教育効果
+        ============================================ */
+
         .effect-box {
-            margin-top: 0.9rem;
-            margin-bottom: 1rem;
+            margin:
+                0.95rem
+                0
+                1rem;
 
-            padding: 0.85rem 0.95rem;
+            padding:
+                0.85rem
+                0.95rem;
 
-            border-left: 4px solid #2c899c;
-            border-radius: 0 12px 12px 0;
+            border-left:
+                4px solid
+                #31889b;
 
-            background: #f2f8f9;
+            border-radius:
+                0
+                11px
+                11px
+                0;
+
+            background:
+                #f1f8f9;
         }
 
         .effect-title {
-            margin-bottom: 0.45rem;
+            margin-bottom:
+                0.4rem;
 
-            color: #32616d;
-            font-size: 0.78rem;
-            font-weight: 750;
+            color:
+                #34616d;
+
+            font-size:
+                0.75rem;
+
+            font-weight:
+                750;
         }
 
         .effect-item {
             position: relative;
 
-            padding-left: 1.1rem;
-            margin-top: 0.35rem;
+            padding-left:
+                1.15rem;
 
-            color: #273b45;
-            font-size: 0.93rem;
-            line-height: 1.55;
+            margin-top:
+                0.32rem;
+
+            color:
+                #283d47;
+
+            font-size:
+                0.92rem;
+
+            line-height:
+                1.6;
         }
 
         .effect-item::before {
@@ -589,111 +829,145 @@ def apply_custom_css() -> None:
             position: absolute;
             left: 0;
 
-            color: #237b8d;
-            font-weight: 800;
+            color:
+                #247c8f;
+
+            font-weight:
+                800;
         }
 
+
         /* ============================================
-           Chat
+           チャット
         ============================================ */
 
         div[data-testid="stChatMessage"] {
-            padding: 0.8rem 0.9rem;
-            margin-bottom: 0.65rem;
+            margin-bottom:
+                0.7rem;
 
-            border: 1px solid #e4eaed;
-            border-radius: 15px;
+            padding:
+                0.85rem
+                0.95rem;
 
-            background: #ffffff;
+            border:
+                1px solid
+                #e2e9ec;
+
+            border-radius:
+                15px;
+
+            background:
+                #ffffff;
         }
 
         div[data-testid="stChatMessage"] p {
-            line-height: 1.78;
+            line-height:
+                1.8;
         }
 
         div[data-testid="stChatInput"] {
-            border-radius: 14px;
+            border-radius:
+                14px;
         }
 
-        div[data-testid="stChatInput"] textarea {
-            border-radius: 14px !important;
-        }
 
         /* ============================================
            Expander
         ============================================ */
 
         div[data-testid="stExpander"] {
-            border: 1px solid #e1e8eb !important;
-            border-radius: 12px !important;
+            border:
+                1px solid
+                #e1e8eb !important;
 
-            background: #fafcfc !important;
+            border-radius:
+                12px !important;
+
+            background:
+                #fafcfc !important;
         }
 
         div[data-testid="stExpander"] summary {
-            color: #50636f;
-            font-weight: 620;
+            color:
+                #53656f;
+
+            font-weight:
+                620;
         }
 
+
         /* ============================================
-           Info / Warning
+           Streamlit alert
         ============================================ */
 
         div[data-testid="stAlert"] {
-            border-radius: 13px !important;
+            border-radius:
+                12px !important;
         }
+
 
         /* ============================================
            Divider
         ============================================ */
 
         hr {
-            border-color: #e5eaed !important;
-            margin-top: 2rem !important;
-            margin-bottom: 2rem !important;
+            margin-top:
+                2rem !important;
+
+            margin-bottom:
+                2rem !important;
+
+            border-color:
+                #e3e9ec !important;
         }
 
-        /* ============================================
-           スピナー
-        ============================================ */
-
-        div[data-testid="stSpinner"] {
-            color: #176077;
-        }
 
         /* ============================================
            モバイル
         ============================================ */
 
-        @media (max-width: 760px) {
+        @media (
+            max-width: 760px
+        ) {
 
             .block-container {
-                padding-top: 1.2rem;
-                padding-left: 1rem;
-                padding-right: 1rem;
+                padding-top:
+                    1rem;
+
+                padding-left:
+                    1rem;
+
+                padding-right:
+                    1rem;
             }
 
             .app-hero {
-                padding: 1.7rem 1.35rem;
-                border-radius: 19px;
+                padding:
+                    1.7rem
+                    1.4rem;
+
+                border-radius:
+                    19px;
             }
 
             .hero-title {
-                font-size: 2rem;
+                font-size:
+                    2rem;
             }
 
             .meta-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns:
+                    1fr;
             }
 
             .section-title {
-                font-size: 1.6rem;
+                font-size:
+                    1.6rem;
             }
         }
 
         </style>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
 
@@ -705,9 +979,11 @@ apply_custom_css()
 # ============================================================
 
 def display_header() -> None:
-    st.markdown(
+
+    render_html(
         """
         <div class="app-hero">
+
             <div class="hero-badge">
                 🔬 SCIENCE × ICT
             </div>
@@ -718,12 +994,13 @@ def display_header() -> None:
 
             <p class="hero-description">
                 理科教育研究に蓄積されたICT活用実践をもとに、
-                授業づくりに参考となる事例を提案します。
-                気になる実践については、論文本文をもとに詳しく質問できます。
+                授業づくりの参考となる事例を提案します。
+                気になる実践については、
+                論文本文をもとに詳しく質問できます。
             </p>
+
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
 
@@ -758,9 +1035,7 @@ if "document_answer_counts" not in st.session_state:
 # ============================================================
 
 def reset_all() -> None:
-    """
-    入力内容・実践候補・会話履歴をすべて初期化する。
-    """
+
     st.session_state.user_request = ""
 
     st.session_state.practice_candidates = []
@@ -779,9 +1054,7 @@ def reset_all() -> None:
 def initialize_document_state(
     practice_id: str,
 ) -> None:
-    """
-    practice_idごとの会話状態を初期化する。
-    """
+
     if (
         practice_id
         not in st.session_state.document_messages
@@ -810,9 +1083,7 @@ def initialize_document_state(
 def toggle_practice(
     practice_id: str,
 ) -> None:
-    """
-    実践カードの展開・閉じるを切り替える。
-    """
+
     if (
         st.session_state.expanded_practice_id
         == practice_id
@@ -836,6 +1107,7 @@ def toggle_practice(
 def display_demo_error(
     error: Exception,
 ) -> None:
+
     st.error(
         "データを読み込めませんでした。"
     )
@@ -855,9 +1127,7 @@ def display_demo_error(
 def join_values(
     values: list[Any],
 ) -> str:
-    """
-    空の値を除外して「、」で連結する。
-    """
+
     normalized_values = [
         str(value).strip()
         for value in values
@@ -869,63 +1139,74 @@ def join_values(
     )
 
 
-def escape_text(
-    value: Any,
-) -> str:
-    return html.escape(
-        str(value)
-    )
-
-
 def display_basic_information(
     candidate: dict[str, Any],
 ) -> None:
-    """
-    学年・領域・単元をカード形式で表示する。
-    """
+
     grade = escape_text(
-        candidate.get("grade")
+        candidate.get(
+            "grade"
+        )
         or "記載なし"
     )
 
     field = escape_text(
-        candidate.get("field")
+        candidate.get(
+            "field"
+        )
         or "記載なし"
     )
 
     unit = escape_text(
-        candidate.get("unit")
+        candidate.get(
+            "unit"
+        )
         or "記載なし"
     )
 
-    st.markdown(
+    render_html(
         f"""
         <div class="meta-grid">
 
             <div class="meta-box">
-                <div class="meta-label">学年</div>
-                <div class="meta-value">{grade}</div>
+                <div class="meta-label">
+                    学年
+                </div>
+
+                <div class="meta-value">
+                    {grade}
+                </div>
             </div>
 
             <div class="meta-box">
-                <div class="meta-label">領域</div>
-                <div class="meta-value">{field}</div>
+                <div class="meta-label">
+                    領域
+                </div>
+
+                <div class="meta-value">
+                    {field}
+                </div>
             </div>
 
             <div class="meta-box">
-                <div class="meta-label">単元</div>
-                <div class="meta-value">{unit}</div>
+                <div class="meta-label">
+                    単元
+                </div>
+
+                <div class="meta-value">
+                    {unit}
+                </div>
             </div>
 
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
 
 def display_document_message(
     message: dict[str, Any],
 ) -> None:
+
     role = message.get(
         "role",
         "assistant",
@@ -960,10 +1241,14 @@ def display_document_message(
             with st.expander(
                 "回答の根拠を確認する"
             ):
+
                 for source in sources:
-                    chunk_index = source.get(
-                        "chunk_index",
-                        "",
+
+                    chunk_index = (
+                        source.get(
+                            "chunk_index",
+                            "",
+                        )
                     )
 
                     if chunk_index == "":
@@ -985,6 +1270,7 @@ def display_document_message(
 def display_document_conversation(
     candidate: dict[str, Any],
 ) -> None:
+
     practice_id = str(
         candidate.get(
             "practice_id",
@@ -1037,9 +1323,10 @@ def display_document_conversation(
 
     st.divider()
 
-    st.markdown(
+    render_html(
         """
         <div class="section-header">
+
             <div class="section-eyebrow">
                 PAPER ASSISTANT
             </div>
@@ -1052,9 +1339,9 @@ def display_document_conversation(
                 選択した実践の論文本文をもとに回答します。
                 研究知見を別の学年や単元へ応用する相談もできます。
             </div>
+
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     if (
@@ -1069,7 +1356,7 @@ def display_document_conversation(
         )
 
     # --------------------------------------------------------
-    # 過去の会話履歴
+    # 会話履歴
     # --------------------------------------------------------
 
     for message in messages:
@@ -1078,32 +1365,32 @@ def display_document_conversation(
         )
 
     # --------------------------------------------------------
-    # 回答待ちの質問がある場合
+    # 回答生成
     # --------------------------------------------------------
 
     if pending_query:
+
         try:
             next_turn = (
                 answer_count + 1
             )
 
             if next_turn > 2:
+
                 st.session_state.document_pending_queries[
                     practice_id
                 ] = None
-
-                st.info(
-                    "error"
-                )
 
                 return
 
             with st.chat_message(
                 "assistant"
             ):
+
                 with st.spinner(
                     "論文本文を確認しています..."
                 ):
+
                     time.sleep(
                         DOCUMENT_LOADING_SECONDS
                     )
@@ -1121,9 +1408,11 @@ def display_document_conversation(
                 )
             ).strip()
 
-            sources = demo_data.get(
-                "sources",
-                [],
+            sources = (
+                demo_data.get(
+                    "sources",
+                    [],
+                )
             )
 
             if not answer:
@@ -1152,6 +1441,7 @@ def display_document_conversation(
             st.rerun()
 
         except Exception as error:
+
             st.session_state.document_pending_queries[
                 practice_id
             ] = None
@@ -1161,7 +1451,7 @@ def display_document_conversation(
             )
 
     # --------------------------------------------------------
-    # 質問入力欄
+    # 質問入力
     # --------------------------------------------------------
 
     user_question = st.chat_input(
@@ -1269,7 +1559,8 @@ def display_practice_card(
     with st.container(
         border=True
     ):
-        st.markdown(
+
+        render_html(
             f"""
             <div class="practice-kicker">
                 PRACTICE {escape_text(index)}
@@ -1278,27 +1569,30 @@ def display_practice_card(
             <div class="practice-title">
                 {escape_text(title)}
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
         bibliographic_values = [
             author,
-            f"{year}年" if year else "",
+            f"{year}年"
+            if year
+            else "",
         ]
 
-        bibliographic_text = join_values(
-            bibliographic_values
+        bibliographic_text = (
+            join_values(
+                bibliographic_values
+            )
         )
 
         if bibliographic_text:
-            st.markdown(
+
+            render_html(
                 f"""
                 <div class="practice-biblio">
                     {escape_text(bibliographic_text)}
                 </div>
-                """,
-                unsafe_allow_html=True,
+                """
             )
 
         display_basic_information(
@@ -1310,12 +1604,15 @@ def display_practice_card(
             *software,
         ]
 
-        ict_text = join_values(
-            ict_values
+        ict_text = (
+            join_values(
+                ict_values
+            )
         )
 
         if ict_text:
-            st.markdown(
+
+            render_html(
                 f"""
                 <div class="info-row">
 
@@ -1324,6 +1621,7 @@ def display_practice_card(
                     </div>
 
                     <div class="info-body">
+
                         <div class="info-label">
                             使用したICT
                         </div>
@@ -1331,24 +1629,26 @@ def display_practice_card(
                         <div class="info-value">
                             {escape_text(ict_text)}
                         </div>
+
                     </div>
 
                 </div>
-                """,
-                unsafe_allow_html=True,
+                """
             )
 
         if effects:
+
             effect_html = ""
 
             for effect in effects:
+
                 effect_html += (
                     '<div class="effect-item">'
                     f"{escape_text(effect)}"
                     "</div>"
                 )
 
-            st.markdown(
+            render_html(
                 f"""
                 <div class="effect-box">
 
@@ -1359,8 +1659,7 @@ def display_practice_card(
                     {effect_html}
 
                 </div>
-                """,
-                unsafe_allow_html=True,
+                """
             )
 
         button_text = (
@@ -1379,6 +1678,7 @@ def display_practice_card(
             ),
             use_container_width=True,
         ):
+
             toggle_practice(
                 practice_id=practice_id
             )
@@ -1386,12 +1686,14 @@ def display_practice_card(
             st.rerun()
 
         if not paper_id:
+
             st.caption(
                 "この実践は、現在詳しい内容を"
                 "確認できません。"
             )
 
         if is_expanded:
+
             display_document_conversation(
                 candidate=candidate
             )
@@ -1403,7 +1705,7 @@ def display_practice_card(
 
 def display_request_form() -> None:
 
-    st.markdown(
+    render_html(
         """
         <div class="section-header">
 
@@ -1421,14 +1723,14 @@ def display_request_form() -> None:
             </div>
 
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     with st.form(
         key="practice_request_form",
         clear_on_submit=False,
     ):
+
         user_request = st.text_area(
             "相談内容",
             value=(
@@ -1441,9 +1743,11 @@ def display_request_form() -> None:
             height=130,
         )
 
-        submitted = st.form_submit_button(
-            "参考になる実践を探す",
-            use_container_width=True,
+        submitted = (
+            st.form_submit_button(
+                "参考になる実践を探す",
+                use_container_width=True,
+            )
         )
 
     if not submitted:
@@ -1454,15 +1758,19 @@ def display_request_form() -> None:
     )
 
     if not normalized_request:
+
         st.warning(
             "相談内容を入力してください。"
         )
+
         return
 
     try:
+
         with st.spinner(
             "ICT活用実践を探索しています..."
         ):
+
             time.sleep(
                 PRACTICE_LOADING_SECONDS
             )
@@ -1471,9 +1779,11 @@ def display_request_form() -> None:
                 load_practice_search()
             )
 
-        result = demo_data.get(
-            "result",
-            {},
+        result = (
+            demo_data.get(
+                "result",
+                {},
+            )
         )
 
         practice_candidates = (
@@ -1484,6 +1794,7 @@ def display_request_form() -> None:
         )
 
         if not practice_candidates:
+
             raise RuntimeError(
                 "error"
             )
@@ -1509,6 +1820,7 @@ def display_request_form() -> None:
         st.rerun()
 
     except Exception as error:
+
         display_demo_error(
             error=error
         )
@@ -1531,7 +1843,7 @@ def display_practice_candidates() -> None:
 
     st.divider()
 
-    st.markdown(
+    render_html(
         f"""
         <div class="section-header">
 
@@ -1545,21 +1857,24 @@ def display_practice_candidates() -> None:
 
             <div class="section-description">
                 {len(candidates)}件の実践を提案します。
-                気になる実践を開くと、論文本文をもとに詳しく質問できます。
+                気になる実践を開くと、
+                論文本文をもとに詳しく質問できます。
             </div>
 
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     if not candidates:
+
         st.info(
             "実践候補を表示できませんでした。"
         )
 
     else:
+
         for candidate in candidates:
+
             display_practice_card(
                 candidate=candidate
             )
@@ -1571,7 +1886,9 @@ def display_practice_candidates() -> None:
         key="reset_all_button",
         use_container_width=True,
     ):
+
         reset_all()
+
         st.rerun()
 
 
