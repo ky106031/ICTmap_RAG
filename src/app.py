@@ -107,7 +107,7 @@ def apply_custom_css() -> None:
 <style>
 
 /* =========================================================
-   基本
+   カラー
 ========================================================= */
 
 :root {
@@ -122,6 +122,55 @@ def apply_custom_css() -> None:
     --surface: #ffffff;
     --surface-soft: #f7f9fa;
 }
+
+
+/* =========================================================
+   アニメーション
+========================================================= */
+
+@keyframes fadeSlideUp {
+
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@keyframes softFade {
+
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+@keyframes answerAppear {
+
+    0% {
+        opacity: 0;
+        transform: translateY(9px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   基本
+========================================================= */
 
 .stApp {
     background:
@@ -176,6 +225,12 @@ p {
     box-shadow:
         0 16px 44px
         rgba(22, 74, 88, 0.14);
+
+    animation:
+        softFade
+        0.55s
+        ease-out
+        both;
 }
 
 .st-key-app_header h1 {
@@ -287,6 +342,21 @@ div[data-testid="stCaptionContainer"] p {
 
 
 /* =========================================================
+   検索結果見出しの出現
+========================================================= */
+
+.st-key-results_header {
+    margin-bottom: 1.1rem;
+
+    animation:
+        fadeSlideUp
+        0.42s
+        ease-out
+        both;
+}
+
+
+/* =========================================================
    入力フォーム
 ========================================================= */
 
@@ -382,10 +452,6 @@ div[data-testid="stTextArea"] textarea:focus {
 /* =========================================================
    フォーム送信ボタン
 ========================================================= */
-
-.st-key-submit_area {
-    margin-top: 0.15rem;
-}
 
 .stFormSubmitButton > button {
     min-height: 2.85rem;
@@ -513,17 +579,61 @@ div[data-testid="stTextArea"] textarea:focus {
 
 
 /* =========================================================
-   結果見出し
+   実践カード
 ========================================================= */
 
-.st-key-results_header {
-    margin-bottom: 1.1rem;
+div[class*="st-key-practice_card_"] {
+    opacity: 0;
+
+    animation:
+        fadeSlideUp
+        0.52s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        forwards;
 }
 
 
-/* =========================================================
-   実践カード
-========================================================= */
+/* 実践1 */
+
+div[class*="st-key-practice_card_1_"] {
+    animation-delay:
+        0.04s;
+}
+
+
+/* 実践2 */
+
+div[class*="st-key-practice_card_2_"] {
+    animation-delay:
+        0.15s;
+}
+
+
+/* 実践3 */
+
+div[class*="st-key-practice_card_3_"] {
+    animation-delay:
+        0.26s;
+}
+
+
+/* 4件目以降 */
+
+div[class*="st-key-practice_card_4_"] {
+    animation-delay:
+        0.37s;
+}
+
+div[class*="st-key-practice_card_5_"] {
+    animation-delay:
+        0.48s;
+}
+
 
 div[data-testid="stVerticalBlockBorderWrapper"] {
     overflow: hidden;
@@ -554,9 +664,6 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 }
 
 div[data-testid="stVerticalBlockBorderWrapper"]:hover {
-    transform:
-        translateY(-1px);
-
     border-color:
         #c7dadd !important;
 
@@ -571,7 +678,9 @@ div[data-testid="stVerticalBlockBorderWrapper"]:hover {
 }
 
 
-/* 実践番号 */
+/* =========================================================
+   実践番号
+========================================================= */
 
 div[class*="st-key-practice_card_"] h3 {
     margin-bottom:
@@ -594,7 +703,9 @@ div[class*="st-key-practice_card_"] h3 {
 }
 
 
-/* 論文タイトル */
+/* =========================================================
+   論文タイトル
+========================================================= */
 
 div[class*="st-key-practice_card_"] h4 {
     margin-top:
@@ -620,7 +731,9 @@ div[class*="st-key-practice_card_"] h4 {
 }
 
 
-/* 著者 */
+/* =========================================================
+   著者
+========================================================= */
 
 div[class*="st-key-practice_card_"]
 div[data-testid="stCaptionContainer"] p {
@@ -685,22 +798,17 @@ div[data-testid="column"] p {
 
 
 /* =========================================================
-   ICT・教育効果
-========================================================= */
-
-div[class*="st-key-practice_card_"]
-p strong {
-    color:
-        #314852;
-}
-
-
-/* =========================================================
-   詳細エリア
+   詳細エリアのアニメーション
 ========================================================= */
 
 .st-key-document_section {
     margin-top: 1rem;
+
+    animation:
+        fadeSlideUp
+        0.38s
+        ease-out
+        both;
 }
 
 .st-key-document_section h3 {
@@ -760,6 +868,12 @@ div[data-testid="stChatMessage"] {
             72,
             0.025
         );
+
+    animation:
+        answerAppear
+        0.38s
+        ease-out
+        both;
 }
 
 div[data-testid="stChatMessage"] p {
@@ -834,6 +948,32 @@ hr {
 .st-key-reset_area {
     margin-top:
         0.3rem;
+}
+
+
+/* =========================================================
+   アニメーションを減らす設定への対応
+========================================================= */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+
+        scroll-behavior:
+            auto !important;
+    }
 }
 
 
@@ -965,6 +1105,7 @@ def initialize_document_state(
         practice_id
         not in st.session_state.document_messages
     ):
+
         st.session_state.document_messages[
             practice_id
         ] = []
@@ -973,6 +1114,7 @@ def initialize_document_state(
         practice_id
         not in st.session_state.document_pending_queries
     ):
+
         st.session_state.document_pending_queries[
             practice_id
         ] = None
@@ -981,6 +1123,7 @@ def initialize_document_state(
         practice_id
         not in st.session_state.document_answer_counts
     ):
+
         st.session_state.document_answer_counts[
             practice_id
         ] = 0
@@ -1457,11 +1600,16 @@ def display_practice_card(
         == practice_id
     )
 
+    # indexをkeyに含めることで、
+    # CSS側で1件目・2件目・3件目に
+    # 個別のanimation-delayを設定できる。
+    card_key = (
+        f"practice_card_{index}_{practice_id}"
+    )
+
     with st.container(
         border=True,
-        key=(
-            f"practice_card_{practice_id}"
-        ),
+        key=card_key,
     ):
 
         st.markdown(
