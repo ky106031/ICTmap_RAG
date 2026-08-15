@@ -44,6 +44,7 @@ DOCUMENT_LOADING_SECONDS = 5.5
 def load_json(
     path: Path,
 ) -> dict[str, Any]:
+
     if not path.exists():
         raise FileNotFoundError(
             f"データが見つかりません: {path}"
@@ -58,6 +59,7 @@ def load_json(
 
 
 def load_practice_search() -> dict[str, Any]:
+
     return load_json(
         PRACTICE_SEARCH_PATH
     )
@@ -99,86 +101,98 @@ st.set_page_config(
 # ============================================================
 
 def apply_custom_css() -> None:
+
     st.markdown(
         """
 <style>
 
 /* =========================================================
-   全体
+   基本
 ========================================================= */
+
+:root {
+    --primary: #176579;
+    --primary-dark: #124b5a;
+    --primary-soft: #edf6f7;
+
+    --text-main: #192b35;
+    --text-sub: #6f7e87;
+
+    --border: #dce5e8;
+    --surface: #ffffff;
+    --surface-soft: #f7f9fa;
+}
 
 .stApp {
     background:
         linear-gradient(
             180deg,
-            #f3f7f9 0px,
-            #f7f9fb 340px,
-            #f7f9fb 100%
+            #f3f7f8 0px,
+            #f8fafb 310px,
+            #f8fafb 100%
         );
 }
 
 .block-container {
-    max-width: 1080px;
-    padding-top: 2rem;
+    max-width: 980px;
+    padding-top: 1.6rem;
     padding-bottom: 5rem;
 }
 
 html,
 body,
 [class*="css"] {
-    color: #1d2b34;
+    color: var(--text-main);
 }
 
 p {
-    line-height: 1.7;
+    line-height: 1.72;
 }
 
 
 /* =========================================================
-   ヘッダーコンテナ
+   上部ヘッダー
 ========================================================= */
 
 .st-key-app_header {
-    position: relative;
-
-    margin-bottom: 2.4rem;
+    margin-bottom: 3rem;
 
     padding:
+        1.75rem
         2rem
-        2.25rem
-        2.05rem
-        2.25rem;
+        1.8rem
+        2rem;
 
-    border-radius: 24px;
+    border-radius: 22px;
 
     background:
         linear-gradient(
             135deg,
-            #143f4d 0%,
-            #17667b 55%,
-            #2a899a 100%
+            #164553 0%,
+            #176579 58%,
+            #268799 100%
         );
 
     box-shadow:
-        0 18px 48px
-        rgba(23, 70, 86, 0.16);
+        0 16px 44px
+        rgba(22, 74, 88, 0.14);
 }
 
 .st-key-app_header h1 {
+    margin-top: 0.45rem !important;
     margin-bottom: 0.45rem !important;
 
     color: #ffffff !important;
 
-    font-size: 2.8rem !important;
+    font-size: 2.55rem !important;
     font-weight: 760 !important;
 
-    line-height: 1.22 !important;
-
+    line-height: 1.2 !important;
     letter-spacing: -0.045em !important;
 }
 
 .st-key-app_header p {
-    max-width: 760px;
+    max-width: 720px;
 
     margin-bottom: 0 !important;
 
@@ -190,22 +204,21 @@ p {
             0.82
         ) !important;
 
-    font-size: 0.98rem;
-    line-height: 1.75;
+    font-size: 0.95rem !important;
+    line-height: 1.7;
 }
 
-.st-key-app_header div[data-testid="stCaptionContainer"] {
-    margin-bottom: 0.3rem;
-}
-
-.st-key-app_header div[data-testid="stCaptionContainer"] p {
+.st-key-app_header
+div[data-testid="stCaptionContainer"] p {
     display: inline-block;
 
     width: auto;
 
+    margin: 0 !important;
+
     padding:
-        0.3rem
-        0.72rem;
+        0.28rem
+        0.7rem;
 
     border:
         1px solid
@@ -223,7 +236,7 @@ p {
             255,
             255,
             255,
-            0.10
+            0.09
         );
 
     color:
@@ -234,40 +247,42 @@ p {
             0.92
         ) !important;
 
-    font-size: 0.75rem !important;
+    font-size: 0.72rem !important;
     font-weight: 700;
 
-    letter-spacing: 0.06em;
+    letter-spacing: 0.045em;
 }
 
 
 /* =========================================================
-   セクション
+   セクション見出し
 ========================================================= */
 
-.st-key-request_section,
-.st-key-results_header {
-    margin-bottom: 1rem;
+.st-key-request_section {
+    margin-bottom: 1.15rem;
 }
 
 .st-key-request_section h2,
 .st-key-results_header h2 {
     margin-top: 0 !important;
-    margin-bottom: 0.25rem !important;
+    margin-bottom: 0.3rem !important;
 
-    color: #172832 !important;
+    color: var(--text-main) !important;
 
-    font-size: 1.95rem !important;
-    font-weight: 750 !important;
+    font-size: 1.8rem !important;
+    font-weight: 740 !important;
 
+    line-height: 1.3 !important;
     letter-spacing: -0.035em !important;
 }
 
 .st-key-request_section p,
 .st-key-results_header p {
-    color: #72818b !important;
+    margin-bottom: 0 !important;
 
-    font-size: 0.94rem !important;
+    color: var(--text-sub) !important;
+
+    font-size: 0.92rem !important;
 }
 
 
@@ -277,132 +292,139 @@ p {
 
 div[data-testid="stForm"] {
     padding:
-        1.4rem
-        1.45rem
-        1.35rem;
+        1.25rem
+        1.3rem
+        1.2rem;
 
     border:
-        1px solid
-        #dae5e9;
+        1px solid var(--border);
 
-    border-radius: 18px;
+    border-radius: 17px;
 
     background:
         rgba(
             255,
             255,
             255,
-            0.97
+            0.98
         );
 
     box-shadow:
-        0 8px 28px
+        0 7px 26px
         rgba(
-            31,
-            64,
-            79,
-            0.055
+            27,
+            60,
+            73,
+            0.045
         );
 }
 
 div[data-testid="stTextArea"] label {
-    color: #344752 !important;
+    color: #40525c !important;
 
-    font-size: 0.9rem !important;
-    font-weight: 680 !important;
+    font-size: 0.86rem !important;
+    font-weight: 670 !important;
 }
 
 div[data-testid="stTextArea"] textarea {
-    min-height: 132px !important;
+    min-height: 126px !important;
 
     padding:
-        1rem
-        1.05rem !important;
+        0.95rem
+        1rem !important;
 
     border:
         1px solid
-        #d8e3e7 !important;
+        #d9e2e6 !important;
 
-    border-radius: 13px !important;
+    border-radius:
+        12px !important;
 
     background:
-        #f7f9fa !important;
+        #f8fafb !important;
 
     color:
-        #1e2e38 !important;
+        #1e3039 !important;
 
-    font-size: 1rem !important;
-    line-height: 1.65 !important;
+    font-size:
+        0.98rem !important;
+
+    line-height:
+        1.65 !important;
 
     box-shadow:
         none !important;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
 }
 
 div[data-testid="stTextArea"] textarea:focus {
     border-color:
-        #298397 !important;
+        #268096 !important;
 
     background:
         #ffffff !important;
 
     box-shadow:
-        0 0 0 4px
+        0 0 0 3px
         rgba(
-            41,
-            131,
-            151,
-            0.10
+            38,
+            128,
+            150,
+            0.09
         ) !important;
 }
 
 
 /* =========================================================
-   ボタン
+   フォーム送信ボタン
 ========================================================= */
 
-.stButton > button,
-.stFormSubmitButton > button {
-    min-height: 3rem;
-
-    border-radius:
-        11px !important;
-
-    font-size:
-        0.95rem !important;
-
-    font-weight:
-        680 !important;
-
-    transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        background 0.15s ease,
-        border-color 0.15s ease !important;
+.st-key-submit_area {
+    margin-top: 0.15rem;
 }
 
 .stFormSubmitButton > button {
+    min-height: 2.85rem;
+
     border:
         1px solid
-        #17677c !important;
+        #176579 !important;
+
+    border-radius:
+        10px !important;
 
     background:
         linear-gradient(
             135deg,
-            #17647a,
-            #28899b
+            #176579,
+            #268799
         ) !important;
 
     color:
         #ffffff !important;
 
+    font-size:
+        0.9rem !important;
+
+    font-weight:
+        680 !important;
+
     box-shadow:
-        0 7px 20px
+        0 6px 17px
         rgba(
             23,
-            100,
-            122,
+            101,
+            121,
             0.15
         ) !important;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease !important;
 }
 
 .stFormSubmitButton > button:hover {
@@ -412,24 +434,58 @@ div[data-testid="stTextArea"] textarea:focus {
     background:
         linear-gradient(
             135deg,
-            #13586c,
-            #237b8d
+            #14586a,
+            #217b8d
         ) !important;
 
     color:
         #ffffff !important;
+
+    box-shadow:
+        0 8px 20px
+        rgba(
+            23,
+            101,
+            121,
+            0.19
+        ) !important;
 }
 
+
+/* =========================================================
+   通常ボタン
+========================================================= */
+
 .stButton > button {
+    min-height: 2.8rem;
+
     border:
         1px solid
-        #ccd9df !important;
+        #ccd9dd !important;
+
+    border-radius:
+        10px !important;
 
     background:
         #ffffff !important;
 
     color:
-        #283b46 !important;
+        #2c414b !important;
+
+    font-size:
+        0.9rem !important;
+
+    font-weight:
+        650 !important;
+
+    box-shadow:
+        none !important;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease !important;
 }
 
 .stButton > button:hover {
@@ -437,22 +493,31 @@ div[data-testid="stTextArea"] textarea:focus {
         translateY(-1px);
 
     border-color:
-        #2a8296 !important;
+        #278397 !important;
 
     background:
-        #f2f8fa !important;
+        #f3f9fa !important;
 
     color:
-        #155d6e !important;
+        #155a6b !important;
 
     box-shadow:
-        0 5px 15px
+        0 5px 14px
         rgba(
             25,
             95,
             115,
-            0.07
+            0.06
         ) !important;
+}
+
+
+/* =========================================================
+   結果見出し
+========================================================= */
+
+.st-key-results_header {
+    margin-bottom: 1.1rem;
 }
 
 
@@ -465,44 +530,43 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 
     border:
         1px solid
-        #dae5e9 !important;
+        #dde6e9 !important;
 
     border-radius:
-        18px !important;
+        17px !important;
 
     background:
-        rgba(
-            255,
-            255,
-            255,
-            0.98
-        ) !important;
+        #ffffff !important;
 
     box-shadow:
-        0 8px 30px
+        0 7px 26px
         rgba(
-            28,
+            27,
             60,
-            75,
-            0.052
+            73,
+            0.045
         );
 
     transition:
         border-color 0.16s ease,
+        transform 0.16s ease,
         box-shadow 0.16s ease;
 }
 
 div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+    transform:
+        translateY(-1px);
+
     border-color:
-        #c6dade !important;
+        #c7dadd !important;
 
     box-shadow:
-        0 12px 38px
+        0 12px 32px
         rgba(
-            28,
+            27,
             60,
-            75,
-            0.08
+            73,
+            0.075
         );
 }
 
@@ -514,16 +578,19 @@ div[class*="st-key-practice_card_"] h3 {
         0.35rem !important;
 
     color:
-        #17667b !important;
+        #22788b !important;
 
     font-size:
-        0.88rem !important;
+        0.76rem !important;
 
     font-weight:
-        780 !important;
+        760 !important;
 
     letter-spacing:
-        0.06em !important;
+        0.08em !important;
+
+    text-transform:
+        uppercase;
 }
 
 
@@ -534,31 +601,34 @@ div[class*="st-key-practice_card_"] h4 {
         0 !important;
 
     margin-bottom:
-        0.2rem !important;
+        0.15rem !important;
 
     color:
-        #172832 !important;
+        #172a34 !important;
 
     font-size:
-        1.25rem !important;
+        1.16rem !important;
 
     font-weight:
-        720 !important;
+        710 !important;
 
     line-height:
-        1.5 !important;
+        1.48 !important;
+
+    letter-spacing:
+        -0.015em !important;
 }
 
 
-/* Caption */
+/* 著者 */
 
 div[class*="st-key-practice_card_"]
 div[data-testid="stCaptionContainer"] p {
     color:
-        #7b8993 !important;
+        #819099 !important;
 
     font-size:
-        0.86rem !important;
+        0.82rem !important;
 }
 
 
@@ -568,21 +638,22 @@ div[data-testid="stCaptionContainer"] p {
 
 div[class*="st-key-practice_card_"]
 div[data-testid="stHorizontalBlock"] {
-    gap: 0.7rem;
+    gap:
+        0.6rem;
 }
 
 div[class*="st-key-practice_card_"]
 div[data-testid="column"] {
     padding:
-        0.72rem
-        0.8rem;
+        0.62rem
+        0.72rem;
 
     border:
         1px solid
-        #e4ebee;
+        #e5ebed;
 
     border-radius:
-        11px;
+        10px;
 
     background:
         #f8fafb;
@@ -591,10 +662,13 @@ div[data-testid="column"] {
 div[class*="st-key-practice_card_"]
 div[data-testid="column"] strong {
     color:
-        #7c8d96;
+        #83929a;
 
     font-size:
-        0.75rem;
+        0.7rem;
+
+    font-weight:
+        700;
 }
 
 div[class*="st-key-practice_card_"]
@@ -603,10 +677,56 @@ div[data-testid="column"] p {
         0 !important;
 
     color:
-        #293b46;
+        #293c46;
 
     font-size:
-        0.92rem;
+        0.88rem;
+}
+
+
+/* =========================================================
+   ICT・教育効果
+========================================================= */
+
+div[class*="st-key-practice_card_"]
+p strong {
+    color:
+        #314852;
+}
+
+
+/* =========================================================
+   詳細エリア
+========================================================= */
+
+.st-key-document_section {
+    margin-top: 1rem;
+}
+
+.st-key-document_section h3 {
+    margin-bottom:
+        0.25rem !important;
+
+    color:
+        var(--text-main);
+
+    font-size:
+        1.48rem !important;
+
+    font-weight:
+        720 !important;
+
+    letter-spacing:
+        -0.025em !important;
+}
+
+.st-key-document_section
+div[data-testid="stCaptionContainer"] p {
+    color:
+        var(--text-sub) !important;
+
+    font-size:
+        0.88rem !important;
 }
 
 
@@ -616,26 +736,40 @@ div[data-testid="column"] p {
 
 div[data-testid="stChatMessage"] {
     padding:
-        0.85rem
-        0.95rem;
+        0.82rem
+        0.92rem;
 
     margin-bottom:
-        0.7rem;
+        0.65rem;
 
     border:
         1px solid
-        #e1e8eb;
+        #e2e9eb;
 
     border-radius:
-        15px;
+        14px;
 
     background:
         #ffffff;
+
+    box-shadow:
+        0 2px 8px
+        rgba(
+            30,
+            60,
+            72,
+            0.025
+        );
 }
 
 div[data-testid="stChatMessage"] p {
     line-height:
-        1.78;
+        1.75;
+}
+
+div[data-testid="stChatInput"] {
+    border-radius:
+        13px;
 }
 
 
@@ -646,10 +780,10 @@ div[data-testid="stChatMessage"] p {
 div[data-testid="stExpander"] {
     border:
         1px solid
-        #e0e8eb !important;
+        #e1e8ea !important;
 
     border-radius:
-        12px !important;
+        11px !important;
 
     background:
         #fafcfc !important;
@@ -657,7 +791,10 @@ div[data-testid="stExpander"] {
 
 div[data-testid="stExpander"] summary {
     color:
-        #53656f;
+        #576871;
+
+    font-size:
+        0.87rem;
 
     font-weight:
         620;
@@ -670,7 +807,7 @@ div[data-testid="stExpander"] summary {
 
 div[data-testid="stAlert"] {
     border-radius:
-        12px !important;
+        11px !important;
 }
 
 
@@ -680,13 +817,23 @@ div[data-testid="stAlert"] {
 
 hr {
     margin-top:
-        2.1rem !important;
+        2.4rem !important;
 
     margin-bottom:
-        2.1rem !important;
+        2.4rem !important;
 
     border-color:
-        #e2e9ec !important;
+        #e4eaec !important;
+}
+
+
+/* =========================================================
+   Reset
+========================================================= */
+
+.st-key-reset_area {
+    margin-top:
+        0.3rem;
 }
 
 
@@ -699,23 +846,31 @@ hr {
 ) {
 
     .block-container {
-        padding-top: 1rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding-top:
+            0.9rem;
+
+        padding-left:
+            1rem;
+
+        padding-right:
+            1rem;
     }
 
     .st-key-app_header {
         padding:
-            1.55rem
+            1.45rem
             1.3rem;
 
+        margin-bottom:
+            2rem;
+
         border-radius:
-            18px;
+            17px;
     }
 
     .st-key-app_header h1 {
         font-size:
-            2rem !important;
+            1.9rem !important;
     }
 
 }
@@ -738,8 +893,9 @@ def display_header() -> None:
     with st.container(
         key="app_header"
     ):
+
         st.caption(
-            "🔬 SCIENCE × ICT"
+            "研究知見 × 授業づくり"
         )
 
         st.title(
@@ -747,9 +903,9 @@ def display_header() -> None:
         )
 
         st.write(
-            "理科教育研究に蓄積されたICT活用実践をもとに、"
-            "授業づくりの参考となる事例を提案します。"
-            "気になる実践については、"
+            "ICTを活用した理科教育研究の知見から、"
+            "授業づくりの参考となる実践を提案します。"
+            "選択した実践については、"
             "論文本文をもとに詳しく質問できます。"
         )
 
@@ -838,9 +994,11 @@ def toggle_practice(
         st.session_state.expanded_practice_id
         == practice_id
     ):
+
         st.session_state.expanded_practice_id = None
 
     else:
+
         st.session_state.expanded_practice_id = (
             practice_id
         )
@@ -865,13 +1023,14 @@ def display_demo_error(
     with st.expander(
         "エラーの詳細"
     ):
+
         st.code(
             str(error)
         )
 
 
 # ============================================================
-# 表示用ヘルパー
+# 表示ヘルパー
 # ============================================================
 
 def join_values(
@@ -1065,14 +1224,18 @@ def display_document_conversation(
 
     st.divider()
 
-    st.markdown(
-        "### この実践について質問する"
-    )
+    with st.container(
+        key="document_section"
+    ):
 
-    st.caption(
-        "選択した実践の論文本文をもとに回答します。"
-        "研究知見を別の学年や単元へ応用する相談もできます。"
-    )
+        st.markdown(
+            "### この実践について質問する"
+        )
+
+        st.caption(
+            "選択した実践の論文本文をもとに回答します。"
+            "研究知見を別の学年や単元へ応用する相談もできます。"
+        )
 
     if (
         not messages
@@ -1332,6 +1495,8 @@ def display_practice_card(
             candidate
         )
 
+        st.write("")
+
         ict_values = [
             *hardware,
             *software,
@@ -1346,44 +1511,56 @@ def display_practice_card(
         if ict_text:
 
             st.markdown(
-                f"**💻 使用したICT**  \n"
-                f"{ict_text}"
+                "**ICT**"
+            )
+
+            st.caption(
+                ict_text
             )
 
         if effects:
 
             st.markdown(
-                "**✓ この実践で確認されたこと**"
+                "**この実践で確認されたこと**"
             )
 
             for effect in effects:
 
                 st.markdown(
-                    f"- {effect}"
+                    f"✓ {effect}"
                 )
 
         button_text = (
             "閉じる"
             if is_expanded
-            else "この実践を詳しく見る →"
+            else "詳しく見る →"
         )
 
-        if st.button(
-            button_text,
-            key=(
-                f"toggle_{practice_id}"
-            ),
-            disabled=not bool(
-                paper_id
-            ),
-            use_container_width=True,
-        ):
+        button_columns = st.columns(
+            [
+                2.4,
+                1,
+            ]
+        )
 
-            toggle_practice(
-                practice_id=practice_id
-            )
+        with button_columns[1]:
 
-            st.rerun()
+            if st.button(
+                button_text,
+                key=(
+                    f"toggle_{practice_id}"
+                ),
+                disabled=not bool(
+                    paper_id
+                ),
+                use_container_width=True,
+            ):
+
+                toggle_practice(
+                    practice_id=practice_id
+                )
+
+                st.rerun()
 
         if not paper_id:
 
@@ -1414,8 +1591,7 @@ def display_request_form() -> None:
         )
 
         st.write(
-            "学年・単元・使いたいICT・期待する学習効果などを、"
-            "自由な文章で入力してください。"
+            "授業で実現したいことを、自由な文章で入力してください。"
         )
 
     with st.form(
@@ -1433,16 +1609,25 @@ def display_request_form() -> None:
                     "例：観察に意欲的に取り組めるような"
                     "授業にしたいです。"
                 ),
-                height=130,
+                height=125,
             )
         )
 
-        submitted = (
-            st.form_submit_button(
-                "参考になる実践を探す",
-                use_container_width=True,
-            )
+        submit_columns = st.columns(
+            [
+                2.1,
+                1,
+            ]
         )
+
+        with submit_columns[1]:
+
+            submitted = (
+                st.form_submit_button(
+                    "実践を探す →",
+                    use_container_width=True,
+                )
+            )
 
     if not submitted:
         return
@@ -1546,8 +1731,8 @@ def display_practice_candidates() -> None:
         )
 
         st.write(
-            f"{len(candidates)}件の実践を提案します。"
-            "気になる実践を開くと、"
+            f"{len(candidates)}件の実践が見つかりました。"
+            "気になる実践を選ぶと、"
             "論文本文をもとに詳しく質問できます。"
         )
 
@@ -1567,15 +1752,28 @@ def display_practice_candidates() -> None:
 
     st.divider()
 
-    if st.button(
-        "相談内容を最初から入力し直す",
-        key="reset_all_button",
-        use_container_width=True,
+    with st.container(
+        key="reset_area"
     ):
 
-        reset_all()
+        reset_columns = st.columns(
+            [
+                2.4,
+                1,
+            ]
+        )
 
-        st.rerun()
+        with reset_columns[1]:
+
+            if st.button(
+                "最初からやり直す",
+                key="reset_all_button",
+                use_container_width=True,
+            ):
+
+                reset_all()
+
+                st.rerun()
 
 
 # ============================================================
