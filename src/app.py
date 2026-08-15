@@ -1,8 +1,6 @@
-import html
 import json
 import time
 from pathlib import Path
-from textwrap import dedent
 from typing import Any
 
 import streamlit as st
@@ -77,7 +75,7 @@ def load_document_answer(
 
     else:
         raise ValueError(
-            "error"
+            "保存済み回答は2回分までです。"
         )
 
     return load_json(
@@ -97,877 +95,634 @@ st.set_page_config(
 
 
 # ============================================================
-# HTML表示ヘルパー
-# ============================================================
-
-def render_html(
-    content: str,
-) -> None:
-    """
-    HTMLのインデントを除去してからStreamlitへ描画する。
-
-    MarkdownがHTMLをコードブロックとして認識する問題を防ぐ。
-    """
-    st.markdown(
-        dedent(content).strip(),
-        unsafe_allow_html=True,
-    )
-
-
-def escape_text(
-    value: Any,
-) -> str:
-    return html.escape(
-        str(value)
-    )
-
-
-# ============================================================
 # カスタムCSS
 # ============================================================
 
 def apply_custom_css() -> None:
-
-    render_html(
+    st.markdown(
         """
-        <style>
-
-        /* ============================================
-           全体
-        ============================================ */
-
-        .stApp {
-            background:
-                linear-gradient(
-                    180deg,
-                    #f1f6f8 0%,
-                    #f7f9fb 320px,
-                    #f7f9fb 100%
-                );
-        }
-
-        .block-container {
-            max-width: 1120px;
-            padding-top: 2rem;
-            padding-bottom: 5rem;
-        }
-
-        html,
-        body,
-        [class*="css"] {
-            color: #182630;
-        }
-
-        p {
-            line-height: 1.75;
-        }
-
-
-        /* ============================================
-           ヒーロー
-        ============================================ */
-
-        .app-hero {
-            position: relative;
-            overflow: hidden;
-
-            padding:
-                2.35rem
-                2.5rem
-                2.3rem
-                2.5rem;
-
-            margin-bottom: 2.4rem;
-
-            border-radius: 24px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #123d4b 0%,
-                    #17647a 58%,
-                    #27899b 100%
-                );
-
-            box-shadow:
-                0 20px 55px
-                rgba(24, 70, 87, 0.17);
-        }
-
-        .app-hero::after {
-            content: "";
-
-            position: absolute;
-            right: -50px;
-            top: -75px;
-
-            width: 230px;
-            height: 230px;
-
-            border-radius: 50%;
-
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.08
-                );
-        }
-
-        .app-hero::before {
-            content: "";
-
-            position: absolute;
-            right: 110px;
-            bottom: -130px;
-
-            width: 230px;
-            height: 230px;
-
-            border-radius: 50%;
-
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.055
-                );
-        }
-
-        .hero-badge {
-            position: relative;
-            z-index: 2;
-
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-
-            padding:
-                0.38rem
-                0.8rem;
-
-            margin-bottom: 0.95rem;
-
-            border:
-                1px solid
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.23
-                );
-
-            border-radius: 999px;
-
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.10
-                );
+<style>
+
+/* =========================================================
+   全体
+========================================================= */
+
+.stApp {
+    background:
+        linear-gradient(
+            180deg,
+            #f3f7f9 0px,
+            #f7f9fb 340px,
+            #f7f9fb 100%
+        );
+}
+
+.block-container {
+    max-width: 1080px;
+    padding-top: 2rem;
+    padding-bottom: 5rem;
+}
+
+html,
+body,
+[class*="css"] {
+    color: #1d2b34;
+}
+
+p {
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   ヘッダーコンテナ
+========================================================= */
+
+.st-key-app_header {
+    position: relative;
+
+    margin-bottom: 2.4rem;
+
+    padding:
+        2rem
+        2.25rem
+        2.05rem
+        2.25rem;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #143f4d 0%,
+            #17667b 55%,
+            #2a899a 100%
+        );
+
+    box-shadow:
+        0 18px 48px
+        rgba(23, 70, 86, 0.16);
+}
+
+.st-key-app_header h1 {
+    margin-bottom: 0.45rem !important;
+
+    color: #ffffff !important;
+
+    font-size: 2.8rem !important;
+    font-weight: 760 !important;
 
-            color:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.93
-                );
+    line-height: 1.22 !important;
 
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.055em;
-        }
+    letter-spacing: -0.045em !important;
+}
 
-        .hero-title {
-            position: relative;
-            z-index: 2;
+.st-key-app_header p {
+    max-width: 760px;
+
+    margin-bottom: 0 !important;
 
-            margin: 0;
-
-            color: #ffffff;
-
-            font-size:
-                clamp(
-                    2.05rem,
-                    4.6vw,
-                    3.25rem
-                );
-
-            font-weight: 780;
-            line-height: 1.18;
-            letter-spacing: -0.045em;
-        }
-
-        .hero-description {
-            position: relative;
-            z-index: 2;
-
-            max-width: 770px;
-
-            margin-top: 0.95rem;
-            margin-bottom: 0;
-
-            color:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.82
-                );
-
-            font-size: 0.98rem;
-            line-height: 1.8;
-        }
-
-
-        /* ============================================
-           セクション
-        ============================================ */
-
-        .section-header {
-            margin-top: 0.25rem;
-            margin-bottom: 1.2rem;
-        }
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.82
+        ) !important;
 
-        .section-eyebrow {
-            margin-bottom: 0.28rem;
-
-            color: #258095;
+    font-size: 0.98rem;
+    line-height: 1.75;
+}
+
+.st-key-app_header div[data-testid="stCaptionContainer"] {
+    margin-bottom: 0.3rem;
+}
+
+.st-key-app_header div[data-testid="stCaptionContainer"] p {
+    display: inline-block;
+
+    width: auto;
+
+    padding:
+        0.3rem
+        0.72rem;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.22
+        );
+
+    border-radius: 999px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.10
+        );
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.92
+        ) !important;
+
+    font-size: 0.75rem !important;
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+}
+
+
+/* =========================================================
+   セクション
+========================================================= */
+
+.st-key-request_section,
+.st-key-results_header {
+    margin-bottom: 1rem;
+}
+
+.st-key-request_section h2,
+.st-key-results_header h2 {
+    margin-top: 0 !important;
+    margin-bottom: 0.25rem !important;
+
+    color: #172832 !important;
+
+    font-size: 1.95rem !important;
+    font-weight: 750 !important;
+
+    letter-spacing: -0.035em !important;
+}
+
+.st-key-request_section p,
+.st-key-results_header p {
+    color: #72818b !important;
+
+    font-size: 0.94rem !important;
+}
+
+
+/* =========================================================
+   入力フォーム
+========================================================= */
+
+div[data-testid="stForm"] {
+    padding:
+        1.4rem
+        1.45rem
+        1.35rem;
+
+    border:
+        1px solid
+        #dae5e9;
+
+    border-radius: 18px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.97
+        );
+
+    box-shadow:
+        0 8px 28px
+        rgba(
+            31,
+            64,
+            79,
+            0.055
+        );
+}
+
+div[data-testid="stTextArea"] label {
+    color: #344752 !important;
+
+    font-size: 0.9rem !important;
+    font-weight: 680 !important;
+}
+
+div[data-testid="stTextArea"] textarea {
+    min-height: 132px !important;
+
+    padding:
+        1rem
+        1.05rem !important;
+
+    border:
+        1px solid
+        #d8e3e7 !important;
+
+    border-radius: 13px !important;
+
+    background:
+        #f7f9fa !important;
+
+    color:
+        #1e2e38 !important;
+
+    font-size: 1rem !important;
+    line-height: 1.65 !important;
+
+    box-shadow:
+        none !important;
+}
+
+div[data-testid="stTextArea"] textarea:focus {
+    border-color:
+        #298397 !important;
+
+    background:
+        #ffffff !important;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            41,
+            131,
+            151,
+            0.10
+        ) !important;
+}
+
+
+/* =========================================================
+   ボタン
+========================================================= */
+
+.stButton > button,
+.stFormSubmitButton > button {
+    min-height: 3rem;
+
+    border-radius:
+        11px !important;
+
+    font-size:
+        0.95rem !important;
+
+    font-weight:
+        680 !important;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease !important;
+}
+
+.stFormSubmitButton > button {
+    border:
+        1px solid
+        #17677c !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #17647a,
+            #28899b
+        ) !important;
+
+    color:
+        #ffffff !important;
+
+    box-shadow:
+        0 7px 20px
+        rgba(
+            23,
+            100,
+            122,
+            0.15
+        ) !important;
+}
+
+.stFormSubmitButton > button:hover {
+    transform:
+        translateY(-1px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #13586c,
+            #237b8d
+        ) !important;
+
+    color:
+        #ffffff !important;
+}
+
+.stButton > button {
+    border:
+        1px solid
+        #ccd9df !important;
+
+    background:
+        #ffffff !important;
+
+    color:
+        #283b46 !important;
+}
+
+.stButton > button:hover {
+    transform:
+        translateY(-1px);
+
+    border-color:
+        #2a8296 !important;
+
+    background:
+        #f2f8fa !important;
+
+    color:
+        #155d6e !important;
+
+    box-shadow:
+        0 5px 15px
+        rgba(
+            25,
+            95,
+            115,
+            0.07
+        ) !important;
+}
+
+
+/* =========================================================
+   実践カード
+========================================================= */
+
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    overflow: hidden;
+
+    border:
+        1px solid
+        #dae5e9 !important;
+
+    border-radius:
+        18px !important;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.98
+        ) !important;
+
+    box-shadow:
+        0 8px 30px
+        rgba(
+            28,
+            60,
+            75,
+            0.052
+        );
+
+    transition:
+        border-color 0.16s ease,
+        box-shadow 0.16s ease;
+}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+    border-color:
+        #c6dade !important;
+
+    box-shadow:
+        0 12px 38px
+        rgba(
+            28,
+            60,
+            75,
+            0.08
+        );
+}
+
+
+/* 実践番号 */
+
+div[class*="st-key-practice_card_"] h3 {
+    margin-bottom:
+        0.35rem !important;
+
+    color:
+        #17667b !important;
+
+    font-size:
+        0.88rem !important;
+
+    font-weight:
+        780 !important;
+
+    letter-spacing:
+        0.06em !important;
+}
+
+
+/* 論文タイトル */
+
+div[class*="st-key-practice_card_"] h4 {
+    margin-top:
+        0 !important;
+
+    margin-bottom:
+        0.2rem !important;
+
+    color:
+        #172832 !important;
+
+    font-size:
+        1.25rem !important;
+
+    font-weight:
+        720 !important;
+
+    line-height:
+        1.5 !important;
+}
+
+
+/* Caption */
+
+div[class*="st-key-practice_card_"]
+div[data-testid="stCaptionContainer"] p {
+    color:
+        #7b8993 !important;
+
+    font-size:
+        0.86rem !important;
+}
+
+
+/* =========================================================
+   学年・領域・単元
+========================================================= */
 
-            font-size: 0.73rem;
-            font-weight: 760;
+div[class*="st-key-practice_card_"]
+div[data-testid="stHorizontalBlock"] {
+    gap: 0.7rem;
+}
+
+div[class*="st-key-practice_card_"]
+div[data-testid="column"] {
+    padding:
+        0.72rem
+        0.8rem;
 
-            letter-spacing: 0.11em;
-        }
-
-        .section-title {
-            margin: 0;
-
-            color: #182733;
-
-            font-size: 1.95rem;
-            font-weight: 770;
-
-            line-height: 1.3;
-            letter-spacing: -0.035em;
-        }
-
-        .section-description {
-            margin-top: 0.45rem;
+    border:
+        1px solid
+        #e4ebee;
 
-            color: #70808b;
+    border-radius:
+        11px;
 
-            font-size: 0.94rem;
-            line-height: 1.7;
-        }
+    background:
+        #f8fafb;
+}
 
+div[class*="st-key-practice_card_"]
+div[data-testid="column"] strong {
+    color:
+        #7c8d96;
 
-        /* ============================================
-           フォーム
-        ============================================ */
-
-        div[data-testid="stForm"] {
-            padding:
-                1.45rem
-                1.5rem
-                1.35rem;
-
-            border:
-                1px solid
-                #dce6ea;
-
-            border-radius: 18px;
-
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.96
-                );
+    font-size:
+        0.75rem;
+}
 
-            box-shadow:
-                0 8px 32px
-                rgba(
-                    31,
-                    64,
-                    79,
-                    0.06
-                );
-        }
-
-        div[data-testid="stTextArea"] label {
-            color: #334650 !important;
-
-            font-weight: 680 !important;
-            font-size: 0.9rem !important;
-        }
-
-        div[data-testid="stTextArea"] textarea {
-            min-height: 135px !important;
-
-            padding:
-                1rem
-                1.05rem !important;
-
-            border:
-                1px solid
-                #d8e3e7 !important;
-
-            border-radius: 13px !important;
-
-            background:
-                #f8fafb !important;
-
-            color:
-                #1d2d37 !important;
-
-            font-size: 1rem !important;
-            line-height: 1.65 !important;
-
-            box-shadow: none !important;
-        }
-
-        div[data-testid="stTextArea"] textarea:focus {
-            border-color:
-                #28859a !important;
-
-            background:
-                #ffffff !important;
-
-            box-shadow:
-                0 0 0 4px
-                rgba(
-                    40,
-                    133,
-                    154,
-                    0.10
-                ) !important;
-        }
-
-
-        /* ============================================
-           ボタン
-        ============================================ */
-
-        .stButton > button,
-        .stFormSubmitButton > button {
-            min-height: 3rem;
-
-            border-radius: 11px !important;
-
-            font-size: 0.95rem !important;
-            font-weight: 680 !important;
-
-            transition:
-                transform 0.16s ease,
-                box-shadow 0.16s ease,
-                background 0.16s ease,
-                border-color 0.16s ease !important;
-        }
-
-        .stButton > button {
-            border:
-                1px solid
-                #ccd9df !important;
-
-            background:
-                #ffffff !important;
-
-            color:
-                #283b46 !important;
-        }
-
-        .stButton > button:hover {
-            transform:
-                translateY(-1px);
-
-            border-color:
-                #2a8296 !important;
-
-            background:
-                #f2f9fa !important;
-
-            color:
-                #155c6d !important;
-
-            box-shadow:
-                0 5px 15px
-                rgba(
-                    25,
-                    95,
-                    115,
-                    0.08
-                ) !important;
-        }
-
-        .stFormSubmitButton > button {
-            border:
-                1px solid
-                #17677c !important;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #17647a,
-                    #27889a
-                )
-                !important;
-
-            color:
-                #ffffff !important;
-
-            box-shadow:
-                0 8px 22px
-                rgba(
-                    23,
-                    100,
-                    122,
-                    0.17
-                )
-                !important;
-        }
-
-        .stFormSubmitButton > button:hover {
-            transform:
-                translateY(-1px);
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #13576b,
-                    #21788a
-                )
-                !important;
-
-            color:
-                #ffffff !important;
-        }
-
-
-        /* ============================================
-           実践カード
-        ============================================ */
-
-        div[data-testid="stVerticalBlockBorderWrapper"] {
-            overflow: hidden;
-
-            border:
-                1px solid
-                #dce6ea !important;
-
-            border-radius:
-                19px !important;
-
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.98
-                ) !important;
-
-            box-shadow:
-                0 9px 32px
-                rgba(
-                    28,
-                    60,
-                    75,
-                    0.055
-                );
-
-            transition:
-                border-color 0.18s ease,
-                box-shadow 0.18s ease;
-        }
-
-        div[data-testid="stVerticalBlockBorderWrapper"]:hover {
-            border-color:
-                #c8dade !important;
-
-            box-shadow:
-                0 13px 38px
-                rgba(
-                    28,
-                    60,
-                    75,
-                    0.085
-                );
-        }
-
-        .practice-kicker {
-            display: inline-flex;
-
-            padding:
-                0.28rem
-                0.7rem;
-
-            margin-bottom: 0.75rem;
-
-            border-radius: 999px;
-
-            background:
-                #e9f5f7;
-
-            color:
-                #17647a;
-
-            font-size: 0.72rem;
-            font-weight: 760;
-
-            letter-spacing: 0.075em;
-        }
-
-        .practice-title {
-            margin:
-                0
-                0
-                0.45rem
-                0;
-
-            color:
-                #172733;
-
-            font-size: 1.28rem;
-            font-weight: 740;
-
-            line-height: 1.55;
-            letter-spacing: -0.02em;
-        }
-
-        .practice-biblio {
-            margin-bottom: 1rem;
-
-            color:
-                #7a8993;
-
-            font-size: 0.87rem;
-        }
-
-
-        /* ============================================
-           メタ情報
-        ============================================ */
-
-        .meta-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(
-                    3,
-                    minmax(0, 1fr)
-                );
+div[class*="st-key-practice_card_"]
+div[data-testid="column"] p {
+    margin-bottom:
+        0 !important;
 
-            gap: 0.7rem;
+    color:
+        #293b46;
 
-            margin:
-                0.9rem
-                0
-                1rem;
-        }
+    font-size:
+        0.92rem;
+}
 
-        .meta-box {
-            padding:
-                0.8rem
-                0.9rem;
 
-            border:
-                1px solid
-                #e4ebee;
+/* =========================================================
+   チャット
+========================================================= */
 
-            border-radius: 11px;
+div[data-testid="stChatMessage"] {
+    padding:
+        0.85rem
+        0.95rem;
 
-            background:
-                #f8fafb;
-        }
-
-        .meta-label {
-            margin-bottom: 0.25rem;
-
-            color:
-                #81919a;
+    margin-bottom:
+        0.7rem;
 
-            font-size: 0.7rem;
-            font-weight: 720;
-
-            letter-spacing: 0.06em;
-        }
-
-        .meta-value {
-            color:
-                #263945;
+    border:
+        1px solid
+        #e1e8eb;
 
-            font-size: 0.91rem;
-            font-weight: 640;
-
-            line-height: 1.5;
-        }
+    border-radius:
+        15px;
 
+    background:
+        #ffffff;
+}
 
-        /* ============================================
-           ICT情報
-        ============================================ */
+div[data-testid="stChatMessage"] p {
+    line-height:
+        1.78;
+}
 
-        .info-row {
-            display: flex;
-            align-items: flex-start;
 
-            gap: 0.75rem;
+/* =========================================================
+   Expander
+========================================================= */
 
-            margin:
-                0.9rem
-                0;
+div[data-testid="stExpander"] {
+    border:
+        1px solid
+        #e0e8eb !important;
 
-            padding:
-                0.8rem
-                0.95rem;
+    border-radius:
+        12px !important;
 
-            border-radius:
-                11px;
+    background:
+        #fafcfc !important;
+}
 
-            background:
-                #f7fafb;
-        }
+div[data-testid="stExpander"] summary {
+    color:
+        #53656f;
 
-        .info-icon {
-            min-width: 1.7rem;
+    font-weight:
+        620;
+}
 
-            font-size: 1.05rem;
-        }
 
-        .info-body {
-            flex: 1;
-        }
+/* =========================================================
+   Alert
+========================================================= */
 
-        .info-label {
-            margin-bottom: 0.15rem;
+div[data-testid="stAlert"] {
+    border-radius:
+        12px !important;
+}
 
-            color:
-                #697b85;
 
-            font-size: 0.73rem;
-            font-weight: 720;
-        }
+/* =========================================================
+   Divider
+========================================================= */
 
-        .info-value {
-            color:
-                #263945;
+hr {
+    margin-top:
+        2.1rem !important;
 
-            font-size: 0.93rem;
-            line-height: 1.6;
-        }
+    margin-bottom:
+        2.1rem !important;
 
+    border-color:
+        #e2e9ec !important;
+}
 
-        /* ============================================
-           教育効果
-        ============================================ */
 
-        .effect-box {
-            margin:
-                0.95rem
-                0
-                1rem;
+/* =========================================================
+   モバイル
+========================================================= */
 
-            padding:
-                0.85rem
-                0.95rem;
+@media (
+    max-width: 760px
+) {
 
-            border-left:
-                4px solid
-                #31889b;
+    .block-container {
+        padding-top: 1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 
-            border-radius:
-                0
-                11px
-                11px
-                0;
+    .st-key-app_header {
+        padding:
+            1.55rem
+            1.3rem;
 
-            background:
-                #f1f8f9;
-        }
+        border-radius:
+            18px;
+    }
 
-        .effect-title {
-            margin-bottom:
-                0.4rem;
+    .st-key-app_header h1 {
+        font-size:
+            2rem !important;
+    }
 
-            color:
-                #34616d;
+}
 
-            font-size:
-                0.75rem;
-
-            font-weight:
-                750;
-        }
-
-        .effect-item {
-            position: relative;
-
-            padding-left:
-                1.15rem;
-
-            margin-top:
-                0.32rem;
-
-            color:
-                #283d47;
-
-            font-size:
-                0.92rem;
-
-            line-height:
-                1.6;
-        }
-
-        .effect-item::before {
-            content: "✓";
-
-            position: absolute;
-            left: 0;
-
-            color:
-                #247c8f;
-
-            font-weight:
-                800;
-        }
-
-
-        /* ============================================
-           チャット
-        ============================================ */
-
-        div[data-testid="stChatMessage"] {
-            margin-bottom:
-                0.7rem;
-
-            padding:
-                0.85rem
-                0.95rem;
-
-            border:
-                1px solid
-                #e2e9ec;
-
-            border-radius:
-                15px;
-
-            background:
-                #ffffff;
-        }
-
-        div[data-testid="stChatMessage"] p {
-            line-height:
-                1.8;
-        }
-
-        div[data-testid="stChatInput"] {
-            border-radius:
-                14px;
-        }
-
-
-        /* ============================================
-           Expander
-        ============================================ */
-
-        div[data-testid="stExpander"] {
-            border:
-                1px solid
-                #e1e8eb !important;
-
-            border-radius:
-                12px !important;
-
-            background:
-                #fafcfc !important;
-        }
-
-        div[data-testid="stExpander"] summary {
-            color:
-                #53656f;
-
-            font-weight:
-                620;
-        }
-
-
-        /* ============================================
-           Streamlit alert
-        ============================================ */
-
-        div[data-testid="stAlert"] {
-            border-radius:
-                12px !important;
-        }
-
-
-        /* ============================================
-           Divider
-        ============================================ */
-
-        hr {
-            margin-top:
-                2rem !important;
-
-            margin-bottom:
-                2rem !important;
-
-            border-color:
-                #e3e9ec !important;
-        }
-
-
-        /* ============================================
-           モバイル
-        ============================================ */
-
-        @media (
-            max-width: 760px
-        ) {
-
-            .block-container {
-                padding-top:
-                    1rem;
-
-                padding-left:
-                    1rem;
-
-                padding-right:
-                    1rem;
-            }
-
-            .app-hero {
-                padding:
-                    1.7rem
-                    1.4rem;
-
-                border-radius:
-                    19px;
-            }
-
-            .hero-title {
-                font-size:
-                    2rem;
-            }
-
-            .meta-grid {
-                grid-template-columns:
-                    1fr;
-            }
-
-            .section-title {
-                font-size:
-                    1.6rem;
-            }
-        }
-
-        </style>
-        """
+</style>
+        """,
+        unsafe_allow_html=True,
     )
 
 
@@ -980,28 +735,23 @@ apply_custom_css()
 
 def display_header() -> None:
 
-    render_html(
-        """
-        <div class="app-hero">
+    with st.container(
+        key="app_header"
+    ):
+        st.caption(
+            "🔬 SCIENCE × ICT"
+        )
 
-            <div class="hero-badge">
-                🔬 SCIENCE × ICT
-            </div>
+        st.title(
+            "理科ICT授業支援システム"
+        )
 
-            <div class="hero-title">
-                理科ICT授業支援システム
-            </div>
-
-            <p class="hero-description">
-                理科教育研究に蓄積されたICT活用実践をもとに、
-                授業づくりの参考となる事例を提案します。
-                気になる実践については、
-                論文本文をもとに詳しく質問できます。
-            </p>
-
-        </div>
-        """
-    )
+        st.write(
+            "理科教育研究に蓄積されたICT活用実践をもとに、"
+            "授業づくりの参考となる事例を提案します。"
+            "気になる実践については、"
+            "論文本文をもとに詳しく質問できます。"
+        )
 
 
 # ============================================================
@@ -1143,64 +893,48 @@ def display_basic_information(
     candidate: dict[str, Any],
 ) -> None:
 
-    grade = escape_text(
-        candidate.get(
-            "grade"
+    columns = st.columns(
+        3
+    )
+
+    with columns[0]:
+
+        st.markdown(
+            "**学年**"
         )
-        or "記載なし"
-    )
 
-    field = escape_text(
-        candidate.get(
-            "field"
+        st.write(
+            candidate.get(
+                "grade"
+            )
+            or "記載なし"
         )
-        or "記載なし"
-    )
 
-    unit = escape_text(
-        candidate.get(
-            "unit"
+    with columns[1]:
+
+        st.markdown(
+            "**領域**"
         )
-        or "記載なし"
-    )
 
-    render_html(
-        f"""
-        <div class="meta-grid">
+        st.write(
+            candidate.get(
+                "field"
+            )
+            or "記載なし"
+        )
 
-            <div class="meta-box">
-                <div class="meta-label">
-                    学年
-                </div>
+    with columns[2]:
 
-                <div class="meta-value">
-                    {grade}
-                </div>
-            </div>
+        st.markdown(
+            "**単元**"
+        )
 
-            <div class="meta-box">
-                <div class="meta-label">
-                    領域
-                </div>
-
-                <div class="meta-value">
-                    {field}
-                </div>
-            </div>
-
-            <div class="meta-box">
-                <div class="meta-label">
-                    単元
-                </div>
-
-                <div class="meta-value">
-                    {unit}
-                </div>
-            </div>
-
-        </div>
-        """
-    )
+        st.write(
+            candidate.get(
+                "unit"
+            )
+            or "記載なし"
+        )
 
 
 def display_document_message(
@@ -1225,6 +959,7 @@ def display_document_message(
     with st.chat_message(
         role
     ):
+
         st.markdown(
             content
         )
@@ -1238,6 +973,7 @@ def display_document_message(
             role == "assistant"
             and sources
         ):
+
             with st.expander(
                 "回答の根拠を確認する"
             ):
@@ -1252,11 +988,13 @@ def display_document_message(
                     )
 
                     if chunk_index == "":
+
                         st.markdown(
                             "- 論文本文の該当箇所"
                         )
 
                     else:
+
                         st.markdown(
                             "- 論文本文の該当箇所"
                             f"（部分 {chunk_index}）"
@@ -1286,17 +1024,21 @@ def display_document_conversation(
     ).strip()
 
     if not practice_id:
+
         st.warning(
             "この実践を識別する情報を"
             "確認できません。"
         )
+
         return
 
     if not paper_id:
+
         st.warning(
             "この実践に対応する論文本文を"
             "確認できません。"
         )
+
         return
 
     initialize_document_state(
@@ -1323,35 +1065,26 @@ def display_document_conversation(
 
     st.divider()
 
-    render_html(
-        """
-        <div class="section-header">
+    st.markdown(
+        "### この実践について質問する"
+    )
 
-            <div class="section-eyebrow">
-                PAPER ASSISTANT
-            </div>
-
-            <div class="section-title">
-                この実践について質問する
-            </div>
-
-            <div class="section-description">
-                選択した実践の論文本文をもとに回答します。
-                研究知見を別の学年や単元へ応用する相談もできます。
-            </div>
-
-        </div>
-        """
+    st.caption(
+        "選択した実践の論文本文をもとに回答します。"
+        "研究知見を別の学年や単元へ応用する相談もできます。"
     )
 
     if (
         not messages
         and not pending_query
     ):
+
         st.info(
+            "例えば、"
             "「授業展開は？」"
             "「ICTをどのように活用しましたか？」"
-            "「別の学年へ応用するとしたら？」"
+            "「別の学年へ応用するとしたら、"
+            "どのような授業が考えられますか？」"
             "などと質問できます。"
         )
 
@@ -1360,17 +1093,19 @@ def display_document_conversation(
     # --------------------------------------------------------
 
     for message in messages:
+
         display_document_message(
             message=message
         )
 
     # --------------------------------------------------------
-    # 回答生成
+    # 回答
     # --------------------------------------------------------
 
     if pending_query:
 
         try:
+
             next_turn = (
                 answer_count + 1
             )
@@ -1416,8 +1151,9 @@ def display_document_conversation(
             )
 
             if not answer:
+
                 raise RuntimeError(
-                    "error"
+                    "保存済み回答が空です。"
                 )
 
             assistant_message = {
@@ -1469,9 +1205,11 @@ def display_document_conversation(
     )
 
     if not normalized_question:
+
         st.warning(
             "質問を入力してください。"
         )
+
         return
 
     messages.append(
@@ -1557,19 +1295,18 @@ def display_practice_card(
     )
 
     with st.container(
-        border=True
+        border=True,
+        key=(
+            f"practice_card_{practice_id}"
+        ),
     ):
 
-        render_html(
-            f"""
-            <div class="practice-kicker">
-                PRACTICE {escape_text(index)}
-            </div>
+        st.markdown(
+            f"### 実践 {index}"
+        )
 
-            <div class="practice-title">
-                {escape_text(title)}
-            </div>
-            """
+        st.markdown(
+            f"#### {title}"
         )
 
         bibliographic_values = [
@@ -1587,12 +1324,8 @@ def display_practice_card(
 
         if bibliographic_text:
 
-            render_html(
-                f"""
-                <div class="practice-biblio">
-                    {escape_text(bibliographic_text)}
-                </div>
-                """
+            st.caption(
+                bibliographic_text
             )
 
         display_basic_information(
@@ -1612,55 +1345,22 @@ def display_practice_card(
 
         if ict_text:
 
-            render_html(
-                f"""
-                <div class="info-row">
-
-                    <div class="info-icon">
-                        💻
-                    </div>
-
-                    <div class="info-body">
-
-                        <div class="info-label">
-                            使用したICT
-                        </div>
-
-                        <div class="info-value">
-                            {escape_text(ict_text)}
-                        </div>
-
-                    </div>
-
-                </div>
-                """
+            st.markdown(
+                f"**💻 使用したICT**  \n"
+                f"{ict_text}"
             )
 
         if effects:
 
-            effect_html = ""
+            st.markdown(
+                "**✓ この実践で確認されたこと**"
+            )
 
             for effect in effects:
 
-                effect_html += (
-                    '<div class="effect-item">'
-                    f"{escape_text(effect)}"
-                    "</div>"
+                st.markdown(
+                    f"- {effect}"
                 )
-
-            render_html(
-                f"""
-                <div class="effect-box">
-
-                    <div class="effect-title">
-                        この実践で確認されたこと
-                    </div>
-
-                    {effect_html}
-
-                </div>
-                """
-            )
 
         button_text = (
             "閉じる"
@@ -1705,42 +1405,36 @@ def display_practice_card(
 
 def display_request_form() -> None:
 
-    render_html(
-        """
-        <div class="section-header">
+    with st.container(
+        key="request_section"
+    ):
 
-            <div class="section-eyebrow">
-                LESSON DESIGN
-            </div>
+        st.markdown(
+            "## 授業づくりについて相談する"
+        )
 
-            <div class="section-title">
-                授業づくりについて相談する
-            </div>
-
-            <div class="section-description">
-                学年・単元・使いたいICT・期待する学習効果などを、
-                自由な文章で入力してください。
-            </div>
-
-        </div>
-        """
-    )
+        st.write(
+            "学年・単元・使いたいICT・期待する学習効果などを、"
+            "自由な文章で入力してください。"
+        )
 
     with st.form(
         key="practice_request_form",
         clear_on_submit=False,
     ):
 
-        user_request = st.text_area(
-            "相談内容",
-            value=(
-                st.session_state.user_request
-            ),
-            placeholder=(
-                "例：観察に意欲的に取り組めるような"
-                "授業にしたいです。"
-            ),
-            height=130,
+        user_request = (
+            st.text_area(
+                "相談内容",
+                value=(
+                    st.session_state.user_request
+                ),
+                placeholder=(
+                    "例：観察に意欲的に取り組めるような"
+                    "授業にしたいです。"
+                ),
+                height=130,
+            )
         )
 
         submitted = (
@@ -1796,7 +1490,7 @@ def display_request_form() -> None:
         if not practice_candidates:
 
             raise RuntimeError(
-                "error"
+                "実践候補を読み込めませんでした。"
             )
 
         st.session_state.user_request = (
@@ -1843,27 +1537,19 @@ def display_practice_candidates() -> None:
 
     st.divider()
 
-    render_html(
-        f"""
-        <div class="section-header">
+    with st.container(
+        key="results_header"
+    ):
 
-            <div class="section-eyebrow">
-                RECOMMENDED PRACTICES
-            </div>
+        st.markdown(
+            "## おすすめの授業実践"
+        )
 
-            <div class="section-title">
-                おすすめの授業実践
-            </div>
-
-            <div class="section-description">
-                {len(candidates)}件の実践を提案します。
-                気になる実践を開くと、
-                論文本文をもとに詳しく質問できます。
-            </div>
-
-        </div>
-        """
-    )
+        st.write(
+            f"{len(candidates)}件の実践を提案します。"
+            "気になる実践を開くと、"
+            "論文本文をもとに詳しく質問できます。"
+        )
 
     if not candidates:
 
