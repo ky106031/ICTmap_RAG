@@ -195,7 +195,7 @@ body,
 }
 
 p {
-    line-height: 1.72;
+    line-height: 1.68;
 }
 
 
@@ -342,7 +342,7 @@ div[data-testid="stCaptionContainer"] p {
 
 
 /* =========================================================
-   検索結果見出しの出現
+   検索結果見出し
 ========================================================= */
 
 .st-key-results_header {
@@ -424,11 +424,6 @@ div[data-testid="stTextArea"] textarea {
 
     box-shadow:
         none !important;
-
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease,
-        background 0.15s ease;
 }
 
 div[data-testid="stTextArea"] textarea:focus {
@@ -487,34 +482,6 @@ div[data-testid="stTextArea"] textarea:focus {
             121,
             0.15
         ) !important;
-
-    transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease !important;
-}
-
-.stFormSubmitButton > button:hover {
-    transform:
-        translateY(-1px);
-
-    background:
-        linear-gradient(
-            135deg,
-            #14586a,
-            #217b8d
-        ) !important;
-
-    color:
-        #ffffff !important;
-
-    box-shadow:
-        0 8px 20px
-        rgba(
-            23,
-            101,
-            121,
-            0.19
-        ) !important;
 }
 
 
@@ -543,21 +510,9 @@ div[data-testid="stTextArea"] textarea:focus {
 
     font-weight:
         650 !important;
-
-    box-shadow:
-        none !important;
-
-    transition:
-        transform 0.15s ease,
-        border-color 0.15s ease,
-        background 0.15s ease,
-        box-shadow 0.15s ease !important;
 }
 
 .stButton > button:hover {
-    transform:
-        translateY(-1px);
-
     border-color:
         #278397 !important;
 
@@ -566,20 +521,11 @@ div[data-testid="stTextArea"] textarea:focus {
 
     color:
         #155a6b !important;
-
-    box-shadow:
-        0 5px 14px
-        rgba(
-            25,
-            95,
-            115,
-            0.06
-        ) !important;
 }
 
 
 /* =========================================================
-   実践カード
+   実践カード出現
 ========================================================= */
 
 div[class*="st-key-practice_card_"] {
@@ -597,43 +543,22 @@ div[class*="st-key-practice_card_"] {
         forwards;
 }
 
-
-/* 実践1 */
-
 div[class*="st-key-practice_card_1_"] {
-    animation-delay:
-        0.04s;
+    animation-delay: 0.04s;
 }
-
-
-/* 実践2 */
 
 div[class*="st-key-practice_card_2_"] {
-    animation-delay:
-        0.15s;
+    animation-delay: 0.15s;
 }
-
-
-/* 実践3 */
 
 div[class*="st-key-practice_card_3_"] {
-    animation-delay:
-        0.26s;
+    animation-delay: 0.26s;
 }
 
 
-/* 4件目以降 */
-
-div[class*="st-key-practice_card_4_"] {
-    animation-delay:
-        0.37s;
-}
-
-div[class*="st-key-practice_card_5_"] {
-    animation-delay:
-        0.48s;
-}
-
+/* =========================================================
+   実践カード本体
+========================================================= */
 
 div[data-testid="stVerticalBlockBorderWrapper"] {
     overflow: hidden;
@@ -656,50 +581,47 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
             73,
             0.045
         );
-
-    transition:
-        border-color 0.16s ease,
-        transform 0.16s ease,
-        box-shadow 0.16s ease;
 }
 
-div[data-testid="stVerticalBlockBorderWrapper"]:hover {
-    border-color:
-        #c7dadd !important;
 
-    box-shadow:
-        0 12px 32px
-        rgba(
-            27,
-            60,
-            73,
-            0.075
-        );
+/*
+カード内部の縦方向の間隔を圧縮
+*/
+
+div[class*="st-key-practice_card_"]
+div[data-testid="stVerticalBlock"] {
+    gap: 0.58rem !important;
 }
 
 
 /* =========================================================
-   実践番号
+   「実践 1」
 ========================================================= */
 
 div[class*="st-key-practice_card_"] h3 {
+    margin-top:
+        0 !important;
+
     margin-bottom:
-        0.35rem !important;
+        0.15rem !important;
 
     color:
-        #22788b !important;
+        #176579 !important;
 
     font-size:
-        0.76rem !important;
+        1.18rem !important;
 
     font-weight:
-        760 !important;
+        780 !important;
+
+    line-height:
+        1.3 !important;
 
     letter-spacing:
-        0.08em !important;
+        -0.01em !important;
 
     text-transform:
-        uppercase;
+        none !important;
 }
 
 
@@ -712,19 +634,19 @@ div[class*="st-key-practice_card_"] h4 {
         0 !important;
 
     margin-bottom:
-        0.15rem !important;
+        0.05rem !important;
 
     color:
         #172a34 !important;
 
     font-size:
-        1.16rem !important;
+        1.22rem !important;
 
     font-weight:
-        710 !important;
+        720 !important;
 
     line-height:
-        1.48 !important;
+        1.45 !important;
 
     letter-spacing:
         -0.015em !important;
@@ -732,16 +654,28 @@ div[class*="st-key-practice_card_"] h4 {
 
 
 /* =========================================================
-   著者
+   著者・発行年
 ========================================================= */
 
 div[class*="st-key-practice_card_"]
 div[data-testid="stCaptionContainer"] p {
+    margin-top:
+        0 !important;
+
+    margin-bottom:
+        0.15rem !important;
+
     color:
-        #819099 !important;
+        #263841 !important;
+
+    opacity:
+        1 !important;
 
     font-size:
-        0.82rem !important;
+        0.88rem !important;
+
+    font-weight:
+        500 !important;
 }
 
 
@@ -752,21 +686,21 @@ div[data-testid="stCaptionContainer"] p {
 div[class*="st-key-practice_card_"]
 div[data-testid="stHorizontalBlock"] {
     gap:
-        0.6rem;
+        0.55rem;
 }
 
 div[class*="st-key-practice_card_"]
 div[data-testid="column"] {
     padding:
-        0.62rem
-        0.72rem;
+        0.5rem
+        0.68rem;
 
     border:
         1px solid
         #e5ebed;
 
     border-radius:
-        10px;
+        9px;
 
     background:
         #f8fafb;
@@ -775,10 +709,10 @@ div[data-testid="column"] {
 div[class*="st-key-practice_card_"]
 div[data-testid="column"] strong {
     color:
-        #83929a;
+        #536570;
 
     font-size:
-        0.7rem;
+        0.78rem;
 
     font-weight:
         700;
@@ -786,6 +720,9 @@ div[data-testid="column"] strong {
 
 div[class*="st-key-practice_card_"]
 div[data-testid="column"] p {
+    margin-top:
+        0.12rem !important;
+
     margin-bottom:
         0 !important;
 
@@ -793,16 +730,37 @@ div[data-testid="column"] p {
         #293c46;
 
     font-size:
-        0.88rem;
+        0.9rem;
 }
 
 
 /* =========================================================
-   詳細エリアのアニメーション
+   ICT / 教育効果
+========================================================= */
+
+div[class*="st-key-practice_card_"] p {
+    margin-top:
+        0.15rem;
+
+    margin-bottom:
+        0.15rem;
+}
+
+div[class*="st-key-practice_card_"] strong {
+    color:
+        #263a44;
+
+    font-weight:
+        720;
+}
+
+
+/* =========================================================
+   詳細質問エリア
 ========================================================= */
 
 .st-key-document_section {
-    margin-top: 1rem;
+    margin-top: 0.8rem;
 
     animation:
         fadeSlideUp
@@ -811,30 +769,45 @@ div[data-testid="column"] p {
         both;
 }
 
+
+/*
+「この実践について質問する」
+*/
+
 .st-key-document_section h3 {
+    margin-top:
+        0 !important;
+
     margin-bottom:
-        0.25rem !important;
+        0.35rem !important;
 
     color:
-        var(--text-main);
+        #176579 !important;
 
     font-size:
-        1.48rem !important;
+        1.72rem !important;
 
     font-weight:
-        720 !important;
+        760 !important;
+
+    line-height:
+        1.35 !important;
 
     letter-spacing:
-        -0.025em !important;
+        -0.03em !important;
 }
+
 
 .st-key-document_section
 div[data-testid="stCaptionContainer"] p {
     color:
-        var(--text-sub) !important;
+        #546772 !important;
 
     font-size:
-        0.88rem !important;
+        0.96rem !important;
+
+    line-height:
+        1.65 !important;
 }
 
 
@@ -844,8 +817,8 @@ div[data-testid="stCaptionContainer"] p {
 
 div[data-testid="stChatMessage"] {
     padding:
-        0.82rem
-        0.92rem;
+        0.9rem
+        1rem;
 
     margin-bottom:
         0.65rem;
@@ -876,10 +849,130 @@ div[data-testid="stChatMessage"] {
         both;
 }
 
+
+/* 回答本文 */
+
 div[data-testid="stChatMessage"] p {
+    font-size:
+        0.98rem;
+
     line-height:
-        1.75;
+        1.78;
+
+    color:
+        #263740;
 }
+
+
+/* =========================================================
+   Document RAG回答内の見出し
+========================================================= */
+
+/*
+## この実践から参考にできる点
+など
+*/
+
+div[data-testid="stChatMessage"] h2 {
+    margin-top:
+        1.7rem !important;
+
+    margin-bottom:
+        0.7rem !important;
+
+    color:
+        #173b47 !important;
+
+    font-size:
+        1.48rem !important;
+
+    font-weight:
+        760 !important;
+
+    line-height:
+        1.4 !important;
+
+    letter-spacing:
+        -0.025em !important;
+}
+
+
+/*
+### 見出しの場合
+*/
+
+div[data-testid="stChatMessage"] h3 {
+    margin-top:
+        1.5rem !important;
+
+    margin-bottom:
+        0.6rem !important;
+
+    color:
+        #173b47 !important;
+
+    font-size:
+        1.32rem !important;
+
+    font-weight:
+        750 !important;
+
+    line-height:
+        1.4 !important;
+}
+
+
+/*
+Markdownが
+**この実践から参考にできる点**
+のように出力された場合にも対応
+*/
+
+div[data-testid="stChatMessage"]
+p:has(> strong:only-child) {
+    margin-top:
+        1.5rem !important;
+
+    margin-bottom:
+        0.6rem !important;
+
+    color:
+        #173b47 !important;
+
+    font-size:
+        1.24rem !important;
+
+    font-weight:
+        750 !important;
+}
+
+div[data-testid="stChatMessage"]
+p:has(> strong:only-child) strong {
+    font-size:
+        inherit !important;
+
+    font-weight:
+        inherit !important;
+}
+
+
+/* 箇条書き */
+
+div[data-testid="stChatMessage"] li {
+    margin-bottom:
+        0.35rem;
+
+    font-size:
+        0.98rem;
+
+    line-height:
+        1.7;
+}
+
+
+/* =========================================================
+   チャット入力
+========================================================= */
 
 div[data-testid="stChatInput"] {
     border-radius:
@@ -905,23 +998,13 @@ div[data-testid="stExpander"] {
 
 div[data-testid="stExpander"] summary {
     color:
-        #576871;
+        #465b66;
 
     font-size:
-        0.87rem;
+        0.9rem;
 
     font-weight:
-        620;
-}
-
-
-/* =========================================================
-   Alert
-========================================================= */
-
-div[data-testid="stAlert"] {
-    border-radius:
-        11px !important;
+        650;
 }
 
 
@@ -931,10 +1014,10 @@ div[data-testid="stAlert"] {
 
 hr {
     margin-top:
-        2.4rem !important;
+        1.8rem !important;
 
     margin-bottom:
-        2.4rem !important;
+        1.8rem !important;
 
     border-color:
         #e4eaec !important;
@@ -942,17 +1025,7 @@ hr {
 
 
 /* =========================================================
-   Reset
-========================================================= */
-
-.st-key-reset_area {
-    margin-top:
-        0.3rem;
-}
-
-
-/* =========================================================
-   アニメーションを減らす設定への対応
+   アニメーション軽減
 ========================================================= */
 
 @media (
@@ -970,9 +1043,6 @@ hr {
 
         transition-duration:
             0.01ms !important;
-
-        scroll-behavior:
-            auto !important;
     }
 }
 
@@ -1105,7 +1175,6 @@ def initialize_document_state(
         practice_id
         not in st.session_state.document_messages
     ):
-
         st.session_state.document_messages[
             practice_id
         ] = []
@@ -1114,7 +1183,6 @@ def initialize_document_state(
         practice_id
         not in st.session_state.document_pending_queries
     ):
-
         st.session_state.document_pending_queries[
             practice_id
         ] = None
@@ -1123,7 +1191,6 @@ def initialize_document_state(
         practice_id
         not in st.session_state.document_answer_counts
     ):
-
         st.session_state.document_answer_counts[
             practice_id
         ] = 0
@@ -1137,11 +1204,9 @@ def toggle_practice(
         st.session_state.expanded_practice_id
         == practice_id
     ):
-
         st.session_state.expanded_practice_id = None
 
     else:
-
         st.session_state.expanded_practice_id = (
             practice_id
         )
@@ -1166,7 +1231,6 @@ def display_demo_error(
     with st.expander(
         "エラーの詳細"
     ):
-
         st.code(
             str(error)
         )
@@ -1394,19 +1458,11 @@ def display_document_conversation(
             "などと質問できます。"
         )
 
-    # --------------------------------------------------------
-    # 会話履歴
-    # --------------------------------------------------------
-
     for message in messages:
 
         display_document_message(
             message=message
         )
-
-    # --------------------------------------------------------
-    # 回答
-    # --------------------------------------------------------
 
     if pending_query:
 
@@ -1491,10 +1547,6 @@ def display_document_conversation(
             display_demo_error(
                 error=error
             )
-
-    # --------------------------------------------------------
-    # 質問入力
-    # --------------------------------------------------------
 
     user_question = st.chat_input(
         "この実践について質問してください",
@@ -1600,9 +1652,6 @@ def display_practice_card(
         == practice_id
     )
 
-    # indexをkeyに含めることで、
-    # CSS側で1件目・2件目・3件目に
-    # 個別のanimation-delayを設定できる。
     card_key = (
         f"practice_card_{index}_{practice_id}"
     )
@@ -1635,15 +1684,14 @@ def display_practice_card(
 
         if bibliographic_text:
 
-            st.caption(
+            # captionではなく通常テキストで表示
+            st.write(
                 bibliographic_text
             )
 
         display_basic_information(
             candidate
         )
-
-        st.write("")
 
         ict_values = [
             *hardware,
@@ -1662,7 +1710,7 @@ def display_practice_card(
                 "**ICT**"
             )
 
-            st.caption(
+            st.write(
                 ict_text
             )
 
@@ -1900,28 +1948,24 @@ def display_practice_candidates() -> None:
 
     st.divider()
 
-    with st.container(
-        key="reset_area"
-    ):
+    reset_columns = st.columns(
+        [
+            2.4,
+            1,
+        ]
+    )
 
-        reset_columns = st.columns(
-            [
-                2.4,
-                1,
-            ]
-        )
+    with reset_columns[1]:
 
-        with reset_columns[1]:
+        if st.button(
+            "最初からやり直す",
+            key="reset_all_button",
+            use_container_width=True,
+        ):
 
-            if st.button(
-                "最初からやり直す",
-                key="reset_all_button",
-                use_container_width=True,
-            ):
+            reset_all()
 
-                reset_all()
-
-                st.rerun()
+            st.rerun()
 
 
 # ============================================================
