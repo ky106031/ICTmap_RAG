@@ -11,17 +11,974 @@ from rag_pipeline import run_pipeline
 # ============================================================
 
 st.set_page_config(
-    page_title="理科ICT授業実践アシスタント",
+    page_title="理科ICT授業支援システム",
     page_icon="🔬",
     layout="centered",
 )
 
-st.title("理科ICT授業実践アシスタント")
 
-st.caption(
-    "授業づくりの条件を入力すると、参考になる実践事例を提案します。"
-    "気になる実践については、論文本文をもとに詳しく質問できます。"
-)
+# ============================================================
+# カスタムCSS
+# ============================================================
+
+def apply_custom_css() -> None:
+
+    st.markdown(
+        """
+<style>
+
+/* =========================================================
+   カラー
+========================================================= */
+
+:root {
+    --primary: #176579;
+    --primary-dark: #124b5a;
+    --primary-soft: #edf6f7;
+
+    --text-main: #192b35;
+    --text-sub: #6f7e87;
+
+    --border: #dce5e8;
+    --surface: #ffffff;
+    --surface-soft: #f7f9fa;
+}
+
+
+/* =========================================================
+   アニメーション
+========================================================= */
+
+@keyframes fadeSlideUp {
+
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@keyframes softFade {
+
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+@keyframes answerAppear {
+
+    0% {
+        opacity: 0;
+        transform: translateY(9px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   基本
+========================================================= */
+
+.stApp {
+    background:
+        linear-gradient(
+            180deg,
+            #f3f7f8 0px,
+            #f8fafb 310px,
+            #f8fafb 100%
+        );
+}
+
+.block-container {
+    max-width: 980px;
+    padding-top: 1.6rem;
+    padding-bottom: 5rem;
+}
+
+html,
+body,
+[class*="css"] {
+    color: var(--text-main);
+}
+
+p {
+    line-height: 1.68;
+}
+
+
+/* =========================================================
+   上部ヘッダー
+========================================================= */
+
+.st-key-app_header {
+    margin-bottom: 3rem;
+
+    padding:
+        1.75rem
+        2rem
+        1.8rem
+        2rem;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #164553 0%,
+            #176579 58%,
+            #268799 100%
+        );
+
+    box-shadow:
+        0 16px 44px
+        rgba(22, 74, 88, 0.14);
+
+    animation:
+        softFade
+        0.55s
+        ease-out
+        both;
+}
+
+.st-key-app_header h1 {
+    margin-top: 0.45rem !important;
+    margin-bottom: 0.45rem !important;
+
+    color: #ffffff !important;
+
+    font-size: 2.55rem !important;
+    font-weight: 760 !important;
+
+    line-height: 1.2 !important;
+    letter-spacing: -0.045em !important;
+}
+
+.st-key-app_header p {
+    max-width: 720px;
+
+    margin-bottom: 0 !important;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.82
+        ) !important;
+
+    font-size: 0.95rem !important;
+    line-height: 1.7;
+}
+
+.st-key-app_header
+div[data-testid="stCaptionContainer"] p {
+    display: inline-block;
+
+    width: auto;
+
+    margin: 0 !important;
+
+    padding:
+        0.28rem
+        0.7rem;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.22
+        );
+
+    border-radius: 999px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.09
+        );
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.92
+        ) !important;
+
+    font-size: 0.72rem !important;
+    font-weight: 700;
+
+    letter-spacing: 0.045em;
+}
+
+
+/* =========================================================
+   セクション見出し
+========================================================= */
+
+.st-key-request_section {
+    margin-bottom: 1.15rem;
+}
+
+.st-key-request_section h2,
+.st-key-results_header h2 {
+    margin-top: 0 !important;
+    margin-bottom: 0.3rem !important;
+
+    color: var(--text-main) !important;
+
+    font-size: 1.8rem !important;
+    font-weight: 740 !important;
+
+    line-height: 1.3 !important;
+    letter-spacing: -0.035em !important;
+}
+
+.st-key-request_section p,
+.st-key-results_header p {
+    margin-bottom: 0 !important;
+
+    color: var(--text-sub) !important;
+
+    font-size: 0.92rem !important;
+}
+
+
+/* =========================================================
+   検索結果見出し
+========================================================= */
+
+.st-key-results_header {
+    margin-bottom: 1.1rem;
+
+    animation:
+        fadeSlideUp
+        0.42s
+        ease-out
+        both;
+}
+
+
+/* =========================================================
+   入力フォーム
+========================================================= */
+
+div[data-testid="stForm"] {
+    padding:
+        1.25rem
+        1.3rem
+        1.2rem;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 17px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.98
+        );
+
+    box-shadow:
+        0 7px 26px
+        rgba(
+            27,
+            60,
+            73,
+            0.045
+        );
+}
+
+div[data-testid="stTextArea"] label {
+    color: #40525c !important;
+
+    font-size: 0.86rem !important;
+    font-weight: 670 !important;
+}
+
+div[data-testid="stTextArea"] textarea {
+    min-height: 126px !important;
+
+    padding:
+        0.95rem
+        1rem !important;
+
+    border:
+        1px solid
+        #d9e2e6 !important;
+
+    border-radius:
+        12px !important;
+
+    background:
+        #f8fafb !important;
+
+    color:
+        #1e3039 !important;
+
+    font-size:
+        0.98rem !important;
+
+    line-height:
+        1.65 !important;
+
+    box-shadow:
+        none !important;
+}
+
+div[data-testid="stTextArea"] textarea:focus {
+    border-color:
+        #268096 !important;
+
+    background:
+        #ffffff !important;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            38,
+            128,
+            150,
+            0.09
+        ) !important;
+}
+
+
+/* =========================================================
+   フォーム送信ボタン
+========================================================= */
+
+.stFormSubmitButton > button {
+    min-height: 2.85rem;
+
+    border:
+        1px solid
+        #176579 !important;
+
+    border-radius:
+        10px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #176579,
+            #268799
+        ) !important;
+
+    color:
+        #ffffff !important;
+
+    font-size:
+        0.9rem !important;
+
+    font-weight:
+        680 !important;
+
+    box-shadow:
+        0 6px 17px
+        rgba(
+            23,
+            101,
+            121,
+            0.15
+        ) !important;
+}
+
+
+/* =========================================================
+   通常ボタン
+========================================================= */
+
+.stButton > button {
+    min-height: 2.8rem;
+
+    border:
+        1px solid
+        #ccd9dd !important;
+
+    border-radius:
+        10px !important;
+
+    background:
+        #ffffff !important;
+
+    color:
+        #2c414b !important;
+
+    font-size:
+        0.9rem !important;
+
+    font-weight:
+        650 !important;
+}
+
+.stButton > button:hover {
+    border-color:
+        #278397 !important;
+
+    background:
+        #f3f9fa !important;
+
+    color:
+        #155a6b !important;
+}
+
+
+/* =========================================================
+   実践カード出現
+========================================================= */
+
+div[class*="st-key-practice_card_"] {
+    opacity: 0;
+
+    animation:
+        fadeSlideUp
+        0.52s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        forwards;
+}
+
+div[class*="st-key-practice_card_1_"] {
+    animation-delay: 0.04s;
+}
+
+div[class*="st-key-practice_card_2_"] {
+    animation-delay: 0.15s;
+}
+
+div[class*="st-key-practice_card_3_"] {
+    animation-delay: 0.26s;
+}
+
+
+/* =========================================================
+   実践カード本体
+========================================================= */
+
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    overflow: hidden;
+
+    border:
+        1px solid
+        #dde6e9 !important;
+
+    border-radius:
+        17px !important;
+
+    background:
+        #ffffff !important;
+
+    box-shadow:
+        0 7px 26px
+        rgba(
+            27,
+            60,
+            73,
+            0.045
+        );
+}
+
+
+/* カード内部の縦方向の間隔 */
+
+div[class*="st-key-practice_card_"]
+div[data-testid="stVerticalBlock"] {
+    gap: 0.58rem !important;
+}
+
+
+/* =========================================================
+   実践番号
+========================================================= */
+
+div[class*="st-key-practice_card_"] h3 {
+    margin-top:
+        0 !important;
+
+    margin-bottom:
+        0.15rem !important;
+
+    color:
+        #176579 !important;
+
+    font-size:
+        1.18rem !important;
+
+    font-weight:
+        780 !important;
+
+    line-height:
+        1.3 !important;
+
+    letter-spacing:
+        -0.01em !important;
+}
+
+
+/* =========================================================
+   論文タイトル
+========================================================= */
+
+div[class*="st-key-practice_card_"] h4 {
+    margin-top:
+        0 !important;
+
+    margin-bottom:
+        0.05rem !important;
+
+    color:
+        #172a34 !important;
+
+    font-size:
+        1.22rem !important;
+
+    font-weight:
+        720 !important;
+
+    line-height:
+        1.45 !important;
+
+    letter-spacing:
+        -0.015em !important;
+}
+
+
+/* =========================================================
+   学年・領域・単元
+========================================================= */
+
+div[class*="st-key-practice_card_"]
+div[data-testid="stHorizontalBlock"] {
+    gap:
+        0.55rem;
+}
+
+div[class*="st-key-practice_card_"]
+div[data-testid="column"] {
+    padding:
+        0.5rem
+        0.68rem;
+
+    border:
+        1px solid
+        #e5ebed;
+
+    border-radius:
+        9px;
+
+    background:
+        #f8fafb;
+}
+
+div[class*="st-key-practice_card_"]
+div[data-testid="column"] strong {
+    color:
+        #536570;
+
+    font-size:
+        0.78rem;
+
+    font-weight:
+        700;
+}
+
+div[class*="st-key-practice_card_"]
+div[data-testid="column"] p {
+    margin-top:
+        0.12rem !important;
+
+    margin-bottom:
+        0 !important;
+
+    color:
+        #293c46;
+
+    font-size:
+        0.9rem;
+}
+
+
+/* =========================================================
+   ICT / 教育効果
+========================================================= */
+
+div[class*="st-key-practice_card_"] p {
+    margin-top:
+        0.15rem;
+
+    margin-bottom:
+        0.15rem;
+}
+
+div[class*="st-key-practice_card_"] strong {
+    color:
+        #263a44;
+
+    font-weight:
+        720;
+}
+
+
+/* =========================================================
+   詳細質問エリア
+========================================================= */
+
+.st-key-document_section {
+    margin-top: 0.8rem;
+
+    animation:
+        fadeSlideUp
+        0.38s
+        ease-out
+        both;
+}
+
+.st-key-document_section h3 {
+    margin-top:
+        0 !important;
+
+    margin-bottom:
+        0.35rem !important;
+
+    color:
+        #176579 !important;
+
+    font-size:
+        1.72rem !important;
+
+    font-weight:
+        760 !important;
+
+    line-height:
+        1.35 !important;
+
+    letter-spacing:
+        -0.03em !important;
+}
+
+.st-key-document_section
+div[data-testid="stCaptionContainer"] p {
+    color:
+        #546772 !important;
+
+    font-size:
+        0.96rem !important;
+
+    line-height:
+        1.65 !important;
+}
+
+
+/* =========================================================
+   チャット
+========================================================= */
+
+div[data-testid="stChatMessage"] {
+    padding:
+        0.9rem
+        1rem;
+
+    margin-bottom:
+        0.65rem;
+
+    border:
+        1px solid
+        #e2e9eb;
+
+    border-radius:
+        14px;
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 2px 8px
+        rgba(
+            30,
+            60,
+            72,
+            0.025
+        );
+
+    animation:
+        answerAppear
+        0.38s
+        ease-out
+        both;
+}
+
+div[data-testid="stChatMessage"] p {
+    font-size:
+        0.98rem;
+
+    line-height:
+        1.78;
+
+    color:
+        #263740;
+}
+
+
+/* =========================================================
+   Document RAG回答内の見出し
+========================================================= */
+
+div[data-testid="stChatMessage"] h2 {
+    margin-top:
+        1.7rem !important;
+
+    margin-bottom:
+        0.7rem !important;
+
+    color:
+        #173b47 !important;
+
+    font-size:
+        1.48rem !important;
+
+    font-weight:
+        760 !important;
+
+    line-height:
+        1.4 !important;
+
+    letter-spacing:
+        -0.025em !important;
+}
+
+div[data-testid="stChatMessage"] h3 {
+    margin-top:
+        1.5rem !important;
+
+    margin-bottom:
+        0.6rem !important;
+
+    color:
+        #173b47 !important;
+
+    font-size:
+        1.32rem !important;
+
+    font-weight:
+        750 !important;
+
+    line-height:
+        1.4 !important;
+}
+
+div[data-testid="stChatMessage"]
+p:has(> strong:only-child) {
+    margin-top:
+        1.5rem !important;
+
+    margin-bottom:
+        0.6rem !important;
+
+    color:
+        #173b47 !important;
+
+    font-size:
+        1.24rem !important;
+
+    font-weight:
+        750 !important;
+}
+
+div[data-testid="stChatMessage"]
+p:has(> strong:only-child) strong {
+    font-size:
+        inherit !important;
+
+    font-weight:
+        inherit !important;
+}
+
+div[data-testid="stChatMessage"] li {
+    margin-bottom:
+        0.35rem;
+
+    font-size:
+        0.98rem;
+
+    line-height:
+        1.7;
+}
+
+
+/* =========================================================
+   チャット入力
+========================================================= */
+
+div[data-testid="stChatInput"] {
+    border-radius:
+        13px;
+}
+
+
+/* =========================================================
+   Expander
+========================================================= */
+
+div[data-testid="stExpander"] {
+    border:
+        1px solid
+        #e1e8ea !important;
+
+    border-radius:
+        11px !important;
+
+    background:
+        #fafcfc !important;
+}
+
+div[data-testid="stExpander"] summary {
+    color:
+        #465b66;
+
+    font-size:
+        0.9rem;
+
+    font-weight:
+        650;
+}
+
+
+/* =========================================================
+   Divider
+========================================================= */
+
+hr {
+    margin-top:
+        1.8rem !important;
+
+    margin-bottom:
+        1.8rem !important;
+
+    border-color:
+        #e4eaec !important;
+}
+
+
+/* =========================================================
+   アニメーション軽減
+========================================================= */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+}
+
+
+/* =========================================================
+   モバイル
+========================================================= */
+
+@media (
+    max-width: 760px
+) {
+
+    .block-container {
+        padding-top:
+            0.9rem;
+
+        padding-left:
+            1rem;
+
+        padding-right:
+            1rem;
+    }
+
+    .st-key-app_header {
+        padding:
+            1.45rem
+            1.3rem;
+
+        margin-bottom:
+            2rem;
+
+        border-radius:
+            17px;
+    }
+
+    .st-key-app_header h1 {
+        font-size:
+            1.9rem !important;
+    }
+
+}
+
+</style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+apply_custom_css()
+
+
+# ============================================================
+# ヘッダー
+# ============================================================
+
+def display_header() -> None:
+
+    with st.container(
+        key="app_header"
+    ):
+
+        st.caption(
+            "研究知見 × 授業づくり"
+        )
+
+        st.title(
+            "理科ICT授業支援システム"
+        )
+
+        st.write(
+            "ICTを活用した理科教育研究の知見から、"
+            "授業づくりの参考となる実践を提案します。"
+            "選択した実践については、"
+            "論文本文をもとに詳しく質問できます。"
+        )
 
 
 # ============================================================
@@ -38,11 +995,9 @@ if "expanded_practice_id" not in st.session_state:
     st.session_state.expanded_practice_id = None
 
 if "document_messages" not in st.session_state:
-    # practice_idごとに会話履歴を保持する
     st.session_state.document_messages = {}
 
 if "document_pending_queries" not in st.session_state:
-    # practice_idごとに回答生成待ちの質問を保持する
     st.session_state.document_pending_queries = {}
 
 if "has_generated_candidates" not in st.session_state:
@@ -58,10 +1013,15 @@ def reset_all() -> None:
     入力内容・実践候補・会話履歴をすべて初期化する。
     """
     st.session_state.user_request = ""
+
     st.session_state.practice_candidates = []
+
     st.session_state.expanded_practice_id = None
+
     st.session_state.document_messages = {}
+
     st.session_state.document_pending_queries = {}
+
     st.session_state.has_generated_candidates = False
 
 
@@ -71,7 +1031,11 @@ def initialize_document_state(
     """
     practice_idごとのDocument RAG用状態を初期化する。
     """
-    if practice_id not in st.session_state.document_messages:
+
+    if (
+        practice_id
+        not in st.session_state.document_messages
+    ):
         st.session_state.document_messages[
             practice_id
         ] = []
@@ -85,19 +1049,22 @@ def initialize_document_state(
         ] = None
 
 
-def toggle_practice(practice_id: str) -> None:
+def toggle_practice(
+    practice_id: str,
+) -> None:
     """
     実践カードの展開・閉じるを切り替える。
-
-    別の実践を開いた場合は、
-    それまで開いていた実践を閉じる。
     """
+
     if (
         st.session_state.expanded_practice_id
         == practice_id
     ):
+
         st.session_state.expanded_practice_id = None
+
     else:
+
         st.session_state.expanded_practice_id = (
             practice_id
         )
@@ -118,12 +1085,14 @@ def display_processing_error(
     """
     APIエラーなどを利用者向けの表現で表示する。
     """
+
     error_text = str(error)
 
     if (
         "429" in error_text
         or "RESOURCE_EXHAUSTED" in error_text
     ):
+
         st.warning(
             "現在、AIの利用回数が一時的な上限に達しています。"
             "時間を空けてから、もう一度お試しください。"
@@ -133,6 +1102,7 @@ def display_processing_error(
         "503" in error_text
         or "UNAVAILABLE" in error_text
     ):
+
         st.warning(
             "現在、AIへのアクセスが混み合っています。"
             "少し時間を空けてから、もう一度お試しください。"
@@ -142,65 +1112,94 @@ def display_processing_error(
         "404" in error_text
         or "NOT_FOUND" in error_text
     ):
+
         st.error(
             "現在、AIモデルを利用できません。"
             "管理者に設定の確認を依頼してください。"
         )
 
     else:
+
         st.error(
             f"{process_name}の途中で"
             "エラーが発生しました。"
         )
 
-    # 開発中の詳細確認用
-    with st.expander("エラーの詳細"):
-        st.code(error_text)
+    with st.expander(
+        "エラーの詳細"
+    ):
+
+        st.code(
+            error_text
+        )
 
 
 # ============================================================
-# 表示用ヘルパー
+# 表示ヘルパー
 # ============================================================
 
-def join_values(values: list[Any]) -> str:
+def join_values(
+    values: list[Any],
+) -> str:
     """
     空の値を除外して「、」で連結する。
     """
+
     normalized_values = [
         str(value).strip()
         for value in values
         if str(value).strip()
     ]
 
-    return "、".join(normalized_values)
+    return "、".join(
+        normalized_values
+    )
 
 
 def display_basic_information(
     candidate: dict[str, Any],
 ) -> None:
-    """
-    学年・領域・単元を3列で表示する。
-    """
-    columns = st.columns(3)
+
+    columns = st.columns(
+        3
+    )
 
     with columns[0]:
-        st.markdown("**学年**")
+
+        st.markdown(
+            "**学年**"
+        )
+
         st.write(
-            candidate.get("grade")
+            candidate.get(
+                "grade"
+            )
             or "記載なし"
         )
 
     with columns[1]:
-        st.markdown("**領域**")
+
+        st.markdown(
+            "**領域**"
+        )
+
         st.write(
-            candidate.get("field")
+            candidate.get(
+                "field"
+            )
             or "記載なし"
         )
 
     with columns[2]:
-        st.markdown("**単元**")
+
+        st.markdown(
+            "**単元**"
+        )
+
         st.write(
-            candidate.get("unit")
+            candidate.get(
+                "unit"
+            )
             or "記載なし"
         )
 
@@ -208,9 +1207,7 @@ def display_basic_information(
 def display_document_message(
     message: dict[str, Any],
 ) -> None:
-    """
-    Document RAGの会話メッセージを表示する。
-    """
+
     role = message.get(
         "role",
         "assistant",
@@ -226,8 +1223,13 @@ def display_document_message(
     if not content:
         return
 
-    with st.chat_message(role):
-        st.markdown(content)
+    with st.chat_message(
+        role
+    ):
+
+        st.markdown(
+            content
+        )
 
         sources = message.get(
             "sources",
@@ -238,20 +1240,28 @@ def display_document_message(
             role == "assistant"
             and sources
         ):
+
             with st.expander(
                 "回答の根拠を確認する"
             ):
+
                 for source in sources:
-                    chunk_index = source.get(
-                        "chunk_index",
-                        "",
+
+                    chunk_index = (
+                        source.get(
+                            "chunk_index",
+                            "",
+                        )
                     )
 
                     if chunk_index == "":
+
                         st.markdown(
                             "- 論文本文の該当箇所"
                         )
+
                     else:
+
                         st.markdown(
                             "- 論文本文の該当箇所"
                             f"（部分 {chunk_index}）"
@@ -268,17 +1278,8 @@ def display_document_conversation(
     """
     展開された実践カード内に、
     論文本文を対象としたチャット欄を表示する。
-
-    表示順:
-        1. 過去の会話履歴
-        2. 新しく送信されたユーザー質問
-        3. AIの回答または回答生成中の表示
-        4. 次の質問を入力するチャット入力欄
-
-    質問送信後は一度再描画し、
-    ユーザーの質問を画面へ先に表示してから
-    回答生成を開始する。
     """
+
     practice_id = str(
         candidate.get(
             "practice_id",
@@ -294,26 +1295,32 @@ def display_document_conversation(
     ).strip()
 
     if not practice_id:
+
         st.warning(
             "この実践を識別する情報を"
             "確認できません。"
         )
+
         return
 
     if not paper_id:
+
         st.warning(
             "この実践に対応する論文本文を"
             "確認できません。"
         )
+
         return
 
     initialize_document_state(
         practice_id=practice_id
     )
 
-    messages = st.session_state.document_messages[
-        practice_id
-    ]
+    messages = (
+        st.session_state.document_messages[
+            practice_id
+        ]
+    )
 
     pending_query = (
         st.session_state.document_pending_queries[
@@ -323,21 +1330,27 @@ def display_document_conversation(
 
     st.divider()
 
-    st.markdown(
-        "### この実践について質問する"
-    )
+    with st.container(
+        key="document_section"
+    ):
 
-    st.caption(
-        "選択した実践の論文本文をもとに回答します。"
-        "本文を参考にした授業への応用についても"
-        "相談できます。"
-    )
+        st.markdown(
+            "### この実践について質問する"
+        )
 
-    # 会話開始前だけ質問例を表示する
-    if not messages and not pending_query:
+        st.caption(
+            "選択した実践の論文本文をもとに回答します。"
+            "研究知見を別の学年や単元へ応用する相談もできます。"
+        )
+
+    if (
+        not messages
+        and not pending_query
+    ):
+
         st.info(
             "例えば、"
-            "「生徒はどのような活動をしましたか？」"
+            "「授業展開は？」"
             "「ICTをどのように活用しましたか？」"
             "「別の学年へ応用するとしたら、"
             "どのような授業が考えられますか？」"
@@ -345,33 +1358,44 @@ def display_document_conversation(
         )
 
     # --------------------------------------------------------
-    # 保存済みの会話履歴を表示
+    # 会話履歴
     # --------------------------------------------------------
 
     for message in messages:
+
         display_document_message(
             message=message
         )
 
     # --------------------------------------------------------
-    # 回答待ちの質問があれば回答を生成
+    # 回答待ちの質問があればDocument RAGを実行
     # --------------------------------------------------------
 
     if pending_query:
+
         try:
-            # AIのメッセージ領域には、
-            # 回答生成中はスピナーだけを表示する
-            with st.chat_message("assistant"):
-                with st.spinner(""):
+
+            with st.chat_message(
+                "assistant"
+            ):
+
+                with st.spinner(
+                    "論文本文を確認しています..."
+                ):
+
                     result = run_document_rag(
                         query=pending_query,
-                        paper_ids=[paper_id],
+                        paper_ids=[
+                            paper_id
+                        ],
                         top_k=5,
                     )
 
             assistant_message = {
                 "role": "assistant",
-                "content": result["answer"],
+                "content": result[
+                    "answer"
+                ],
                 "sources": result.get(
                     "sources",
                     [],
@@ -386,11 +1410,10 @@ def display_document_conversation(
                 practice_id
             ] = None
 
-            # 完成した回答を会話履歴として再描画し、
-            # その下に入力欄を表示する
             st.rerun()
 
         except Exception as error:
+
             st.session_state.document_pending_queries[
                 practice_id
             ] = None
@@ -400,11 +1423,8 @@ def display_document_conversation(
                 process_name="回答の作成",
             )
 
-            # エラー後も次の質問を入力できるようにするため、
-            # ここではreturnしない
-
     # --------------------------------------------------------
-    # チャット入力欄を会話履歴の一番下に表示
+    # 質問入力
     # --------------------------------------------------------
 
     user_question = st.chat_input(
@@ -422,14 +1442,12 @@ def display_document_conversation(
     )
 
     if not normalized_question:
+
         st.warning(
             "質問を入力してください。"
         )
-        return
 
-    # --------------------------------------------------------
-    # 質問を履歴へ追加し、回答待ち状態にする
-    # --------------------------------------------------------
+        return
 
     messages.append(
         {
@@ -442,8 +1460,6 @@ def display_document_conversation(
         practice_id
     ] = normalized_question
 
-    # 次の再描画でユーザー質問を先に表示し、
-    # その下で回答を生成する
     st.rerun()
 
 
@@ -454,9 +1470,7 @@ def display_document_conversation(
 def display_practice_card(
     candidate: dict[str, Any],
 ) -> None:
-    """
-    実践の概要と展開ボタンを表示する。
-    """
+
     index = candidate.get(
         "index",
         "",
@@ -477,7 +1491,9 @@ def display_practice_card(
     ).strip()
 
     title = (
-        candidate.get("title")
+        candidate.get(
+            "title"
+        )
         or "タイトル不明"
     )
 
@@ -515,26 +1531,39 @@ def display_practice_card(
         == practice_id
     )
 
-    with st.container(border=True):
+    card_key = (
+        f"practice_card_{index}_{practice_id}"
+    )
+
+    with st.container(
+        border=True,
+        key=card_key,
+    ):
+
         st.markdown(
-            f"### 実践{index}"
+            f"### 実践 {index}"
         )
 
         st.markdown(
-            f"**{title}**"
+            f"#### {title}"
         )
 
         bibliographic_values = [
             author,
-            f"{year}年" if year else "",
+            f"{year}年"
+            if year
+            else "",
         ]
 
-        bibliographic_text = join_values(
-            bibliographic_values
+        bibliographic_text = (
+            join_values(
+                bibliographic_values
+            )
         )
 
         if bibliographic_text:
-            st.caption(
+
+            st.write(
                 bibliographic_text
             )
 
@@ -547,49 +1576,75 @@ def display_practice_card(
             *software,
         ]
 
-        ict_text = join_values(
-            ict_values
+        ict_text = (
+            join_values(
+                ict_values
+            )
         )
 
         if ict_text:
+
             st.markdown(
-                f"**使用したICT：** {ict_text}"
+                "**ICT**"
+            )
+
+            st.write(
+                ict_text
             )
 
         if effects:
+
             st.markdown(
                 "**この実践で確認されたこと**"
             )
 
             for effect in effects:
+
                 st.markdown(
-                    f"- {effect}"
+                    f"✓ {effect}"
                 )
 
         button_text = (
             "閉じる"
             if is_expanded
-            else "この実践を詳しく見る"
+            else "詳しく見る →"
         )
 
-        if st.button(
-            button_text,
-            key=f"toggle_{practice_id}",
-            disabled=not bool(paper_id),
-            use_container_width=True,
-        ):
-            toggle_practice(
-                practice_id=practice_id
-            )
-            st.rerun()
+        button_columns = st.columns(
+            [
+                2.4,
+                1,
+            ]
+        )
+
+        with button_columns[1]:
+
+            if st.button(
+                button_text,
+                key=(
+                    f"toggle_{practice_id}"
+                ),
+                disabled=not bool(
+                    paper_id
+                ),
+                use_container_width=True,
+            ):
+
+                toggle_practice(
+                    practice_id=practice_id
+                )
+
+                st.rerun()
 
         if not paper_id:
+
             st.caption(
                 "この実践は、現在詳しい内容を"
                 "確認できません。"
             )
 
         if is_expanded:
+
             display_document_conversation(
                 candidate=candidate
             )
@@ -603,34 +1658,54 @@ def display_request_form() -> None:
     """
     授業づくりについての相談内容を入力する。
     """
-    st.markdown(
-        "## 授業づくりについて相談する"
-    )
 
-    st.write(
-        "学年、単元、使いたいICT、"
-        "期待する学習効果などを入力してください。"
-    )
+    with st.container(
+        key="request_section"
+    ):
+
+        st.markdown(
+            "## 授業づくりについて相談する"
+        )
+
+        st.write(
+            "授業で実現したいことを、"
+            "自由な文章で入力してください。"
+        )
 
     with st.form(
         key="practice_request_form",
         clear_on_submit=False,
     ):
-        user_request = st.text_area(
-            "相談内容",
-            value=st.session_state.user_request,
-            placeholder=(
-                "例：高校3年生の生物でInstagramを活用し、"
-                "観察への意欲を高めたいです。"
-                "参考になる実践を教えてください。"
-            ),
-            height=120,
+
+        user_request = (
+            st.text_area(
+                "相談内容",
+                value=(
+                    st.session_state.user_request
+                ),
+                placeholder=(
+                    "例：観察に意欲的に取り組めるような"
+                    "授業にしたいです。"
+                ),
+                height=125,
+            )
         )
 
-        submitted = st.form_submit_button(
-            "参考になる実践を提案してもらう",
-            use_container_width=True,
+        submit_columns = st.columns(
+            [
+                2.1,
+                1,
+            ]
         )
+
+        with submit_columns[1]:
+
+            submitted = (
+                st.form_submit_button(
+                    "実践を探す →",
+                    use_container_width=True,
+                )
+            )
 
     if not submitted:
         return
@@ -640,15 +1715,19 @@ def display_request_form() -> None:
     )
 
     if not normalized_request:
+
         st.warning(
             "相談内容を入力してください。"
         )
+
         return
 
     try:
+
         with st.spinner(
-            "条件に合う実践を考えています..."
+            "ICT活用実践を探索しています..."
         ):
+
             result = run_pipeline(
                 user_query=normalized_request
             )
@@ -675,6 +1754,7 @@ def display_request_form() -> None:
         st.rerun()
 
     except Exception as error:
+
         display_processing_error(
             error=error,
             process_name="実践の提案",
@@ -689,6 +1769,7 @@ def display_practice_candidates() -> None:
     """
     提案された実践をカード形式で表示する。
     """
+
     if not (
         st.session_state.has_generated_candidates
     ):
@@ -700,42 +1781,61 @@ def display_practice_candidates() -> None:
 
     st.divider()
 
-    st.markdown(
-        "## おすすめの授業実践"
-    )
+    with st.container(
+        key="results_header"
+    ):
+
+        st.markdown(
+            "## おすすめの授業実践"
+        )
+
+        st.write(
+            f"{len(candidates)}件の実践が見つかりました。"
+            "気になる実践を選ぶと、"
+            "論文本文をもとに詳しく質問できます。"
+        )
 
     if not candidates:
+
         st.info(
             "条件に合う実践を提案できませんでした。"
             "条件を少し変えて、もう一度お試しください。"
         )
 
     else:
-        st.caption(
-            f"{len(candidates)}件の実践を提案します。"
-            "気になる実践を開くと、"
-            "その場で詳しく質問できます。"
-        )
 
         for candidate in candidates:
+
             display_practice_card(
                 candidate=candidate
             )
 
     st.divider()
 
-    if st.button(
-        "相談内容を最初から入力し直す",
-        key="reset_all_button",
-        use_container_width=True,
-    ):
-        reset_all()
-        st.rerun()
+    reset_columns = st.columns(
+        [
+            2.4,
+            1,
+        ]
+    )
+
+    with reset_columns[1]:
+
+        if st.button(
+            "最初からやり直す",
+            key="reset_all_button",
+            use_container_width=True,
+        ):
+
+            reset_all()
+
+            st.rerun()
 
 
 # ============================================================
 # 画面表示
 # ============================================================
 
+display_header()
 display_request_form()
 display_practice_candidates()
