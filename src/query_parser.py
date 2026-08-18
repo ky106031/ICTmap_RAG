@@ -1,65 +1,108 @@
 import os
 from typing import Any, Dict, Optional
 
-from dotenv import load_dotenv
-from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field as PydanticField
 
+from gemini_client import create_gemini_client
 
-load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-PARSE_MODEL = os.getenv("GEMINI_PARSE_MODEL", "gemini-2.5-flash")
+# ============================================================
+# 基本設定
+# ============================================================
 
+PARSE_MODEL = os.getenv(
+    "GEMINI_PARSE_MODEL",
+    "gemini-2.5-flash",
+)
+
+
+# ============================================================
+# 検索条件スキーマ
+# ============================================================
 
 class QueryConditions(BaseModel):
     Grade: Optional[str] = PydanticField(
         default=None,
-        description="学年。例: 小学5年生, 中学3年生, 高校3年生"
+        description=(
+            "学年。例: 小学5年生, 中学3年生, 高校3年生"
+        ),
     )
+
     Field: Optional[str] = PydanticField(
         default=None,
-        description="理科の領域。例: 物理, 化学, 生物, 地学"
+        description=(
+            "理科の領域。例: 物理, 化学, 生物, 地学"
+        ),
     )
+
     Unit: Optional[str] = PydanticField(
         default=None,
-        description="理科の単元名。例: 生態系とその保全, オームの法則"
+        description=(
+            "理科の単元名。"
+            "例: 生態系とその保全, オームの法則"
+        ),
     )
+
     ICT_Hardware: Optional[str] = PydanticField(
         default=None,
-        description="ICT機器・端末。例: iPad, タブレット, PC"
+        description=(
+            "ICT機器・端末。例: iPad, タブレット, PC"
+        ),
     )
+
     ICT_Software: Optional[str] = PydanticField(
         default=None,
-        description="ICTソフトウェア・アプリ。例: Instagram, Excel, FaceTime"
+        description=(
+            "ICTソフトウェア・アプリ。"
+            "例: Instagram, Excel, FaceTime"
+        ),
     )
+
     ICT_Artifact: Optional[str] = PydanticField(
         default=None,
-        description="ICTによって作成される成果物。例: 動画, グラフ, 写真"
+        description=(
+            "ICTによって作成される成果物。"
+            "例: 動画, グラフ, 写真"
+        ),
     )
+
     ICT_Function: Optional[str] = PydanticField(
         default=None,
-        description="ICTが持つ機能。例: 写真撮影, 共有, グラフ化"
+        description=(
+            "ICTが持つ機能。"
+            "例: 写真撮影, 共有, グラフ化"
+        ),
     )
+
     Educational_Opportunity: Optional[str] = PydanticField(
         default=None,
-        description="ICTによって可能になる学習活動・教育機会。例: 観察結果を共有する活動"
+        description=(
+            "ICTによって可能になる学習活動・教育機会。"
+            "例: 観察結果を共有する活動"
+        ),
     )
+
     Educational_Effect: Optional[str] = PydanticField(
         default=None,
-        description="期待する教育効果。例: 観察への意欲を高めたい, 理解を深めたい"
+        description=(
+            "期待する教育効果。"
+            "例: 観察への意欲を高めたい, 理解を深めたい"
+        ),
     )
 
 
-def get_gemini_client():
-    if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY が .env に設定されていません。")
+# ============================================================
+# プロンプト
+# ============================================================
 
-    return genai.Client(api_key=GEMINI_API_KEY)
-
-
-def build_parse_prompt(user_query: str) -> str:
+def build_parse_prompt(
+    user_query: str,
+) -> str:
+    """
+    ユーザー質問からGraphRAG検索条件を抽出するための
+    プロンプトを作成する。
+    """
     return f"""
 あなたは理科教育ICT活用GraphRAGシステムの検索条件抽出器です。
 
@@ -84,9 +127,32 @@ def build_parse_prompt(user_query: str) -> str:
 """.strip()
 
 
-def parse_query(user_query: str) -> Dict[str, Any]:
-    client = get_gemini_client()
-    prompt = build_parse_prompt(user_query)
+# ============================================================
+# 検索条件抽出
+# ============================================================
+
+def parse_query(
+    user_query: str,
+) -> Dict[str, Any]:
+    """
+    ユーザー質問からGraphRAG検索条件を抽出する。
+
+    Gemini APIクライアントはgemini_client.pyで
+    共通管理しているため、一時的なAPIエラーについては
+    SDK側のRetry設定が適用される。
+    """
+    normalized_query = user_query.strip()
+
+    if not normalized_query:
+        raise ValueError(
+            "ユーザーの質問が空です。"
+        )
+
+    client = create_gemini_client()
+
+    prompt = build_parse_prompt(
+        normalized_query
+    )
 
     response = client.models.generate_content(
         model=PARSE_MODEL,
@@ -100,24 +166,47 @@ def parse_query(user_query: str) -> Dict[str, Any]:
 
     if response.parsed is not None:
         parsed: QueryConditions = response.parsed
+
         return parsed.model_dump()
 
-    raise ValueError(f"構造化出力の解析に失敗しました。response.text: {response.text}")
+    raise ValueError(
+        "構造化出力の解析に失敗しました。"
+        f"response.text: {response.text}"
+    )
 
 
-def main():
+# ============================================================
+# 動作確認
+# ============================================================
+
+def main() -> None:
+    """
+    query_parser.py単体の動作確認。
+    """
     user_query = (
-        "高校3年生でInstagramを活用し、観察への意欲を高めたいです。"
+        "高校3年生でInstagramを活用し、"
+        "観察への意欲を高めたいです。"
         "どのような授業実践が参考になりますか？"
     )
 
-    raw_conditions = parse_query(user_query)
+    raw_conditions = parse_query(
+        user_query
+    )
 
-    print("=== User Query ===")
-    print(user_query)
+    print(
+        "=== User Query ==="
+    )
+    print(
+        user_query
+    )
 
-    print("\n=== Parsed Conditions ===")
-    print(raw_conditions)
+    print()
+    print(
+        "=== Parsed Conditions ==="
+    )
+    print(
+        raw_conditions
+    )
 
 
 if __name__ == "__main__":

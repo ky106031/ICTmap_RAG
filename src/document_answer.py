@@ -1,9 +1,8 @@
-import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-from google import genai
 from google.genai import types
+
+from gemini_client import create_gemini_client
 
 
 # ============================================================
@@ -16,28 +15,6 @@ GENERATION_MODEL = "gemini-3.5-flash"
 
 DEFAULT_TEMPERATURE = 0.2
 DEFAULT_MAX_OUTPUT_TOKENS = 4096
-
-
-# ============================================================
-# Geminiクライアント
-# ============================================================
-
-def create_gemini_client() -> genai.Client:
-    """
-    .envからGEMINI_API_KEYを読み込み、
-    Gemini APIクライアントを作成する。
-    """
-    load_dotenv(BASE_DIR / ".env")
-
-    api_key = os.getenv("GEMINI_API_KEY")
-
-    if not api_key:
-        raise ValueError(
-            "GEMINI_API_KEYが設定されていません。\n"
-            "プロジェクトルートの.envを確認してください。"
-        )
-
-    return genai.Client(api_key=api_key)
 
 
 # ============================================================
@@ -67,7 +44,10 @@ def validate_answer_inputs(
             "回答生成に使用するコンテキストが空です。"
         )
 
-    return normalized_query, normalized_context
+    return (
+        normalized_query,
+        normalized_context,
+    )
 
 
 # ============================================================
@@ -83,18 +63,11 @@ def build_document_answer_prompt(
 
     論文本文に関する事実確認だけでなく、
     論文を参考にした授業への応用・改善提案にも対応する。
-
-    Args:
-        query:
-            ユーザーの質問
-        context:
-            document_context_builder.pyで作成した
-            論文本文の検索コンテキスト
-
-    Returns:
-        Geminiへ渡すプロンプト
     """
-    normalized_query, normalized_context = validate_answer_inputs(
+    (
+        normalized_query,
+        normalized_context,
+    ) = validate_answer_inputs(
         query=query,
         context=context,
     )
@@ -226,20 +199,9 @@ def generate_document_answer(
     """
     検索コンテキストに基づいて回答を生成する。
 
-    Args:
-        query:
-            ユーザーの質問
-        context:
-            論文本文から作成した検索コンテキスト
-        model:
-            回答生成に使用するGeminiモデル
-        temperature:
-            出力のランダム性
-        max_output_tokens:
-            最大出力トークン数
-
-    Returns:
-        生成された回答文
+    Gemini APIクライアントはgemini_client.pyで
+    共通管理しているため、一時的なAPIエラーには
+    Retry設定が適用される。
     """
     if not 0.0 <= temperature <= 2.0:
         raise ValueError(
@@ -289,6 +251,7 @@ def main() -> None:
     from document_context_builder import (
         build_document_context,
     )
+
     from document_retriever import (
         retrieve_document_chunks,
     )
@@ -298,26 +261,40 @@ def main() -> None:
         "どのような活動をしましたか？"
     )
 
-    paper_ids = ["P_0001"]
+    paper_ids = [
+        "P_0001"
+    ]
 
-    retrieved_chunks = retrieve_document_chunks(
-        query=query,
-        paper_ids=paper_ids,
-        top_k=5,
+    retrieved_chunks = (
+        retrieve_document_chunks(
+            query=query,
+            paper_ids=paper_ids,
+            top_k=5,
+        )
     )
 
-    context = build_document_context(
-        retrieved_chunks=retrieved_chunks
+    context = (
+        build_document_context(
+            retrieved_chunks=retrieved_chunks
+        )
     )
 
-    answer = generate_document_answer(
-        query=query,
-        context=context,
+    answer = (
+        generate_document_answer(
+            query=query,
+            context=context,
+        )
     )
 
-    print("=== Document Answer ===")
+    print(
+        "=== Document Answer ==="
+    )
+
     print()
-    print(answer)
+
+    print(
+        answer
+    )
 
 
 if __name__ == "__main__":

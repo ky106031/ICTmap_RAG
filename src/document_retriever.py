@@ -1,11 +1,11 @@
-import os
 from pathlib import Path
 from typing import Any, TypedDict
 
 import chromadb
-from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+
+from gemini_client import create_gemini_client
 
 
 # ============================================================
@@ -13,10 +13,17 @@ from google.genai import types
 # ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-CHROMA_DIR = BASE_DIR / "data" / "chroma_db"
+
+CHROMA_DIR = (
+    BASE_DIR
+    / "data"
+    / "chroma_db"
+)
 
 # cleaned_textから作成した新しいコレクション
-CHROMA_COLLECTION_NAME = "paper_chunks_cleaned_v1"
+CHROMA_COLLECTION_NAME = (
+    "paper_chunks_cleaned_v1"
+)
 
 # document_indexer.pyと同じモデル・次元数を使用
 EMBEDDING_MODEL = "gemini-embedding-001"
@@ -37,28 +44,6 @@ class RetrievedChunk(TypedDict):
 
 
 # ============================================================
-# Geminiクライアント
-# ============================================================
-
-def create_gemini_client() -> genai.Client:
-    """
-    .envからGEMINI_API_KEYを読み込み、
-    Gemini APIクライアントを作成する。
-    """
-    load_dotenv(BASE_DIR / ".env")
-
-    api_key = os.getenv("GEMINI_API_KEY")
-
-    if not api_key:
-        raise ValueError(
-            "GEMINI_API_KEYが設定されていません。\n"
-            "プロジェクトルートの.envを確認してください。"
-        )
-
-    return genai.Client(api_key=api_key)
-
-
-# ============================================================
 # Chromaコレクション
 # ============================================================
 
@@ -68,23 +53,30 @@ def get_chroma_collection() -> chromadb.Collection:
     """
     if not CHROMA_DIR.exists():
         raise FileNotFoundError(
-            f"Chromaの保存先が見つかりません: {CHROMA_DIR}\n"
+            f"Chromaの保存先が見つかりません: "
+            f"{CHROMA_DIR}\n"
             "先にdocument_indexer.pyを実行してください。"
         )
 
-    chroma_client = chromadb.PersistentClient(
-        path=str(CHROMA_DIR)
+    chroma_client = (
+        chromadb.PersistentClient(
+            path=str(CHROMA_DIR)
+        )
     )
 
     try:
-        collection = chroma_client.get_collection(
-            name=CHROMA_COLLECTION_NAME
+        collection = (
+            chroma_client.get_collection(
+                name=CHROMA_COLLECTION_NAME
+            )
         )
+
     except Exception as error:
         raise RuntimeError(
             "Document RAG用のChromaコレクションが"
             "見つかりません。\n"
-            f"コレクション名: {CHROMA_COLLECTION_NAME}\n"
+            f"コレクション名: "
+            f"{CHROMA_COLLECTION_NAME}\n"
             "先にdocument_indexer.pyを実行してください。"
         ) from error
 
@@ -110,6 +102,10 @@ def embed_query(
 
     インデックス登録時はRETRIEVAL_DOCUMENTを使用しているため、
     検索質問側ではRETRIEVAL_QUERYを使用する。
+
+    Gemini APIクライアントはgemini_client.pyで
+    共通管理しているため、一時的なAPIエラーには
+    Retry設定が適用される。
     """
     normalized_query = query.strip()
 
@@ -123,16 +119,21 @@ def embed_query(
         contents=normalized_query,
         config=types.EmbedContentConfig(
             task_type="RETRIEVAL_QUERY",
-            output_dimensionality=EMBEDDING_DIMENSION,
+            output_dimensionality=(
+                EMBEDDING_DIMENSION
+            ),
         ),
     )
 
     if not response.embeddings:
         raise RuntimeError(
-            "Gemini APIから質問Embeddingが返されませんでした。"
+            "Gemini APIから質問Embeddingが"
+            "返されませんでした。"
         )
 
-    query_embedding = response.embeddings[0].values
+    query_embedding = (
+        response.embeddings[0].values
+    )
 
     if not query_embedding:
         raise RuntimeError(
@@ -155,17 +156,23 @@ def normalize_paper_ids(
     normalized_ids: list[str] = []
 
     for paper_id in paper_ids:
-        normalized_id = paper_id.strip()
+        normalized_id = (
+            paper_id.strip()
+        )
 
         if (
             normalized_id
-            and normalized_id not in normalized_ids
+            and normalized_id
+            not in normalized_ids
         ):
-            normalized_ids.append(normalized_id)
+            normalized_ids.append(
+                normalized_id
+            )
 
     if not normalized_ids:
         raise ValueError(
-            "検索対象のpaper_idsが指定されていません。"
+            "検索対象のpaper_idsが"
+            "指定されていません。"
         )
 
     return normalized_ids
@@ -177,8 +184,10 @@ def build_paper_filter(
     """
     Chroma検索用のpaper_idフィルタを作成する。
     """
-    normalized_ids = normalize_paper_ids(
-        paper_ids=paper_ids
+    normalized_ids = (
+        normalize_paper_ids(
+            paper_ids=paper_ids
+        )
     )
 
     if len(normalized_ids) == 1:
@@ -200,8 +209,10 @@ def count_target_chunks(
     """
     指定された論文IDに該当するチャンク数を取得する。
     """
-    paper_filter = build_paper_filter(
-        paper_ids=paper_ids
+    paper_filter = (
+        build_paper_filter(
+            paper_ids=paper_ids
+        )
     )
 
     result = collection.get(
@@ -209,7 +220,12 @@ def count_target_chunks(
         include=[],
     )
 
-    return len(result.get("ids", []))
+    return len(
+        result.get(
+            "ids",
+            [],
+        )
+    )
 
 
 # ============================================================
@@ -222,15 +238,24 @@ def format_query_results(
     """
     Chromaの検索結果を扱いやすい形式へ変換する。
     """
-    result_ids = query_results.get("ids") or [[]]
+    result_ids = (
+        query_results.get("ids")
+        or [[]]
+    )
+
     result_documents = (
-        query_results.get("documents") or [[]]
+        query_results.get("documents")
+        or [[]]
     )
+
     result_metadatas = (
-        query_results.get("metadatas") or [[]]
+        query_results.get("metadatas")
+        or [[]]
     )
+
     result_distances = (
-        query_results.get("distances") or [[]]
+        query_results.get("distances")
+        or [[]]
     )
 
     ids = result_ids[0]
@@ -238,24 +263,42 @@ def format_query_results(
     metadatas = result_metadatas[0]
     distances = result_distances[0]
 
-    retrieved_chunks: list[RetrievedChunk] = []
+    retrieved_chunks: list[
+        RetrievedChunk
+    ] = []
 
-    for chunk_id, text, metadata, distance in zip(
+    for (
+        chunk_id,
+        text,
+        metadata,
+        distance,
+    ) in zip(
         ids,
         documents,
         metadatas,
         distances,
     ):
+
         normalized_metadata = (
-            metadata if metadata is not None else {}
+            metadata
+            if metadata is not None
+            else {}
         )
 
         retrieved_chunks.append(
             {
-                "chunk_id": str(chunk_id),
-                "distance": float(distance),
-                "metadata": dict(normalized_metadata),
-                "text": str(text),
+                "chunk_id": str(
+                    chunk_id
+                ),
+                "distance": float(
+                    distance
+                ),
+                "metadata": dict(
+                    normalized_metadata
+                ),
+                "text": str(
+                    text
+                ),
             }
         )
 
@@ -275,7 +318,7 @@ def retrieve_document_chunks(
     指定された論文本文から質問に関連するチャンクを取得する。
 
     API呼び出しは質問Embedding生成の1回のみ。
-    登録済み560チャンクのEmbeddingは再生成しない。
+    登録済みチャンクのEmbeddingは再生成しない。
 
     Args:
         query:
@@ -293,22 +336,31 @@ def retrieve_document_chunks(
             "top_kは1以上を指定してください。"
         )
 
-    normalized_paper_ids = normalize_paper_ids(
-        paper_ids=paper_ids
+    normalized_paper_ids = (
+        normalize_paper_ids(
+            paper_ids=paper_ids
+        )
     )
 
-    collection = get_chroma_collection()
+    collection = (
+        get_chroma_collection()
+    )
 
-    target_chunk_count = count_target_chunks(
-        collection=collection,
-        paper_ids=normalized_paper_ids,
+    target_chunk_count = (
+        count_target_chunks(
+            collection=collection,
+            paper_ids=(
+                normalized_paper_ids
+            ),
+        )
     )
 
     if target_chunk_count == 0:
         raise ValueError(
             "指定されたpaper_idに対応するチャンクが"
             "見つかりませんでした。\n"
-            f"paper_ids: {normalized_paper_ids}"
+            f"paper_ids: "
+            f"{normalized_paper_ids}"
         )
 
     # 対象論文のチャンク数を超えないようにする
@@ -317,27 +369,40 @@ def retrieve_document_chunks(
         target_chunk_count,
     )
 
-    gemini_client = create_gemini_client()
-
-    # ここで質問文1件だけEmbeddingする
-    query_embedding = embed_query(
-        client=gemini_client,
-        query=query,
+    # 共通Retry設定済みGemini Client
+    gemini_client = (
+        create_gemini_client()
     )
 
-    paper_filter = build_paper_filter(
-        paper_ids=normalized_paper_ids
+    # 質問文1件だけEmbeddingする
+    query_embedding = (
+        embed_query(
+            client=gemini_client,
+            query=query,
+        )
     )
 
-    query_results = collection.query(
-        query_embeddings=[query_embedding],
-        n_results=actual_top_k,
-        where=paper_filter,
-        include=[
-            "documents",
-            "metadatas",
-            "distances",
-        ],
+    paper_filter = (
+        build_paper_filter(
+            paper_ids=(
+                normalized_paper_ids
+            )
+        )
+    )
+
+    query_results = (
+        collection.query(
+            query_embeddings=[
+                query_embedding
+            ],
+            n_results=actual_top_k,
+            where=paper_filter,
+            include=[
+                "documents",
+                "metadatas",
+                "distances",
+            ],
+        )
     )
 
     return format_query_results(
@@ -358,20 +423,37 @@ def main() -> None:
         "どのような活動をしましたか？"
     )
 
-    paper_ids = ["P_0001"]
+    paper_ids = [
+        "P_0001"
+    ]
 
     top_k = 5
 
-    print("=== Document Retrieval Results ===")
-    print(f"collection: {CHROMA_COLLECTION_NAME}")
-    print(f"query: {query}")
-    print(f"paper_ids: {paper_ids}")
+    print(
+        "=== Document Retrieval Results ==="
+    )
+
+    print(
+        f"collection: "
+        f"{CHROMA_COLLECTION_NAME}"
+    )
+
+    print(
+        f"query: {query}"
+    )
+
+    print(
+        f"paper_ids: {paper_ids}"
+    )
+
     print()
 
-    retrieved_chunks = retrieve_document_chunks(
-        query=query,
-        paper_ids=paper_ids,
-        top_k=top_k,
+    retrieved_chunks = (
+        retrieve_document_chunks(
+            query=query,
+            paper_ids=paper_ids,
+            top_k=top_k,
+        )
     )
 
     print(
@@ -383,22 +465,34 @@ def main() -> None:
         retrieved_chunks,
         start=1,
     ):
+
         print()
-        print("=" * 70)
+        print(
+            "=" * 70
+        )
+
         print(
             f"[{rank}] chunk_id: "
             f"{chunk['chunk_id']}"
         )
+
         print(
             f"distance: "
             f"{chunk['distance']}"
         )
+
         print(
             f"metadata: "
             f"{chunk['metadata']}"
         )
-        print("text:")
-        print(chunk["text"])
+
+        print(
+            "text:"
+        )
+
+        print(
+            chunk["text"]
+        )
 
 
 if __name__ == "__main__":
