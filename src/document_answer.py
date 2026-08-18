@@ -11,7 +11,7 @@ from gemini_client import create_gemini_client
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-GENERATION_MODEL = "gemini-3.5-flash"
+GENERATION_MODEL = "gemini-2.5-flash"
 
 DEFAULT_TEMPERATURE = 0.2
 DEFAULT_MAX_OUTPUT_TOKENS = 4096

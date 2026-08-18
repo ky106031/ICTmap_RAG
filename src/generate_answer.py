@@ -24,7 +24,7 @@ OUTPUT_PATH = (
 
 GENERATE_MODEL = os.getenv(
     "GEMINI_GENERATE_MODEL",
-    "gemini-3.5-flash",
+    "gemini-2.5-flash",
 )
 
 
