@@ -52,8 +52,8 @@ DOCUMENT_ANSWER_02_PATH = (
 # 必要なら後から調整可能。
 # ============================================================
 
-GRAPH_SEARCH_DELAY = 2.8
-DOCUMENT_SEARCH_DELAY = 2.5
+GRAPH_SEARCH_DELAY = 5.5
+DOCUMENT_SEARCH_DELAY = 4.5
 
 
 # ============================================================
