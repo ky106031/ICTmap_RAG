@@ -11,7 +11,7 @@ from rag_pipeline import run_pipeline
 # ============================================================
 
 st.set_page_config(
-    page_title="理科ICT授業支援システム",
+    page_title="ICTマップAI検索システム",
     page_icon="🔬",
     layout="centered",
 )
