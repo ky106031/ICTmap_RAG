@@ -54,6 +54,7 @@ def apply_custom_css() -> None:
 ========================================================= */
 
 .stApp {
+
     background:
         linear-gradient(
             180deg,
@@ -63,20 +64,30 @@ def apply_custom_css() -> None:
         );
 }
 
+
 .block-container {
-    max-width: 980px;
-    padding-top: 1.6rem;
+
+    max-width:
+        980px;
+
+    padding-top:
+        1.6rem;
 
     /*
-    固定された
-    参照実践バー + チャット入力欄
-    と本文が重ならないようにする
+    参照実践バー
+    +
+    固定Chat Input
+    の分だけ十分に余白を取る
     */
-    padding-bottom: 13rem;
+    padding-bottom:
+        15rem;
 }
 
+
 p {
-    line-height: 1.7;
+
+    line-height:
+        1.7;
 }
 
 
@@ -85,13 +96,16 @@ p {
 ========================================================= */
 
 .st-key-app_header {
-    margin-bottom: 2.5rem;
+
+    margin-bottom:
+        2.5rem;
 
     padding:
         1.7rem
         2rem;
 
-    border-radius: 22px;
+    border-radius:
+        22px;
 
     background:
         linear-gradient(
@@ -111,7 +125,9 @@ p {
         );
 }
 
+
 .st-key-app_header h1 {
+
     color:
         #ffffff !important;
 
@@ -122,7 +138,9 @@ p {
         .4rem !important;
 }
 
+
 .st-key-app_header p {
+
     color:
         rgba(
             255,
@@ -138,17 +156,22 @@ p {
 ========================================================= */
 
 div[class*="st-key-practice_card_"] {
+
     margin-bottom:
         .8rem;
 }
 
+
 div[class*="st-key-practice_card_"]
 div[data-testid="stVerticalBlock"] {
+
     gap:
         .5rem !important;
 }
 
+
 div[data-testid="stVerticalBlockBorderWrapper"] {
+
     border:
         1px solid
         #dce5e8 !important;
@@ -169,7 +192,9 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
         );
 }
 
+
 div[class*="st-key-practice_card_"] h3 {
+
     color:
         #176579 !important;
 
@@ -179,7 +204,7 @@ div[class*="st-key-practice_card_"] h3 {
 
 
 /* =========================================================
-   カード内チェックボックス
+   実践カード内チェックボックス
 ========================================================= */
 
 div[class*="st-key-practice_card_"]
@@ -247,6 +272,7 @@ div[data-testid="stChatMessage"] h2 {
         1.45rem !important;
 }
 
+
 div[data-testid="stChatMessage"] h3 {
 
     color:
@@ -264,51 +290,53 @@ div[data-testid="stChatMessage"] h3 {
 .st-key-reference_bar {
 
     position:
-        fixed;
+        fixed !important;
 
     left:
-        50%;
+        50% !important;
 
     /*
-    Streamlitのchat_inputより
-    十分上に配置する
+    Chat inputより明確に上に置く
     */
     bottom:
-        105px;
+        125px !important;
 
     transform:
-        translateX(-50%);
+        translateX(-50%) !important;
 
     width:
         min(
             930px,
             calc(100vw - 32px)
-        );
+        ) !important;
 
+    /*
+    Chat領域より前面
+    */
     z-index:
-        1000;
+        3000 !important;
 
     padding:
-        .45rem
-        .75rem;
+        .5rem
+        .75rem !important;
 
     border:
         1px solid
-        #d4e3e6;
+        #d4e3e6 !important;
 
     border-radius:
-        13px;
+        13px !important;
 
     background:
         rgba(
             250,
             252,
             252,
-            .98
-        );
+            .99
+        ) !important;
 
     backdrop-filter:
-        blur(10px);
+        blur(12px);
 
     box-shadow:
         0 7px 24px
@@ -316,12 +344,17 @@ div[data-testid="stChatMessage"] h3 {
             23,
             70,
             84,
-            .10
-        );
+            .12
+        ) !important;
+
+    pointer-events:
+        auto !important;
 }
 
 
-/* 固定バー内部 */
+/* =========================================================
+   参照バー内部
+========================================================= */
 
 .st-key-reference_bar
 div[data-testid="stVerticalBlock"] {
@@ -335,10 +368,10 @@ div[data-testid="stVerticalBlock"] {
 div[data-testid="stHorizontalBlock"] {
 
     align-items:
-        center;
+        center !important;
 
     gap:
-        .6rem;
+        .6rem !important;
 }
 
 
@@ -357,30 +390,61 @@ div[data-testid="stHorizontalBlock"] {
 
 .st-key-reference_bar button {
 
+    position:
+        relative !important;
+
+    z-index:
+        3001 !important;
+
     min-height:
-        2.25rem !important;
+        2.3rem !important;
 
     border-radius:
         9px !important;
 
     font-size:
         .82rem !important;
+
+    pointer-events:
+        auto !important;
 }
 
 
 /* =========================================================
-   固定チャット入力
+   Popover
+========================================================= */
+
+/*
+参照実践選択用Popoverを
+最前面へ
+*/
+
+div[data-testid="stPopover"] {
+
+    position:
+        relative !important;
+
+    z-index:
+        4000 !important;
+
+    pointer-events:
+        auto !important;
+}
+
+
+/* =========================================================
+   Streamlit固定Bottom領域
 ========================================================= */
 
 [data-testid="stBottom"] {
 
     z-index:
-        1001 !important;
+        2000 !important;
 
     background:
         linear-gradient(
             to top,
-            #f8fafb 82%,
+            #f8fafb 88%,
             rgba(
                 248,
                 250,
@@ -391,16 +455,23 @@ div[data-testid="stHorizontalBlock"] {
 }
 
 
+/* =========================================================
+   Chat Input
+========================================================= */
+
 div[data-testid="stChatInput"] {
 
     position:
-        relative;
+        relative !important;
 
     z-index:
-        1002 !important;
+        2001 !important;
 
     border-radius:
         14px !important;
+
+    pointer-events:
+        auto !important;
 }
 
 
@@ -427,8 +498,10 @@ div[data-testid="stExpander"] {
 ========================================================= */
 
 hr {
+
     margin:
-        1.7rem 0 !important;
+        1.7rem
+        0 !important;
 }
 
 
@@ -452,7 +525,7 @@ hr {
             1rem;
 
         padding-bottom:
-            14rem;
+            16rem;
     }
 
 
@@ -480,16 +553,16 @@ hr {
     .st-key-reference_bar {
 
         bottom:
-            100px;
+            120px !important;
 
         width:
             calc(
                 100vw - 20px
-            );
+            ) !important;
 
         padding:
             .4rem
-            .55rem;
+            .55rem !important;
     }
 
 }
@@ -548,6 +621,7 @@ def reset_all() -> None:
     システム全体を初期状態へ戻す。
     """
 
+    # 実践選択WidgetのStateを削除
     for key in list(
         st.session_state.keys()
     ):
@@ -589,7 +663,7 @@ def get_selected_candidates() -> list[
     dict[str, Any]
 ]:
     """
-    現在選択されている実践候補を取得する。
+    現在選択中の実践候補を取得する。
     """
 
     selected_ids = set(
@@ -614,7 +688,7 @@ def update_selected_ids(
     selected: bool,
 ) -> None:
     """
-    実践の選択状態を更新する。
+    selected_practice_idsを更新する。
     """
 
     current_ids = set(
@@ -633,7 +707,7 @@ def update_selected_ids(
             practice_id
         )
 
-    # 実践カードの表示順を維持する
+    # 実践カードの順番に並べる
     ordered_ids: list[str] = []
 
     for candidate in (
@@ -662,7 +736,7 @@ def on_card_selection_change(
     practice_id: str,
 ) -> None:
     """
-    実践カード側のチェック変更。
+    実践カード側のチェック状態変更。
     """
 
     card_key = (
@@ -681,7 +755,7 @@ def on_card_selection_change(
         selected=selected,
     )
 
-    # 固定バー側と同期
+    # 固定バー側へ同期
     bar_key = (
         f"bar_select_{practice_id}"
     )
@@ -697,7 +771,7 @@ def on_bar_selection_change(
     practice_id: str,
 ) -> None:
     """
-    固定バー側のチェック変更。
+    固定バーPopover側のチェック状態変更。
     """
 
     bar_key = (
@@ -716,7 +790,7 @@ def on_bar_selection_change(
         selected=selected,
     )
 
-    # カード側と同期
+    # カード側へ同期
     card_key = (
         f"card_select_{practice_id}"
     )
@@ -736,7 +810,7 @@ def join_values(
     values: list[Any],
 ) -> str:
     """
-    空の値を除外して「、」で連結する。
+    空の値を除いて「、」で連結する。
     """
 
     normalized = [
@@ -759,7 +833,7 @@ def display_processing_error(
     process_name: str,
 ) -> None:
     """
-    APIエラーなどをユーザー向けに表示する。
+    APIエラー等を利用者向けに表示する。
     """
 
     error_text = str(
@@ -813,7 +887,7 @@ def display_processing_error(
 
 def display_header() -> None:
     """
-    ページ上部のヘッダー。
+    ページヘッダー。
     """
 
     with st.container(
@@ -843,7 +917,7 @@ def display_practice_card(
     candidate: dict[str, Any],
 ) -> None:
     """
-    GraphRAGで取得した実践をカード表示する。
+    GraphRAGで検索された実践をカード表示する。
     """
 
     index = candidate.get(
@@ -913,6 +987,10 @@ def display_practice_card(
                 bibliography
             )
 
+        # ----------------------------------------------------
+        # 基本情報
+        # ----------------------------------------------------
+
         columns = st.columns(
             3
         )
@@ -956,6 +1034,10 @@ def display_practice_card(
                 or "記載なし"
             )
 
+        # ----------------------------------------------------
+        # ICT
+        # ----------------------------------------------------
+
         ict = join_values(
             [
                 *candidate.get(
@@ -979,6 +1061,10 @@ def display_practice_card(
                 ict
             )
 
+        # ----------------------------------------------------
+        # 教育効果
+        # ----------------------------------------------------
+
         effects = candidate.get(
             "effects",
             [],
@@ -995,6 +1081,10 @@ def display_practice_card(
                 st.markdown(
                     f"✓ {effect}"
                 )
+
+        # ----------------------------------------------------
+        # 選択
+        # ----------------------------------------------------
 
         card_key = (
             f"card_select_"
@@ -1026,15 +1116,15 @@ def display_practice_card(
 
 
 # ============================================================
-# 固定：参照中の実践バー
+# 固定：参照実践バー
 # ============================================================
 
 def display_reference_bar() -> None:
     """
-    チャット入力欄の上に、
-    現在参照している実践を固定表示する。
+    Chat Inputの上に、
+    現在参照中の実践を常時表示する。
 
-    popoverからいつでも選択変更可能。
+    Popoverからいつでも選択を変更できる。
     """
 
     if not (
@@ -1062,6 +1152,10 @@ def display_reference_bar() -> None:
             ]
         )
 
+        # ----------------------------------------------------
+        # 選択中表示
+        # ----------------------------------------------------
+
         with columns[0]:
 
             if selected:
@@ -1084,6 +1178,10 @@ def display_reference_bar() -> None:
                 st.markdown(
                     "**参照する実践を選択してください**"
                 )
+
+        # ----------------------------------------------------
+        # 選択変更Popover
+        # ----------------------------------------------------
 
         with columns[1]:
 
@@ -1150,12 +1248,12 @@ def display_reference_bar() -> None:
 
 
 # ============================================================
-# Chat履歴
+# Document RAG Chat履歴
 # ============================================================
 
 def display_research_messages() -> None:
     """
-    Document RAGでの会話履歴を表示する。
+    Document RAGの会話履歴を表示する。
     """
 
     for message in (
@@ -1175,6 +1273,7 @@ def display_research_messages() -> None:
         ).strip()
 
         if not content:
+
             continue
 
         with st.chat_message(
@@ -1223,8 +1322,8 @@ def display_research_messages() -> None:
 # ============================================================
 # 固定UI
 #
-# st.chat_inputをトップレベルで使用することで、
-# Streamlit標準の画面下固定入力欄として表示する。
+# st.chat_inputはトップレベルで使用する。
+# これによりStreamlit標準の固定入力欄になる。
 # ============================================================
 
 display_reference_bar()
@@ -1251,7 +1350,7 @@ user_input = st.chat_input(
 
 
 # ============================================================
-# 入力をStateへ即時登録
+# Chat Inputの受付
 # ============================================================
 
 if user_input:
@@ -1264,6 +1363,7 @@ if user_input:
 
         # ----------------------------------------------------
         # 初回質問
+        # → GraphRAG
         # ----------------------------------------------------
 
         if not (
@@ -1280,6 +1380,7 @@ if user_input:
 
         # ----------------------------------------------------
         # 追加質問
+        # → Document RAG
         # ----------------------------------------------------
 
         else:
@@ -1298,6 +1399,10 @@ if user_input:
 
             else:
 
+                # --------------------------------------------
+                # paper_id
+                # --------------------------------------------
+
                 paper_ids = [
                     str(
                         candidate.get(
@@ -1311,6 +1416,10 @@ if user_input:
                         "paper_id"
                     )
                 ]
+
+                # --------------------------------------------
+                # Geminiへ渡す実践名
+                # --------------------------------------------
 
                 paper_labels = {
                     str(
@@ -1330,8 +1439,12 @@ if user_input:
                     )
                 }
 
-                # 入力直後に履歴へ追加するため、
-                # AI処理中でも質問が消えない
+                # --------------------------------------------
+                # 入力直後にUser Messageを保存
+                #
+                # API処理中でも質問を画面から消さない
+                # --------------------------------------------
+
                 st.session_state.research_messages.append(
                     {
                         "role": "user",
@@ -1372,7 +1485,7 @@ if not (
     )
 
     # --------------------------------------------------------
-    # ユーザーが入力した質問
+    # 入力済み質問
     # --------------------------------------------------------
 
     if (
@@ -1388,10 +1501,9 @@ if not (
             )
 
     # --------------------------------------------------------
-    # GraphRAG
+    # GraphRAG処理
     #
-    # spinnerは1つだけ。
-    # 質問の直下に表示される。
+    # ローディング表示はこれ1つだけ
     # --------------------------------------------------------
 
     if (
@@ -1448,7 +1560,7 @@ if not (
 else:
 
     # --------------------------------------------------------
-    # 最初のユーザー質問
+    # 最初の質問
     # --------------------------------------------------------
 
     if (
@@ -1466,7 +1578,7 @@ else:
     st.divider()
 
     # --------------------------------------------------------
-    # 実践候補
+    # おすすめ実践
     # --------------------------------------------------------
 
     st.markdown(
@@ -1501,7 +1613,7 @@ else:
     st.divider()
 
     # --------------------------------------------------------
-    # Document RAG
+    # 研究知見について相談
     # --------------------------------------------------------
 
     st.markdown(
@@ -1514,6 +1626,10 @@ else:
         "複数の研究知見を組み合わせた"
         "新しい授業案についても質問できます。"
     )
+
+    # --------------------------------------------------------
+    # 選択エラー
+    # --------------------------------------------------------
 
     if (
         st.session_state.selection_error
@@ -1534,11 +1650,7 @@ else:
     display_research_messages()
 
     # --------------------------------------------------------
-    # 新しい質問への回答生成
-    #
-    # ユーザー質問はすでに
-    # research_messagesに入っているので、
-    # AI処理中も画面から消えない。
+    # Document RAG処理
     # --------------------------------------------------------
 
     if (
