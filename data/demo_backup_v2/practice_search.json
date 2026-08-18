@@ -1,0 +1,78 @@
+{
+  "query": "観察に意欲的に取り組めるような授業がしたいです",
+  "practice_candidates": [
+    {
+      "index": 1,
+      "label": "実践1",
+      "practice_id": "P_0001_1",
+      "paper_id": "P_0001",
+      "title": "液体の粒子モデルを学ぶ教材・教育プログラムの開発\n中学校第一学年を対象として",
+      "author": "青木 悠樹",
+      "year": "2017",
+      "grade": "中1",
+      "field": "化学",
+      "unit": "物質のすがた（身の回りの物質とその性質）",
+      "matched_conditions": [
+        "Educational_Effect"
+      ],
+      "hardware": [
+        "NEXUS7"
+      ],
+      "software": [
+        "カメラアプリ"
+      ],
+      "effects": [
+        "観察に対する意欲が高まる"
+      ]
+    },
+    {
+      "index": 2,
+      "label": "実践2",
+      "practice_id": "P_0046_1",
+      "paper_id": "P_0046",
+      "title": "ドジョウの血流観察におけるモバイル顕微鏡の教育効果",
+      "author": "山野井 貴浩, 菊地 優花, 大谷津 明花",
+      "year": "2024",
+      "grade": "小6",
+      "field": "生物",
+      "unit": "人の体のつくりと働き",
+      "matched_conditions": [
+        "Educational_Effect"
+      ],
+      "hardware": [
+        "iPad"
+      ],
+      "software": [
+        "カメラアプリ"
+      ],
+      "effects": [
+        "観察に対する意欲が高まる"
+      ]
+    },
+    {
+      "index": 3,
+      "label": "実践3",
+      "practice_id": "P_0032_1",
+      "paper_id": "P_0032",
+      "title": "高等学校生物のPBLでのSNSを利用した観察についての実践的研究―ジェンダーの視点によるInstagram活用についての考察―",
+      "author": "奥村 仁一",
+      "year": "2018",
+      "grade": "高3",
+      "field": "生物",
+      "unit": "生態系とその保全",
+      "matched_conditions": [
+        "Educational_Effect"
+      ],
+      "hardware": [
+        "iPad"
+      ],
+      "software": [
+        "Instagram"
+      ],
+      "effects": [
+        "明確な観察視点を持った注意深い観察が促される",
+        "観察に対する意欲が高まる"
+      ]
+    }
+  ]
+}
