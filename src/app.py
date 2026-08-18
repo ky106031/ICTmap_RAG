@@ -1036,7 +1036,7 @@ def display_header() -> None:
         )
 
         st.title(
-            "理科ICT授業支援システム"
+            "ICTマップAI検索システム"
         )
 
         st.write(
