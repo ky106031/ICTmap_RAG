@@ -37,6 +37,12 @@ def apply_custom_css() -> None:
 
     --border: #dce5e8;
     --surface: #ffffff;
+
+    /*
+    本文・参照バー・Chat Inputで
+    共通して使う最大幅
+    */
+    --content-width: 900px;
 }
 
 
@@ -50,7 +56,7 @@ def apply_custom_css() -> None:
 
 
 /* =========================================================
-   基本
+   ページ全体
 ========================================================= */
 
 .stApp {
@@ -64,18 +70,38 @@ def apply_custom_css() -> None:
 }
 
 
+/*
+通常本文の中央基準も900pxへ統一
+*/
+
 .block-container {
-    max-width: 980px;
+    max-width:
+        var(--content-width) !important;
+
+    width:
+        calc(100% - 48px) !important;
+
+    margin-left:
+        auto !important;
+
+    margin-right:
+        auto !important;
+
+    padding-left:
+        0 !important;
+
+    padding-right:
+        0 !important;
 
     padding-top:
         1.6rem;
 
     /*
-    固定された参照バーと
-    Chat Inputの分だけ十分に余白を確保
+    固定UIの下に本文が隠れないよう
+    十分な余白を確保
     */
     padding-bottom:
-        19rem;
+        17rem;
 }
 
 
@@ -191,7 +217,7 @@ div[class*="st-key-practice_card_"] h3 {
 
 
 /* =========================================================
-   実践カード内チェックボックス
+   実践カード内チェック
 ========================================================= */
 
 div[class*="st-key-practice_card_"]
@@ -220,27 +246,29 @@ div[data-testid="stCheckbox"] {
 ========================================================= */
 
 /*
-ユーザー・AI双方のメッセージを
-画面いっぱいにせず、
-左右均等に余白を確保する
+左右を完全に均等にする。
+本文幅の中でさらに少し余白を確保。
 */
 
 div[data-testid="stChatMessage"] {
+    box-sizing:
+        border-box !important;
+
     width:
-        calc(100% - 2rem);
+        calc(100% - 24px) !important;
 
     margin-left:
-        auto !important;
+        12px !important;
 
     margin-right:
-        auto !important;
+        12px !important;
 
     margin-bottom:
         .9rem !important;
 
     padding:
-        1rem
-        1.25rem !important;
+        1.05rem
+        1.35rem !important;
 
     border:
         1px solid
@@ -264,21 +292,30 @@ div[data-testid="stChatMessage"] {
 
 
 /*
-Chat本文内部にも少し余白を持たせる
+メッセージ内部も左右対称
 */
 
 div[data-testid="stChatMessageContent"] {
     padding-left:
-        .45rem !important;
+        .4rem !important;
 
     padding-right:
-        .45rem !important;
+        .4rem !important;
 }
 
 
 div[data-testid="stChatMessage"] p {
     line-height:
         1.8 !important;
+}
+
+
+div[data-testid="stChatMessage"] li {
+    line-height:
+        1.75 !important;
+
+    margin-bottom:
+        .35rem;
 }
 
 
@@ -300,7 +337,7 @@ div[data-testid="stChatMessage"] h2 {
         1.5rem !important;
 
     margin-bottom:
-        .65rem !important;
+        .7rem !important;
 }
 
 
@@ -318,54 +355,164 @@ div[data-testid="stChatMessage"] h3 {
         1.35rem !important;
 
     margin-bottom:
-        .55rem !important;
-}
-
-
-div[data-testid="stChatMessage"] li {
-    line-height:
-        1.75 !important;
-
-    margin-bottom:
-        .3rem;
+        .6rem !important;
 }
 
 
 /* =========================================================
-   固定：参照中の実践バー
+   Streamlit Bottom領域
 ========================================================= */
 
+/*
+Bottomそのものは画面幅いっぱいでよい。
+
+その内部だけを900px中央配置にする。
+*/
+
+[data-testid="stBottom"] {
+    z-index:
+        2000 !important;
+
+    width:
+        100% !important;
+
+    left:
+        0 !important;
+
+    right:
+        0 !important;
+
+    background:
+        linear-gradient(
+            to top,
+            #f8fafb 88%,
+            rgba(
+                248,
+                250,
+                251,
+                0
+            )
+        ) !important;
+}
+
+
+/*
+stBottom直下のラッパーを
+明示的に中央揃え
+*/
+
+[data-testid="stBottom"] > div {
+    max-width:
+        var(--content-width) !important;
+
+    width:
+        calc(100% - 48px) !important;
+
+    margin-left:
+        auto !important;
+
+    margin-right:
+        auto !important;
+}
+
+
+/* =========================================================
+   Chat Input
+========================================================= */
+
+div[data-testid="stChatInput"] {
+    width:
+        100% !important;
+
+    max-width:
+        100% !important;
+
+    margin-left:
+        auto !important;
+
+    margin-right:
+        auto !important;
+
+    position:
+        relative !important;
+
+    z-index:
+        2001 !important;
+
+    border-radius:
+        14px !important;
+
+    pointer-events:
+        auto !important;
+}
+
+
+/*
+入力が長くなりすぎても
+際限なく上へ伸びないようにする。
+
+3～4行程度で内部スクロールへ移行。
+*/
+
+div[data-testid="stChatInput"]
+textarea {
+    max-height:
+        105px !important;
+
+    overflow-y:
+        auto !important;
+
+    line-height:
+        1.5 !important;
+}
+
+
+/* =========================================================
+   固定：参照実践バー
+========================================================= */
+
+/*
+Chat Inputと全く同じ
+
+    width: 900px
+    left: 50%
+    translateX(-50%)
+
+を使う。
+
+これにより中央基準を統一。
+*/
+
 .st-key-reference_bar {
+    box-sizing:
+        border-box !important;
+
     position:
         fixed !important;
 
     left:
         50% !important;
 
-    /*
-    Chat Inputが2～3行になっても
-    重なりにくい高さまで上げる
-    */
-    bottom:
-        185px !important;
-
     transform:
         translateX(-50%) !important;
 
-    /*
-    Chat Inputと横幅を揃える
-    */
+    bottom:
+        142px !important;
+
+    max-width:
+        var(--content-width) !important;
+
     width:
-        min(
-            900px,
-            calc(100vw - 48px)
-        ) !important;
+        calc(100% - 48px) !important;
 
     z-index:
         3000 !important;
 
+    margin:
+        0 !important;
+
     padding:
-        .5rem
+        .55rem
         .8rem !important;
 
     border:
@@ -392,7 +539,7 @@ div[data-testid="stChatMessage"] li {
             23,
             70,
             84,
-            .12
+            .11
         ) !important;
 
     pointer-events:
@@ -407,7 +554,7 @@ div[data-testid="stChatMessage"] li {
 .st-key-reference_bar
 div[data-testid="stVerticalBlock"] {
     gap:
-        .3rem !important;
+        .25rem !important;
 }
 
 
@@ -417,7 +564,7 @@ div[data-testid="stHorizontalBlock"] {
         center !important;
 
     gap:
-        .6rem !important;
+        .7rem !important;
 }
 
 
@@ -425,11 +572,11 @@ div[data-testid="stHorizontalBlock"] {
     margin:
         0 !important;
 
-    font-size:
-        .88rem !important;
-
     color:
         #344a55 !important;
+
+    font-size:
+        .9rem !important;
 }
 
 
@@ -447,7 +594,7 @@ div[data-testid="stHorizontalBlock"] {
         9px !important;
 
     font-size:
-        .82rem !important;
+        .83rem !important;
 
     pointer-events:
         auto !important;
@@ -464,64 +611,6 @@ div[data-testid="stPopover"] {
 
     z-index:
         4000 !important;
-
-    pointer-events:
-        auto !important;
-}
-
-
-/* =========================================================
-   Streamlit固定Bottom領域
-========================================================= */
-
-[data-testid="stBottom"] {
-    z-index:
-        2000 !important;
-
-    background:
-        linear-gradient(
-            to top,
-            #f8fafb 90%,
-            rgba(
-                248,
-                250,
-                251,
-                0
-            )
-        ) !important;
-}
-
-
-/* =========================================================
-   Chat Input
-========================================================= */
-
-/*
-Chat Inputも参照バーと同じ900px幅にする
-*/
-
-[data-testid="stBottom"]
-div[data-testid="stChatInput"] {
-    width:
-        min(
-            900px,
-            calc(100vw - 48px)
-        ) !important;
-
-    margin-left:
-        auto !important;
-
-    margin-right:
-        auto !important;
-
-    position:
-        relative !important;
-
-    z-index:
-        2001 !important;
-
-    border-radius:
-        14px !important;
 
     pointer-events:
         auto !important;
@@ -564,18 +653,20 @@ hr {
     max-width: 760px
 ) {
 
+    :root {
+        --content-width: 100%;
+    }
+
+
     .block-container {
+        width:
+            calc(100% - 20px) !important;
+
         padding-top:
             .9rem;
 
-        padding-left:
-            1rem;
-
-        padding-right:
-            1rem;
-
         padding-bottom:
-            21rem;
+            18rem;
     }
 
 
@@ -600,7 +691,13 @@ hr {
 
     div[data-testid="stChatMessage"] {
         width:
-            calc(100% - .5rem);
+            calc(100% - 8px) !important;
+
+        margin-left:
+            4px !important;
+
+        margin-right:
+            4px !important;
 
         padding:
             .9rem
@@ -608,27 +705,29 @@ hr {
     }
 
 
-    .st-key-reference_bar {
-        bottom:
-            175px !important;
-
+    [data-testid="stBottom"] > div {
         width:
-            calc(
-                100vw - 20px
-            ) !important;
-
-        padding:
-            .4rem
-            .55rem !important;
+            calc(100% - 20px) !important;
     }
 
 
-    [data-testid="stBottom"]
-    div[data-testid="stChatInput"] {
+    .st-key-reference_bar {
         width:
-            calc(
-                100vw - 20px
-            ) !important;
+            calc(100% - 20px) !important;
+
+        bottom:
+            138px !important;
+
+        padding:
+            .45rem
+            .6rem !important;
+    }
+
+
+    div[data-testid="stChatInput"]
+    textarea {
+        max-height:
+            95px !important;
     }
 
 }
@@ -679,12 +778,12 @@ for key, value in DEFAULT_STATE.items():
 
 
 # ============================================================
-# State操作
+# State
 # ============================================================
 
 def reset_all() -> None:
     """
-    システム全体を初期状態へ戻す。
+    画面・選択・会話履歴を初期化する。
     """
 
     for key in list(
@@ -728,7 +827,7 @@ def get_selected_candidates() -> list[
     dict[str, Any]
 ]:
     """
-    現在選択中の実践候補を取得する。
+    選択中の実践候補を返す。
     """
 
     selected_ids = set(
@@ -753,7 +852,7 @@ def update_selected_ids(
     selected: bool,
 ) -> None:
     """
-    selected_practice_idsを更新する。
+    選択中practice_idを更新する。
     """
 
     current_ids = set(
@@ -800,7 +899,7 @@ def on_card_selection_change(
     practice_id: str,
 ) -> None:
     """
-    実践カード側のチェック状態変更。
+    実践カード側のチェック変更。
     """
 
     card_key = (
@@ -834,7 +933,7 @@ def on_bar_selection_change(
     practice_id: str,
 ) -> None:
     """
-    固定バーPopover側のチェック状態変更。
+    固定バー側のチェック変更。
     """
 
     bar_key = (
@@ -871,9 +970,6 @@ def on_bar_selection_change(
 def join_values(
     values: list[Any],
 ) -> str:
-    """
-    空の値を除いて「、」で連結する。
-    """
 
     normalized = [
         str(value).strip()
@@ -894,9 +990,6 @@ def display_processing_error(
     error: Exception,
     process_name: str,
 ) -> None:
-    """
-    APIエラーなどを利用者向けに表示する。
-    """
 
     error_text = str(
         error
@@ -948,9 +1041,6 @@ def display_processing_error(
 # ============================================================
 
 def display_header() -> None:
-    """
-    ページヘッダー。
-    """
 
     with st.container(
         key="app_header"
@@ -972,15 +1062,12 @@ def display_header() -> None:
 
 
 # ============================================================
-# 実践カード
+# Practice Card
 # ============================================================
 
 def display_practice_card(
     candidate: dict[str, Any],
 ) -> None:
-    """
-    GraphRAGで検索された実践をカード表示する。
-    """
 
     index = candidate.get(
         "index",
@@ -1049,10 +1136,6 @@ def display_practice_card(
                 bibliography
             )
 
-        # ----------------------------------------------------
-        # 基本情報
-        # ----------------------------------------------------
-
         columns = st.columns(
             3
         )
@@ -1096,10 +1179,6 @@ def display_practice_card(
                 or "記載なし"
             )
 
-        # ----------------------------------------------------
-        # ICT
-        # ----------------------------------------------------
-
         ict = join_values(
             [
                 *candidate.get(
@@ -1123,10 +1202,6 @@ def display_practice_card(
                 ict
             )
 
-        # ----------------------------------------------------
-        # 教育効果
-        # ----------------------------------------------------
-
         effects = candidate.get(
             "effects",
             [],
@@ -1144,13 +1219,8 @@ def display_practice_card(
                     f"✓ {effect}"
                 )
 
-        # ----------------------------------------------------
-        # 実践選択
-        # ----------------------------------------------------
-
         card_key = (
-            f"card_select_"
-            f"{practice_id}"
+            f"card_select_{practice_id}"
         )
 
         if (
@@ -1182,12 +1252,6 @@ def display_practice_card(
 # ============================================================
 
 def display_reference_bar() -> None:
-    """
-    Chat Inputの上に、
-    現在参照中の実践を常時表示する。
-
-    Popoverからいつでも実践を変更できる。
-    """
 
     if not (
         st.session_state.has_generated_candidates
@@ -1214,10 +1278,6 @@ def display_reference_bar() -> None:
             ]
         )
 
-        # ----------------------------------------------------
-        # 参照中表示
-        # ----------------------------------------------------
-
         with columns[0]:
 
             if selected:
@@ -1240,10 +1300,6 @@ def display_reference_bar() -> None:
                 st.markdown(
                     "**参照する実践を選択してください**"
                 )
-
-        # ----------------------------------------------------
-        # 実践変更
-        # ----------------------------------------------------
 
         with columns[1]:
 
@@ -1278,8 +1334,7 @@ def display_reference_bar() -> None:
                     )
 
                     bar_key = (
-                        f"bar_select_"
-                        f"{practice_id}"
+                        f"bar_select_{practice_id}"
                     )
 
                     if (
@@ -1310,13 +1365,10 @@ def display_reference_bar() -> None:
 
 
 # ============================================================
-# Document RAG Chat履歴
+# Chat履歴
 # ============================================================
 
 def display_research_messages() -> None:
-    """
-    Document RAGでの会話履歴を表示する。
-    """
 
     for message in (
         st.session_state.research_messages
@@ -1335,6 +1387,7 @@ def display_research_messages() -> None:
         ).strip()
 
         if not content:
+
             continue
 
         with st.chat_message(
@@ -1408,7 +1461,7 @@ user_input = st.chat_input(
 
 
 # ============================================================
-# Chat Input受付
+# 入力受付
 # ============================================================
 
 if user_input:
@@ -1420,7 +1473,7 @@ if user_input:
     if normalized_input:
 
         # ----------------------------------------------------
-        # 初回質問
+        # 初回質問 → GraphRAG
         # ----------------------------------------------------
 
         if not (
@@ -1436,7 +1489,7 @@ if user_input:
             )
 
         # ----------------------------------------------------
-        # 追加質問
+        # 追加質問 → Document RAG
         # ----------------------------------------------------
 
         else:
@@ -1487,8 +1540,6 @@ if user_input:
                     )
                 }
 
-                # 入力直後に保存して
-                # API処理中にも画面に残す
                 st.session_state.research_messages.append(
                     {
                         "role": "user",
@@ -1529,7 +1580,7 @@ if not (
     )
 
     # --------------------------------------------------------
-    # 入力したユーザー質問
+    # ユーザー入力
     # --------------------------------------------------------
 
     if (
@@ -1670,7 +1721,7 @@ else:
     )
 
     # --------------------------------------------------------
-    # 選択エラー
+    # 未選択エラー
     # --------------------------------------------------------
 
     if (
@@ -1686,7 +1737,7 @@ else:
         )
 
     # --------------------------------------------------------
-    # 会話履歴
+    # Chat履歴
     # --------------------------------------------------------
 
     display_research_messages()
