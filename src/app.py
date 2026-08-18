@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 import streamlit as st
@@ -38,10 +39,6 @@ def apply_custom_css() -> None:
     --border: #dce5e8;
     --surface: #ffffff;
 
-    /*
-    本文・参照バー・Chat Inputで
-    共通して使う最大幅
-    */
     --content-width: 900px;
 }
 
@@ -70,10 +67,6 @@ def apply_custom_css() -> None:
 }
 
 
-/*
-通常本文の中央基準も900pxへ統一
-*/
-
 .block-container {
     max-width:
         var(--content-width) !important;
@@ -96,10 +89,6 @@ def apply_custom_css() -> None:
     padding-top:
         1.6rem;
 
-    /*
-    固定UIの下に本文が隠れないよう
-    十分な余白を確保
-    */
     padding-bottom:
         17rem;
 }
@@ -245,11 +234,6 @@ div[data-testid="stCheckbox"] {
    Chat Message
 ========================================================= */
 
-/*
-左右を完全に均等にする。
-本文幅の中でさらに少し余白を確保。
-*/
-
 div[data-testid="stChatMessage"] {
     box-sizing:
         border-box !important;
@@ -290,10 +274,6 @@ div[data-testid="stChatMessage"] {
         );
 }
 
-
-/*
-メッセージ内部も左右対称
-*/
 
 div[data-testid="stChatMessageContent"] {
     padding-left:
@@ -360,14 +340,8 @@ div[data-testid="stChatMessage"] h3 {
 
 
 /* =========================================================
-   Streamlit Bottom領域
+   Streamlit Bottom
 ========================================================= */
-
-/*
-Bottomそのものは画面幅いっぱいでよい。
-
-その内部だけを900px中央配置にする。
-*/
 
 [data-testid="stBottom"] {
     z-index:
@@ -395,11 +369,6 @@ Bottomそのものは画面幅いっぱいでよい。
         ) !important;
 }
 
-
-/*
-stBottom直下のラッパーを
-明示的に中央揃え
-*/
 
 [data-testid="stBottom"] > div {
     max-width:
@@ -447,13 +416,6 @@ div[data-testid="stChatInput"] {
 }
 
 
-/*
-入力が長くなりすぎても
-際限なく上へ伸びないようにする。
-
-3～4行程度で内部スクロールへ移行。
-*/
-
 div[data-testid="stChatInput"]
 textarea {
     max-height:
@@ -470,18 +432,6 @@ textarea {
 /* =========================================================
    固定：参照実践バー
 ========================================================= */
-
-/*
-Chat Inputと全く同じ
-
-    width: 900px
-    left: 50%
-    translateX(-50%)
-
-を使う。
-
-これにより中央基準を統一。
-*/
 
 .st-key-reference_bar {
     box-sizing:
@@ -546,10 +496,6 @@ Chat Inputと全く同じ
         auto !important;
 }
 
-
-/* =========================================================
-   参照バー内部
-========================================================= */
 
 .st-key-reference_bar
 div[data-testid="stVerticalBlock"] {
@@ -631,6 +577,39 @@ div[data-testid="stExpander"] {
 
     background:
         #fafcfc !important;
+}
+
+
+/* =========================================================
+   デモデータ保存エリア
+========================================================= */
+
+.st-key-demo_export_section {
+    margin-top:
+        2rem;
+
+    padding:
+        1rem
+        1.1rem;
+
+    border:
+        1px dashed
+        #9ebbc2;
+
+    border-radius:
+        14px;
+
+    background:
+        #f3f9fa;
+}
+
+
+.st-key-demo_export_section h3 {
+    color:
+        #176579 !important;
+
+    margin-top:
+        0 !important;
 }
 
 
@@ -754,6 +733,13 @@ DEFAULT_STATE = {
     "pending_graph_query": None,
     "pending_document_query": None,
     "selection_error": None,
+
+    # --------------------------------------------
+    # Demo保存用
+    # --------------------------------------------
+
+    "demo_practice_search": None,
+    "demo_document_answers": [],
 }
 
 
@@ -783,7 +769,7 @@ for key, value in DEFAULT_STATE.items():
 
 def reset_all() -> None:
     """
-    画面・選択・会話履歴を初期化する。
+    画面・選択・会話履歴・デモ保存データを初期化する。
     """
 
     for key in list(
@@ -898,9 +884,6 @@ def update_selected_ids(
 def on_card_selection_change(
     practice_id: str,
 ) -> None:
-    """
-    実践カード側のチェック変更。
-    """
 
     card_key = (
         f"card_select_{practice_id}"
@@ -932,9 +915,6 @@ def on_card_selection_change(
 def on_bar_selection_change(
     practice_id: str,
 ) -> None:
-    """
-    固定バー側のチェック変更。
-    """
 
     bar_key = (
         f"bar_select_{practice_id}"
@@ -979,6 +959,113 @@ def join_values(
 
     return "、".join(
         normalized
+    )
+
+
+def to_json_text(
+    data: Any,
+) -> str:
+    """
+    Download Button用に
+    PythonデータをUTF-8 JSON文字列へ変換する。
+    """
+
+    return json.dumps(
+        data,
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+# ============================================================
+# Demo保存データ
+# ============================================================
+
+def save_demo_practice_search(
+    query: str,
+    result: dict[str, Any],
+) -> None:
+    """
+    GraphRAG正常実行結果を
+    Demo用データとしてSession Stateへ保存する。
+    """
+
+    st.session_state.demo_practice_search = {
+        "query": query,
+        "practice_candidates": result.get(
+            "practice_candidates",
+            [],
+        ),
+    }
+
+
+def save_demo_document_answer(
+    query: str,
+    selected_candidates: list[
+        dict[str, Any]
+    ],
+    result: dict[str, Any],
+) -> None:
+    """
+    Document RAG正常実行結果を
+    Demo用データとしてSession Stateへ保存する。
+    """
+
+    selected_practices = []
+
+    for candidate in selected_candidates:
+
+        selected_practices.append(
+            {
+                "index": candidate.get(
+                    "index"
+                ),
+                "practice_id": candidate.get(
+                    "practice_id"
+                ),
+                "paper_id": candidate.get(
+                    "paper_id"
+                ),
+                "title": candidate.get(
+                    "title"
+                ),
+                "author": candidate.get(
+                    "author"
+                ),
+                "year": candidate.get(
+                    "year"
+                ),
+                "grade": candidate.get(
+                    "grade"
+                ),
+                "field": candidate.get(
+                    "field"
+                ),
+                "unit": candidate.get(
+                    "unit"
+                ),
+            }
+        )
+
+    answer_data = {
+        "query": query,
+        "selected_practices": selected_practices,
+        "paper_ids": result.get(
+            "paper_ids",
+            [],
+        ),
+        "answer": result.get(
+            "answer",
+            "",
+        ),
+        "sources": result.get(
+            "sources",
+            [],
+        ),
+    }
+
+    st.session_state.demo_document_answers.append(
+        answer_data
     )
 
 
@@ -1434,6 +1521,91 @@ def display_research_messages() -> None:
 
 
 # ============================================================
+# Demoデータダウンロード
+# ============================================================
+
+def display_demo_export_section() -> None:
+    """
+    正常動作時に取得した結果を
+    Demo版用JSONとしてダウンロードする。
+    """
+
+    if (
+        st.session_state.demo_practice_search
+        is None
+        and not st.session_state.demo_document_answers
+    ):
+
+        return
+
+    with st.container(
+        key="demo_export_section"
+    ):
+
+        st.markdown(
+            "### デモ用データ保存"
+        )
+
+        st.caption(
+            "正常動作時の結果をJSONとして保存します。"
+            "発表用Demo版の作成後、この領域は削除します。"
+        )
+
+        # ----------------------------------------------------
+        # GraphRAG
+        # ----------------------------------------------------
+
+        if (
+            st.session_state.demo_practice_search
+            is not None
+        ):
+
+            practice_json = to_json_text(
+                st.session_state.demo_practice_search
+            )
+
+            st.download_button(
+                label=(
+                    "practice_search.json をダウンロード"
+                ),
+                data=practice_json,
+                file_name="practice_search.json",
+                mime="application/json",
+                use_container_width=True,
+            )
+
+        # ----------------------------------------------------
+        # Document RAG
+        # ----------------------------------------------------
+
+        for index, answer_data in enumerate(
+            st.session_state.demo_document_answers,
+            start=1,
+        ):
+
+            filename = (
+                f"document_answer_{index:02d}.json"
+            )
+
+            json_text = to_json_text(
+                answer_data
+            )
+
+            st.download_button(
+                label=(
+                    f"{filename} をダウンロード"
+                ),
+                data=json_text,
+                file_name=filename,
+                mime="application/json",
+                use_container_width=True,
+                key=(
+                    f"download_demo_answer_{index}"
+                ),
+            )
+
+
+# ============================================================
 # 固定UI
 # ============================================================
 
@@ -1473,7 +1645,7 @@ if user_input:
     if normalized_input:
 
         # ----------------------------------------------------
-        # 初回質問 → GraphRAG
+        # 初回質問
         # ----------------------------------------------------
 
         if not (
@@ -1489,7 +1661,7 @@ if user_input:
             )
 
         # ----------------------------------------------------
-        # 追加質問 → Document RAG
+        # 追加質問
         # ----------------------------------------------------
 
         else:
@@ -1551,6 +1723,11 @@ if user_input:
                     "query": normalized_input,
                     "paper_ids": paper_ids,
                     "paper_labels": paper_labels,
+
+                    # JSON保存用
+                    "selected_candidates": (
+                        selected_candidates
+                    ),
                 }
 
 
@@ -1578,10 +1755,6 @@ if not (
         "期待する学習効果などを"
         "自由な文章で入力してください。"
     )
-
-    # --------------------------------------------------------
-    # ユーザー入力
-    # --------------------------------------------------------
 
     if (
         st.session_state.initial_query
@@ -1616,6 +1789,15 @@ if not (
                 result = run_pipeline(
                     user_query=pending_query
                 )
+
+            # --------------------------------------------
+            # Demo用JSONとして保存
+            # --------------------------------------------
+
+            save_demo_practice_search(
+                query=pending_query,
+                result=result,
+            )
 
             st.session_state.practice_candidates = (
                 result.get(
@@ -1721,7 +1903,7 @@ else:
     )
 
     # --------------------------------------------------------
-    # 未選択エラー
+    # 選択エラー
     # --------------------------------------------------------
 
     if (
@@ -1737,7 +1919,7 @@ else:
         )
 
     # --------------------------------------------------------
-    # Chat履歴
+    # 会話履歴
     # --------------------------------------------------------
 
     display_research_messages()
@@ -1773,6 +1955,24 @@ else:
                     top_k=3,
                 )
 
+            # --------------------------------------------
+            # Demo用回答として保存
+            # --------------------------------------------
+
+            save_demo_document_answer(
+                query=pending[
+                    "query"
+                ],
+                selected_candidates=pending[
+                    "selected_candidates"
+                ],
+                result=result,
+            )
+
+            # --------------------------------------------
+            # Chat履歴
+            # --------------------------------------------
+
             st.session_state.research_messages.append(
                 {
                     "role": "assistant",
@@ -1802,6 +2002,12 @@ else:
                 error=error,
                 process_name="回答の作成",
             )
+
+    # --------------------------------------------------------
+    # Demoデータ保存
+    # --------------------------------------------------------
+
+    display_demo_export_section()
 
     st.divider()
 
