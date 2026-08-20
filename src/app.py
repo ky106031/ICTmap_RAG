@@ -1,9 +1,9 @@
-import json
-import time
-from pathlib import Path
 from typing import Any
 
 import streamlit as st
+
+from document_pipeline import run_document_rag
+from rag_pipeline import run_pipeline
 
 
 # ============================================================
@@ -15,45 +15,6 @@ st.set_page_config(
     page_icon="🔬",
     layout="centered",
 )
-
-
-# ============================================================
-# 基本パス
-# ============================================================
-
-BASE_DIR = Path(__file__).resolve().parents[1]
-
-DEMO_DATA_DIR = (
-    BASE_DIR
-    / "data"
-    / "demo_backup_v2"
-)
-
-PRACTICE_SEARCH_PATH = (
-    DEMO_DATA_DIR
-    / "practice_search.json"
-)
-
-DOCUMENT_ANSWER_01_PATH = (
-    DEMO_DATA_DIR
-    / "document_answer_01.json"
-)
-
-DOCUMENT_ANSWER_02_PATH = (
-    DEMO_DATA_DIR
-    / "document_answer_02.json"
-)
-
-
-# ============================================================
-# Demo待機時間
-#
-# 発表時に「処理している感じ」を再現する。
-# 必要なら後から調整可能。
-# ============================================================
-
-GRAPH_SEARCH_DELAY = 5.5
-DOCUMENT_SEARCH_DELAY = 4.5
 
 
 # ============================================================
@@ -726,46 +687,6 @@ apply_custom_css()
 
 
 # ============================================================
-# JSON
-# ============================================================
-
-def load_json(
-    path: Path,
-) -> dict[str, Any]:
-    """
-    Demo用JSONを読み込む。
-    """
-
-    if not path.exists():
-
-        raise FileNotFoundError(
-            f"Demo用JSONが見つかりません。\n"
-            f"{path}"
-        )
-
-    with open(
-        path,
-        "r",
-        encoding="utf-8",
-    ) as file:
-
-        data = json.load(
-            file
-        )
-
-    if not isinstance(
-        data,
-        dict,
-    ):
-
-        raise ValueError(
-            f"JSONの形式が不正です: {path}"
-        )
-
-    return data
-
-
-# ============================================================
 # Session State
 # ============================================================
 
@@ -776,22 +697,13 @@ DEFAULT_STATE = {
     "research_messages": [],
     "has_generated_candidates": False,
 
-    # --------------------------------------------
-    # Demo処理待ち
-    # --------------------------------------------
+    # GraphRAG処理待ち
+    "pending_graph_query": None,
 
-    "pending_demo_graph": False,
-    "pending_demo_document": None,
+    # Document RAG処理待ち
+    "pending_document_query": None,
 
-    # --------------------------------------------
-    # 追加質問の回数
-    #
-    # 0 → document_answer_01
-    # 1 → document_answer_02
-    # --------------------------------------------
-
-    "document_answer_index": 0,
-
+    # 実践未選択時の警告
     "selection_error": None,
 }
 
@@ -822,7 +734,7 @@ for key, value in DEFAULT_STATE.items():
 
 def reset_all() -> None:
     """
-    Demoを最初からやり直す。
+    システムを最初の状態へ戻す。
     """
 
     for key in list(
@@ -957,6 +869,7 @@ def on_card_selection_change(
         selected=selected,
     )
 
+    # 下部固定バー側へ同期
     bar_key = (
         f"bar_select_{practice_id}"
     )
@@ -972,7 +885,7 @@ def on_bar_selection_change(
     practice_id: str,
 ) -> None:
     """
-    固定バー側のチェック変更。
+    下部固定バー側のチェック変更。
     """
 
     bar_key = (
@@ -991,6 +904,7 @@ def on_bar_selection_change(
         selected=selected,
     )
 
+    # 実践カード側へ同期
     card_key = (
         f"card_select_{practice_id}"
     )
@@ -1019,6 +933,64 @@ def join_values(
     return "、".join(
         normalized
     )
+
+
+# ============================================================
+# Error
+# ============================================================
+
+def display_processing_error(
+    error: Exception,
+    process_name: str,
+) -> None:
+    """
+    API・DB処理のエラーを
+    ユーザー向けに表示する。
+    """
+
+    error_text = str(
+        error
+    )
+
+    if (
+        "429" in error_text
+        or "RESOURCE_EXHAUSTED"
+        in error_text
+    ):
+
+        st.warning(
+            "現在、AIの利用が混み合っています。"
+            "少し時間を空けてから"
+            "もう一度お試しください。"
+        )
+
+    elif (
+        "503" in error_text
+        or "UNAVAILABLE"
+        in error_text
+    ):
+
+        st.warning(
+            "現在、AIへのアクセスが"
+            "混み合っています。"
+            "少し時間を空けてから"
+            "もう一度お試しください。"
+        )
+
+    else:
+
+        st.error(
+            f"{process_name}中に"
+            "エラーが発生しました。"
+        )
+
+    with st.expander(
+        "エラーの詳細"
+    ):
+
+        st.code(
+            error_text
+        )
 
 
 # ============================================================
@@ -1419,234 +1391,6 @@ def display_research_messages() -> None:
 
 
 # ============================================================
-# Demo Graph処理
-# ============================================================
-
-def process_demo_graph() -> None:
-    """
-    GraphRAGの代わりに
-    practice_search.jsonを読み込む。
-    """
-
-    if not (
-        st.session_state.pending_demo_graph
-    ):
-
-        return
-
-    try:
-
-        with st.spinner(
-            "ICTマップを探索しています..."
-        ):
-
-            time.sleep(
-                GRAPH_SEARCH_DELAY
-            )
-
-            data = load_json(
-                PRACTICE_SEARCH_PATH
-            )
-
-        candidates = data.get(
-            "practice_candidates",
-            [],
-        )
-
-        if not isinstance(
-            candidates,
-            list,
-        ):
-
-            raise ValueError(
-                "practice_candidatesの形式が不正です。"
-            )
-
-        st.session_state.practice_candidates = (
-            candidates
-        )
-
-        st.session_state.has_generated_candidates = (
-            True
-        )
-
-        st.session_state.pending_demo_graph = (
-            False
-        )
-
-        st.rerun()
-
-    except Exception as error:
-
-        st.session_state.pending_demo_graph = (
-            False
-        )
-
-        st.error(
-            "デモ用の実践情報を"
-            "読み込めませんでした。"
-        )
-
-        with st.expander(
-            "エラーの詳細"
-        ):
-
-            st.code(
-                str(error)
-            )
-
-
-# ============================================================
-# Demo Document処理
-# ============================================================
-
-def get_demo_answer_path(
-    answer_index: int,
-) -> Path | None:
-    """
-    質問回数に対応するJSONを返す。
-    """
-
-    if answer_index == 0:
-
-        return (
-            DOCUMENT_ANSWER_01_PATH
-        )
-
-    if answer_index == 1:
-
-        return (
-            DOCUMENT_ANSWER_02_PATH
-        )
-
-    return None
-
-
-def process_demo_document() -> None:
-    """
-    Document RAGの代わりに
-    保存済み回答JSONを読み込む。
-    """
-
-    pending = (
-        st.session_state.pending_demo_document
-    )
-
-    if not pending:
-
-        return
-
-    answer_index = (
-        st.session_state.document_answer_index
-    )
-
-    answer_path = get_demo_answer_path(
-        answer_index
-    )
-
-    # --------------------------------------------------------
-    # 保存済み回答を使い切った場合
-    # --------------------------------------------------------
-
-    if answer_path is None:
-
-        st.session_state.pending_demo_document = (
-            None
-        )
-
-        st.session_state.research_messages.append(
-            {
-                "role": "assistant",
-                "content": (
-                    "このデモで用意されている"
-                    "回答は以上です。"
-                ),
-                "sources": [],
-            }
-        )
-
-        st.rerun()
-
-        return
-
-    try:
-
-        with st.spinner(
-            "選択した研究知見を確認しています..."
-        ):
-
-            time.sleep(
-                DOCUMENT_SEARCH_DELAY
-            )
-
-            data = load_json(
-                answer_path
-            )
-
-        answer = str(
-            data.get(
-                "answer",
-                "",
-            )
-        ).strip()
-
-        sources = data.get(
-            "sources",
-            [],
-        )
-
-        if not answer:
-
-            raise ValueError(
-                "保存済み回答が空です。"
-            )
-
-        if not isinstance(
-            sources,
-            list,
-        ):
-
-            sources = []
-
-        st.session_state.research_messages.append(
-            {
-                "role": "assistant",
-                "content": answer,
-                "sources": sources,
-            }
-        )
-
-        st.session_state.document_answer_index += (
-            1
-        )
-
-        st.session_state.pending_demo_document = (
-            None
-        )
-
-        st.rerun()
-
-    except Exception as error:
-
-        st.session_state.pending_demo_document = (
-            None
-        )
-
-        st.error(
-            "デモ用の回答を"
-            "読み込めませんでした。"
-        )
-
-        with st.expander(
-            "エラーの詳細"
-        ):
-
-            st.code(
-                str(error)
-            )
-
-
-# ============================================================
 # 固定UI
 # ============================================================
 
@@ -1686,7 +1430,8 @@ if user_input:
     if normalized_input:
 
         # ----------------------------------------------------
-        # 1回目
+        # 初回質問
+        # → GraphRAG
         # ----------------------------------------------------
 
         if not (
@@ -1697,12 +1442,13 @@ if user_input:
                 normalized_input
             )
 
-            st.session_state.pending_demo_graph = (
-                True
+            st.session_state.pending_graph_query = (
+                normalized_input
             )
 
         # ----------------------------------------------------
-        # 2回目以降
+        # 追加質問
+        # → Document RAG
         # ----------------------------------------------------
 
         else:
@@ -1722,19 +1468,72 @@ if user_input:
             else:
 
                 # --------------------------------------------
-                # 入力内容はそのまま画面へ表示
+                # 選択した実践のpaper_id
                 # --------------------------------------------
 
-                st.session_state.research_messages.append(
-                    {
-                        "role": "user",
-                        "content": normalized_input,
-                    }
-                )
+                paper_ids = [
+                    str(
+                        candidate.get(
+                            "paper_id",
+                            "",
+                        )
+                    )
+                    for candidate
+                    in selected_candidates
+                    if candidate.get(
+                        "paper_id"
+                    )
+                ]
 
-                st.session_state.pending_demo_document = {
-                    "query": normalized_input,
+                # --------------------------------------------
+                # LLMへ渡す表示名
+                # --------------------------------------------
+
+                paper_labels = {
+                    str(
+                        candidate[
+                            "paper_id"
+                        ]
+                    ):
+                    (
+                        f"実践"
+                        f"{candidate['index']}："
+                        f"{candidate['title']}"
+                    )
+                    for candidate
+                    in selected_candidates
+                    if candidate.get(
+                        "paper_id"
+                    )
                 }
+
+                if not paper_ids:
+
+                    st.session_state.selection_error = (
+                        "選択した実践に対応する"
+                        "論文情報を取得できませんでした。"
+                    )
+
+                else:
+
+                    # ----------------------------------------
+                    # API処理前にユーザー質問を保存
+                    #
+                    # 回答生成中も質問が画面に残る
+                    # ----------------------------------------
+
+                    st.session_state.research_messages.append(
+                        {
+                            "role": "user",
+                            "content": normalized_input,
+                        }
+                    )
+
+                    st.session_state.pending_document_query = {
+                        "query": normalized_input,
+                        "paper_ids": paper_ids,
+                        "paper_labels": paper_labels,
+                    }
 
 
 # ============================================================
@@ -1762,6 +1561,10 @@ if not (
         "自由な文章で入力してください。"
     )
 
+    # --------------------------------------------------------
+    # ユーザー質問
+    # --------------------------------------------------------
+
     if (
         st.session_state.initial_query
     ):
@@ -1775,14 +1578,69 @@ if not (
             )
 
     # --------------------------------------------------------
-    # 保存済みGraphRAG結果
+    # GraphRAG
     # --------------------------------------------------------
 
-    process_demo_graph()
+    if (
+        st.session_state.pending_graph_query
+    ):
+
+        pending_query = (
+            st.session_state.pending_graph_query
+        )
+
+        try:
+
+            with st.spinner(
+                "ICTマップを探索しています..."
+            ):
+
+                result = run_pipeline(
+                    user_query=pending_query
+                )
+
+            candidates = result.get(
+                "practice_candidates",
+                [],
+            )
+
+            if not isinstance(
+                candidates,
+                list,
+            ):
+
+                raise ValueError(
+                    "実践候補の形式が不正です。"
+                )
+
+            st.session_state.practice_candidates = (
+                candidates
+            )
+
+            st.session_state.has_generated_candidates = (
+                True
+            )
+
+            st.session_state.pending_graph_query = (
+                None
+            )
+
+            st.rerun()
+
+        except Exception as error:
+
+            st.session_state.pending_graph_query = (
+                None
+            )
+
+            display_processing_error(
+                error=error,
+                process_name="実践の検索",
+            )
 
 
 # ============================================================
-# 実践検索後
+# GraphRAG検索後
 # ============================================================
 
 else:
@@ -1824,7 +1682,8 @@ else:
     ):
 
         st.info(
-            "実践情報がありません。"
+            "条件に合う実践を"
+            "提案できませんでした。"
         )
 
     else:
@@ -1855,7 +1714,7 @@ else:
     )
 
     # --------------------------------------------------------
-    # 未選択
+    # 実践未選択
     # --------------------------------------------------------
 
     if (
@@ -1877,10 +1736,85 @@ else:
     display_research_messages()
 
     # --------------------------------------------------------
-    # 保存済みDocument RAG回答
+    # Document RAG
     # --------------------------------------------------------
 
-    process_demo_document()
+    if (
+        st.session_state.pending_document_query
+    ):
+
+        pending = (
+            st.session_state.pending_document_query
+        )
+
+        try:
+
+            with st.spinner(
+                "選択した研究知見を確認しています..."
+            ):
+
+                result = run_document_rag(
+                    query=pending[
+                        "query"
+                    ],
+                    paper_ids=pending[
+                        "paper_ids"
+                    ],
+                    paper_labels=pending[
+                        "paper_labels"
+                    ],
+                    top_k=3,
+                )
+
+            answer = str(
+                result.get(
+                    "answer",
+                    "",
+                )
+            ).strip()
+
+            if not answer:
+
+                raise RuntimeError(
+                    "回答が生成されませんでした。"
+                )
+
+            sources = result.get(
+                "sources",
+                [],
+            )
+
+            if not isinstance(
+                sources,
+                list,
+            ):
+
+                sources = []
+
+            st.session_state.research_messages.append(
+                {
+                    "role": "assistant",
+                    "content": answer,
+                    "sources": sources,
+                }
+            )
+
+            st.session_state.pending_document_query = (
+                None
+            )
+
+            st.rerun()
+
+        except Exception as error:
+
+            st.session_state.pending_document_query = (
+                None
+            )
+
+            display_processing_error(
+                error=error,
+                process_name="回答の作成",
+            )
 
     st.divider()
 
